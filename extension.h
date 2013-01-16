@@ -43,8 +43,6 @@
 #include <stdio.h>
 #include <string>
 
-using namespace std;
-
 /**
  * @brief Sample implementation of the SDK Extension.
  * Note: Uncomment one of the pre-defined virtual functions in order to use it.
@@ -100,7 +98,7 @@ public:
 public:
 	sysThread(char command[], IPluginFunction* nfunction):IThread()
 	{	
-		strcpy(Scommand, command);
+		std::strcpy(Scommand, command);
 		function = nfunction;
 	}
 
