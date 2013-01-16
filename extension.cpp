@@ -83,7 +83,7 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
 
 	if (s_command.find("2>&1") == std::string::npos)
-		std::strcat(command, "2>&1");
+		strcat(command, "2>&1");
 
 	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
 		FILE* cmdFile = _popen(command, "r");
@@ -150,7 +150,7 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 	std::string s_command = Scommand;
 
 	if (s_command.find("2>&1") == std::string::npos)
-		std::strcat(Scommand, "2>&1");
+		strcat(Scommand, "2>&1");
 
 	function->PushString(Scommand);
 
