@@ -42,6 +42,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string>
+#include <string.h>
 
 /**
  * @brief Sample implementation of the SDK Extension.
@@ -98,7 +99,7 @@ public:
 public:
 	sysThread(char command[], IPluginFunction* nfunction):IThread()
 	{	
-		std::strcpy(Scommand, command);
+		strcpy(Scommand, command);
 		function = nfunction;
 	}
 
