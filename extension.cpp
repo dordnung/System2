@@ -149,10 +149,10 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 	char buffer[4096];
 	std::string s_command = Scommand;
 
+	function->PushString(Scommand);
+
 	if (s_command.find("2>&1") == std::string::npos)
 		strcat(Scommand, " 2>&1");
-
-	function->PushString(Scommand);
 
 	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
 		FILE* cmdFile = _popen(Scommand, "r");
