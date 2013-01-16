@@ -42,6 +42,8 @@
 #include <cstdlib>
 #include <string.h>
 
+using namespace std;
+
 /**
  * @brief Sample implementation of the SDK Extension.
  * Note: Uncomment one of the pre-defined virtual functions in order to use it.
@@ -95,7 +97,7 @@ public:
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel);
 public:
-	sysThread::sysThread(char command[], IPluginFunction* nfunction):IThread()
+	sysThread(char command[], IPluginFunction* nfunction):IThread()
 	{	
 		strcpy(Scommand, command);
 		function = nfunction;
