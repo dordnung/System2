@@ -5,7 +5,7 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK = sourcemod-central
+SMSDK = ../sourcemod-central
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
