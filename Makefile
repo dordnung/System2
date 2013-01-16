@@ -33,7 +33,7 @@ CPP_OSX = clang
 ### SDK CONFIGURATIONS ###
 ##########################
 
-INCLUDE += -I. -I.. -Isdk -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/public/core
+INCLUDE += -I. -I.. -Isdk -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
 LINK += -m32 -lm -ldl
 
 CFLAGS += -DPOSIX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
