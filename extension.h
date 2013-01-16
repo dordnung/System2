@@ -40,7 +40,8 @@
 
 #include "smsdk_ext.h"
 #include <cstdlib>
-#include <string.h>
+#include <stdio.h>
+#include <string>
 
 using namespace std;
 
@@ -91,7 +92,7 @@ public:
 class sysThread : public IThread
 {
 private:
-	char Scommand[2048];
+	char Scommand[2060];
 	IPluginFunction* function;
 public:
 	void RunThread(IThreadHandle *pThread);

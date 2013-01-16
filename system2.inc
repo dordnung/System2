@@ -3,53 +3,67 @@
 #endif
 #define _system2_included
 
+// Max Size of the Command Output
+#define CMD_MAX_RETURN 4096
+
 enum OS
 {
-	OS_UNKNOWN
+	OS_UNKNOWN,
 	OS_WINDOWS,
 	OS_UNIX,
 	OS_MAC
 }
 
+enum Cmd_Return
+{
+	CMD_SUCCESS,
+	CMD_EMPTY,
+	CMD_ERROR,
+}
+
 /**
  * Called when finished with RunThreadCommand !
  */
-funcenum SysCallback 
+funcenum CmdCallback 
 {
-	public(const String:command[])
+	public(const String:command[], const String:output[], Cmd_Return:status)
 };
 
 /**
  * Execute a threaded system command
- *
- * @param command			Command to execute.
+ 
  * @param cb			  	Callback function.
+ * @param command			Command string format
+ * @param ...				Command string arguments.
  *
- * @noreturn.
+ * @noreturn
  */
-native RunThreadCommand(const String:command[], SysCallback:cb);
+native RunThreadCommand(CmdCallback:cb, const String:command[], any:...);
 
 /**
  * Execute a non threaded system command
  *
- * @param command			Command to execute.
+ * @param output			Output variable
+ * @param size				Size of the output variable
+ * @param command			Command string format
+ * @param ...				Command string arguments.
  *
- * @noreturn.
+ * @return					Cmd_Return var
  */
-native RunCommand(const String:command[]);
+native Cmd_Return:RunCommand(String:output[], size, const String:command[], any:...);
 
 /**
  * Get the absolute gamedir (e.g. /home/.../.../cstrike)
  *
- * @param GameDir			String to save gamedir in.
+ * @param gamedir			String to save gamedir in.
  * @param maxlength			Size of the String.
  *
- * @noreturn.
+ * @noreturn
  */
-native GetGameDir(String:GameDir[], maxlength);
+native GetGameDir(String:gamedir[], maxlength);
 
 /**
- * Get the OS, on which the server runs
+ * Get the Servers Running System
  *
  * @return						OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC
  */
