@@ -78,12 +78,12 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
 	char command[2060];
 	char buffer[4096];
-	string s_command = command;
+	std::string s_command = command;
 
 	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
 
-	if (s_command.find("2>&1") == string::npos)
-		strcat(command, "2>&1");
+	if (s_command.find("2>&1") == std::string::npos)
+		std::strcat(command, "2>&1");
 
 	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
 		FILE* cmdFile = _popen(command, "r");
@@ -147,10 +147,10 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 void sysThread::RunThread(IThreadHandle* pHandle)
 {
 	char buffer[4096];
-	string s_command = Scommand;
+	std::string s_command = Scommand;
 
-	if (s_command.find("2>&1") == string::npos)
-		strcat(Scommand, "2>&1");
+	if (s_command.find("2>&1") == std::string::npos)
+		std::strcat(Scommand, "2>&1");
 
 	function->PushString(Scommand);
 
