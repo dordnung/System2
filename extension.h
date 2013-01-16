@@ -40,6 +40,7 @@
 
 #include "smsdk_ext.h"
 #include <cstdlib>
+#include <string.h>
 
 /**
  * @brief Sample implementation of the SDK Extension.
