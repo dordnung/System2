@@ -62,34 +62,71 @@ void System2Extension::SDK_OnUnload()
 
 cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 {
-	char *command;
+	char command[2024];
 	sysThread* myThread;
 
-	pContext->LocalToString(params[1], &command);
+	g_pSM->FormatString(command, sizeof(command), pContext, params, 2);
 
-	myThread = new sysThread(command, pContext->GetFunctionById(params[2]));
+	myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
 
 	threader->MakeThread(myThread);
-	
-	return true;
-}
-
-cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
-{
-	char *command;
-
-	pContext->LocalToString(params[1], &command);
-
-	system(command);
 
 	return 1;
 }
 
+cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
+{
+	char command[2060];
+	char buffer[4096];
+	string s_command = command;
+
+	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
+
+	if (s_command.find("2>&1") == string::npos)
+		strcat(command, "2>&1");
+
+	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+		FILE* cmdFile = _popen(command, "r");
+	#else
+		FILE* cmdFile = popen(command, "r");
+	#endif
+
+	if (!cmdFile)
+	{
+		pContext->StringToLocal(params[1], params[2], "ERROR Executing Command!");
+
+		return 2;
+	}
+
+	if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
+	{
+		pContext->StringToLocal(params[1], params[2], buffer);
+
+		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+			_pclose(cmdFile);
+		#else
+			pclose(cmdFile);
+		#endif
+
+		return 0;
+	}
+	else
+	{
+		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
+
+		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+			_pclose(cmdFile);
+		#else
+			pclose(cmdFile);
+		#endif
+
+		return 1;
+	}
+}
+
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
 {
-	const char *GamePath = g_pSM->GetGamePath();
-
-	pContext->StringToLocal(params[1], params[2], GamePath);
+	pContext->StringToLocal(params[1], params[2], g_pSM->GetGamePath());
 
 	return 1;
 }
@@ -109,16 +146,57 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 
 void sysThread::RunThread(IThreadHandle* pHandle)
 {
-	system(Scommand);
+	char buffer[4096];
+	string s_command = Scommand;
+
+	if (s_command.find("2>&1") == string::npos)
+		strcat(Scommand, "2>&1");
 
 	function->PushString(Scommand);
+
+	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+		FILE* cmdFile = _popen(Scommand, "r");
+	#else
+		FILE* cmdFile = popen(Scommand, "r");
+	#endif
+
+	if (!cmdFile)
+	{
+		function->PushString("ERROR Executing Command!");
+		function->PushCell(2);
+	}
+	else
+	{
+		if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
+		{
+			function->PushString(buffer);
+			function->PushCell(0);
+
+			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+				_pclose(cmdFile);
+			#else
+				pclose(cmdFile);
+			#endif
+		}
+		else
+		{
+			function->PushString("EMPTY Reading Result!");
+			function->PushCell(1);
+
+			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+				_pclose(cmdFile);
+			#else
+				pclose(cmdFile);
+			#endif
+		}
+	}
+
 	function->Execute(NULL);
 }
 
 void sysThread::OnTerminate(IThreadHandle* pHandle, bool cancel)
 {
 }
-
 
 const sp_nativeinfo_t system2_natives[] = 
 {
