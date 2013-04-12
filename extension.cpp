@@ -34,9 +34,9 @@
 enum OS
 {
 	OS_Unknown,
-    OS_Windows,
-    OS_Linux,
-    OS_Mac
+	OS_Windows,
+	OS_Linux,
+	OS_Mac
 };
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
