@@ -90,18 +90,16 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 
 cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
-	char command[2060];
 	char buffer[4096];
-	std::string s_command = command;
 
-	smutils->FormatString(command, sizeof(command), pContext, params, 3);
+	smutils->FormatString(buffer, sizeof(buffer), pContext, params, 3);
 
-	if (s_command.find("2>&1") == std::string::npos)
+	if (strstr(buffer, "2>&1") == NULL)
 	{
-		strcat(command, " 2>&1");
+		strcat(buffer, " 2>&1");
 	}
 	
-	FILE* cmdFile = PosixOpen(command, "r");
+	FILE* cmdFile = PosixOpen(buffer, "r");
 	
 	cell_t result = 0;
 
@@ -148,13 +146,13 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 void sysThread::RunThread(IThreadHandle* pHandle)
 {
 	char buffer[4096];
-	std::string s_command = Scommand;
-
 	function->PushString(Scommand);
 
-	if (s_command.find("2>&1") == std::string::npos)
+	if (strstr(Scommand, "2>&1") == NULL)
+	{
 		strcat(Scommand, " 2>&1");
-
+	}
+	
 	FILE* cmdFile = PosixOpen(Scommand, "r");
 
 	if (cmdFile)
