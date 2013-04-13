@@ -100,28 +100,27 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	}
 	
 	FILE* cmdFile = PosixOpen(command, "r");
+	
+	cell_t result = 0;
 
 	if (!cmdFile)
 	{
 		pContext->StringToLocal(params[1], params[2], "ERROR Executing Command!");
-
 		return 2;
 	}
 
 	if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 	{
 		pContext->StringToLocal(params[1], params[2], buffer);
-
-		PosixClose(cmdFile);
-		return 0;
 	}
 	else
 	{
 		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
-
-		PosixClose(cmdFile);
-		return 1;
+		result = 1;
 	}
+
+	PosixClose(cmdFile);
+	return result;
 }
 
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
@@ -156,27 +155,25 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 
 	FILE* cmdFile = PosixOpen(Scommand, "r");
 
-	if (!cmdFile)
-	{
-		function->PushString("ERROR Executing Command!");
-		function->PushCell(2);
-	}
-	else
+	if (cmdFile)
 	{
 		if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 		{
 			function->PushString(buffer);
 			function->PushCell(0);
-
-			PosixClose(cmdFile);
 		}
 		else
 		{
 			function->PushString("EMPTY Reading Result!");
 			function->PushCell(1);
-
-			PosixClose(cmdFile);
 		}
+		
+		PosixClose(cmdFile);
+	}
+	else
+	{
+		function->PushString("ERROR Executing Command!");
+		function->PushCell(2);
 	}
 
 	function->Execute(NULL);
