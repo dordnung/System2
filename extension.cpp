@@ -31,6 +31,18 @@
 
 #include "extension.h"
 
+#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+#define PosixOpen _popen
+#else
+#define PosixOpen popen
+#endif
+
+#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+#define PosixClose _pclose
+#else
+#define PosixClose pclose
+#endif
+
 enum OS
 {
 	OS_Unknown,
@@ -83,13 +95,11 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
 
 	if (s_command.find("2>&1") == std::string::npos)
+	{
 		strcat(command, " 2>&1");
-
-	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-		FILE* cmdFile = _popen(command, "r");
-	#else
-		FILE* cmdFile = popen(command, "r");
-	#endif
+	}
+	
+	FILE* cmdFile = PosixOpen(command, "r");
 
 	if (!cmdFile)
 	{
@@ -102,24 +112,14 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	{
 		pContext->StringToLocal(params[1], params[2], buffer);
 
-		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-			_pclose(cmdFile);
-		#else
-			pclose(cmdFile);
-		#endif
-
+		PosixClose(cmdFile);
 		return 0;
 	}
 	else
 	{
 		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
 
-		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-			_pclose(cmdFile);
-		#else
-			pclose(cmdFile);
-		#endif
-
+		PosixClose(cmdFile);
 		return 1;
 	}
 }
@@ -154,11 +154,7 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 	if (s_command.find("2>&1") == std::string::npos)
 		strcat(Scommand, " 2>&1");
 
-	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-		FILE* cmdFile = _popen(Scommand, "r");
-	#else
-		FILE* cmdFile = popen(Scommand, "r");
-	#endif
+	FILE* cmdFile = PosixOpen(Scommand, "r");
 
 	if (!cmdFile)
 	{
@@ -172,22 +168,14 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 			function->PushString(buffer);
 			function->PushCell(0);
 
-			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-				_pclose(cmdFile);
-			#else
-				pclose(cmdFile);
-			#endif
+			PosixClose(cmdFile);
 		}
 		else
 		{
 			function->PushString("EMPTY Reading Result!");
 			function->PushCell(1);
 
-			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-				_pclose(cmdFile);
-			#else
-				pclose(cmdFile);
-			#endif
+			PosixClose(cmdFile);
 		}
 	}
 
