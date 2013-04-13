@@ -43,6 +43,8 @@
 #define PosixClose pclose
 #endif
 
+SH_DECL_HOOK1_void(IServerGameDLL, GameFrame, SH_NOATTRIB, false, bool);
+
 enum OS
 {
 	OS_Unknown,
@@ -53,8 +55,8 @@ enum OS
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
 {
-	g_pShareSys->AddNatives(myself, system2_natives);
-	g_pShareSys->RegisterLibrary(myself, "system2");
+	sharesys->AddNatives(myself, system2_natives);
+	sharesys->RegisterLibrary(myself, "system2");
 
 	return true;
 }
@@ -77,7 +79,7 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 	char command[2024];
 	sysThread* myThread;
 
-	g_pSM->FormatString(command, sizeof(command), pContext, params, 2);
+	smutils->FormatString(command, sizeof(command), pContext, params, 2);
 
 	myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
 
@@ -92,7 +94,7 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	char buffer[4096];
 	std::string s_command = command;
 
-	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
+	smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
 	if (s_command.find("2>&1") == std::string::npos)
 	{
@@ -125,7 +127,7 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
 {
-	pContext->StringToLocal(params[1], params[2], g_pSM->GetGamePath());
+	pContext->StringToLocal(params[1], params[2], smutils->GetGamePath());
 
 	return 1;
 }
