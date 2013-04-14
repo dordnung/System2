@@ -43,7 +43,6 @@
 #define PosixClose pclose
 #endif
 
-SH_DECL_HOOK1_void(IServerGameDLL, GameFrame, SH_NOATTRIB, false, bool);
 
 enum OS
 {
