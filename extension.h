@@ -91,7 +91,7 @@ public:
 class sysThread : public IThread
 {
 private:
-	char Scommand[2060];
+	char Scommand[2048];
 	IPluginFunction* function;
 public:
 	void RunThread(IThreadHandle *pThread);
@@ -105,7 +105,17 @@ public:
 
 };
 
+typedef struct
+{
+	public:
+	char pResultString[4096];
+	char pCommandString[2048];
+	IPluginFunction* pFunc;
+	cell_t result;
+} PawnFuncThreadReturn;
 
 extern const sp_nativeinfo_t system2_natives[];
+
+void OnGameFrameHit(bool simulating);
 
 #endif // _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
