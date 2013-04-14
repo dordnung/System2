@@ -30,6 +30,7 @@
  */
 
 #include "extension.h"
+#include "sh_vector.h"
 
 #if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
 #define PosixOpen _popen
@@ -43,6 +44,9 @@
 #define PosixClose pclose
 #endif
 
+CVector<PawnFuncThreadReturn *> vecPawnReturn;
+
+IMutex * g_pPawnMutex;
 
 enum OS
 {
@@ -56,7 +60,8 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
 {
 	sharesys->AddNatives(myself, system2_natives);
 	sharesys->RegisterLibrary(myself, "system2");
-
+	smutils->AddGameFrameHook(&OnGameFrameHit);
+	g_pPawnMutex = threader->MakeMutex();
 	return true;
 }
 
@@ -71,6 +76,32 @@ void System2Extension::SDK_OnAllLoaded()
 
 void System2Extension::SDK_OnUnload()
 {
+	smutils->RemoveGameFrameHook(&OnGameFrameHit);
+	g_pPawnMutex->DestroyThis();
+}
+
+void OnGameFrameHit(bool simulating)
+{
+	if (!g_pPawnMutex->TryLock())
+	{
+		return; /* This is totally fine. We'll hit the next frame. We don't need to dead lock. */
+	}
+	
+	if (!vecPawnReturn.empty())
+	{
+		PawnFuncThreadReturn * pReturn = vecPawnReturn.back();
+		vecPawnReturn.pop_back();
+		
+		IPluginFunction * pFunc = pReturn->pFunc;
+		pFunc->PushString(pReturn->pCommandString);
+		pFunc->PushString(pReturn->pResultString);
+		pFunc->PushCell(pReturn->result);
+		pFunc->Execute(NULL);
+		
+		delete pReturn;
+	}
+	
+	g_pPawnMutex->Unlock();
 }
 
 cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
@@ -145,8 +176,11 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 void sysThread::RunThread(IThreadHandle* pHandle)
 {
 	char buffer[4096];
-	function->PushString(Scommand);
 
+	PawnFuncThreadReturn * pReturn = new PawnFuncThreadReturn;
+	pReturn->pFunc = function;
+	strcpy(pReturn->pCommandString, Scommand);
+	
 	if (strstr(Scommand, "2>&1") == NULL)
 	{
 		strcat(Scommand, " 2>&1");
@@ -156,26 +190,27 @@ void sysThread::RunThread(IThreadHandle* pHandle)
 
 	if (cmdFile)
 	{
-		if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
+		if (fgets(pReturn->pResultString, sizeof(pReturn->pResultString), cmdFile) == NULL)
 		{
-			function->PushString(buffer);
-			function->PushCell(0);
+			strcpy(pReturn->pResultString, "EMPTY Reading Result!");
+			pReturn->result = 1;
 		}
 		else
 		{
-			function->PushString("EMPTY Reading Result!");
-			function->PushCell(1);
+			pReturn->result = 0;
 		}
 		
 		PosixClose(cmdFile);
 	}
 	else
 	{
-		function->PushString("ERROR Executing Command!");
-		function->PushCell(2);
+		strcpy(pReturn->pResultString, "ERROR Executing Command!");
+		pReturn->result = 2;
 	}
-
-	function->Execute(NULL);
+	
+	g_pPawnMutex->Lock();
+	vecPawnReturn.push_back(pReturn);
+	g_pPawnMutex->Unlock();
 }
 
 void sysThread::OnTerminate(IThreadHandle* pHandle, bool cancel)
