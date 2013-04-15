@@ -1,37 +1,33 @@
 /**
- * vim: set ts=4 :
- * =============================================================================
- * SourceMod Sample Extension
- * Copyright (C) 2004-2008 AlliedModders LLC.  All rights reserved.
- * =============================================================================
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 3.0, as published by the
- * Free Software Foundation.
+ * -----------------------------------------------------
+ * File        extension.h
+ * Authors     David <popoklopsi> Ordnung, Sourcemod
+ * License     GPLv3
+ * Web         http://popoklopsi.de
+ * -----------------------------------------------------
  * 
-
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * As a special exception, AlliedModders LLC gives you permission to link the
- * code of this program (as well as its derivative works) to "Half-Life 2," the
- * "Source Engine," the "SourcePawn JIT," and any Game MODs that run on software
- * by the Valve Corporation.  You must obey the GNU General Public License in
- * all respects for all other code used.  Additionally, AlliedModders LLC grants
- * this exception to all derivative works.  AlliedModders LLC defines further
- * exceptions, found in LICENSE.txt (as of this writing, version JULY-31-2007),
- * or <http://www.sourcemod.net/license.php>.
- *
- * Version: $Id$
+ * 
+ * Copyright (C) 2013 David <popoklopsi> Ordnung, Sourcemod
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
+
+
 
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
+
 
 /**
  * @file extension.h
@@ -41,8 +37,10 @@
 #include "smsdk_ext.h"
 #include <cstdlib>
 #include <stdio.h>
-#include <string>
-#include <string.h>
+
+
+
+
 
 /**
  * @brief Sample implementation of the SDK Extension.
@@ -88,34 +86,50 @@ public:
 	virtual bool QueryRunning(char *error, size_t maxlength);
 };
 
+
+
+
+
 class sysThread : public IThread
 {
 private:
 	char Scommand[2048];
 	IPluginFunction* function;
+
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel);
-public:
-	sysThread(char command[], IPluginFunction* nfunction):IThread()
+	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
+	sysThread(char* command, IPluginFunction* callback) : IThread()
 	{	
 		strcpy(Scommand, command);
-		function = nfunction;
+		function = callback;
 	}
 
 };
 
+
+
+
 typedef struct
 {
-	public:
+public:
 	char pResultString[4096];
 	char pCommandString[2048];
+
 	IPluginFunction* pFunc;
 	cell_t result;
+
 } PawnFuncThreadReturn;
+
+
+
 
 extern const sp_nativeinfo_t system2_natives[];
 
 void OnGameFrameHit(bool simulating);
+
+
+
 
 #endif // _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
