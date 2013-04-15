@@ -30,20 +30,38 @@
  */
 
 #include "extension.h"
+#include "sh_vector.h"
+
+#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+#define PosixOpen _popen
+#else
+#define PosixOpen popen
+#endif
+
+#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+#define PosixClose _pclose
+#else
+#define PosixClose pclose
+#endif
+
+CVector<PawnFuncThreadReturn *> vecPawnReturn;
+
+IMutex * g_pPawnMutex;
 
 enum OS
 {
 	OS_Unknown,
-    OS_Windows,
-    OS_Linux,
-    OS_Mac
+	OS_Windows,
+	OS_Linux,
+	OS_Mac
 };
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
 {
-	g_pShareSys->AddNatives(myself, system2_natives);
-	g_pShareSys->RegisterLibrary(myself, "system2");
-
+	sharesys->AddNatives(myself, system2_natives);
+	sharesys->RegisterLibrary(myself, "system2");
+	smutils->AddGameFrameHook(&OnGameFrameHit);
+	g_pPawnMutex = threader->MakeMutex();
 	return true;
 }
 
@@ -58,6 +76,32 @@ void System2Extension::SDK_OnAllLoaded()
 
 void System2Extension::SDK_OnUnload()
 {
+	smutils->RemoveGameFrameHook(&OnGameFrameHit);
+	g_pPawnMutex->DestroyThis();
+}
+
+void OnGameFrameHit(bool simulating)
+{
+	if (!g_pPawnMutex->TryLock())
+	{
+		return; /* This is totally fine. We'll hit the next frame. We don't need to dead lock. */
+	}
+	
+	if (!vecPawnReturn.empty())
+	{
+		PawnFuncThreadReturn * pReturn = vecPawnReturn.back();
+		vecPawnReturn.pop_back();
+		
+		IPluginFunction * pFunc = pReturn->pFunc;
+		pFunc->PushString(pReturn->pCommandString);
+		pFunc->PushString(pReturn->pResultString);
+		pFunc->PushCell(pReturn->result);
+		pFunc->Execute(NULL);
+		
+		delete pReturn;
+	}
+	
+	g_pPawnMutex->Unlock();
 }
 
 cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
@@ -65,7 +109,7 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 	char command[2024];
 	sysThread* myThread;
 
-	g_pSM->FormatString(command, sizeof(command), pContext, params, 2);
+	smutils->FormatString(command, sizeof(command), pContext, params, 2);
 
 	myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
 
@@ -76,57 +120,42 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 
 cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
-	char command[2060];
 	char buffer[4096];
-	std::string s_command = command;
 
-	g_pSM->FormatString(command, sizeof(command), pContext, params, 3);
+	smutils->FormatString(buffer, sizeof(buffer), pContext, params, 3);
 
-	if (s_command.find("2>&1") == std::string::npos)
-		strcat(command, " 2>&1");
-
-	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-		FILE* cmdFile = _popen(command, "r");
-	#else
-		FILE* cmdFile = popen(command, "r");
-	#endif
+	if (strstr(buffer, "2>&1") == NULL)
+	{
+		strcat(buffer, " 2>&1");
+	}
+	
+	FILE* cmdFile = PosixOpen(buffer, "r");
+	
+	cell_t result = 0;
 
 	if (!cmdFile)
 	{
 		pContext->StringToLocal(params[1], params[2], "ERROR Executing Command!");
-
 		return 2;
 	}
 
 	if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 	{
 		pContext->StringToLocal(params[1], params[2], buffer);
-
-		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-			_pclose(cmdFile);
-		#else
-			pclose(cmdFile);
-		#endif
-
-		return 0;
 	}
 	else
 	{
 		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
-
-		#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-			_pclose(cmdFile);
-		#else
-			pclose(cmdFile);
-		#endif
-
-		return 1;
+		result = 1;
 	}
+
+	PosixClose(cmdFile);
+	return result;
 }
 
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
 {
-	pContext->StringToLocal(params[1], params[2], g_pSM->GetGamePath());
+	pContext->StringToLocal(params[1], params[2], smutils->GetGamePath());
 
 	return 1;
 }
@@ -147,51 +176,41 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 void sysThread::RunThread(IThreadHandle* pHandle)
 {
 	char buffer[4096];
-	std::string s_command = Scommand;
 
-	function->PushString(Scommand);
-
-	if (s_command.find("2>&1") == std::string::npos)
+	PawnFuncThreadReturn * pReturn = new PawnFuncThreadReturn;
+	pReturn->pFunc = function;
+	strcpy(pReturn->pCommandString, Scommand);
+	
+	if (strstr(Scommand, "2>&1") == NULL)
+	{
 		strcat(Scommand, " 2>&1");
-
-	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-		FILE* cmdFile = _popen(Scommand, "r");
-	#else
-		FILE* cmdFile = popen(Scommand, "r");
-	#endif
-
-	if (!cmdFile)
-	{
-		function->PushString("ERROR Executing Command!");
-		function->PushCell(2);
 	}
-	else
-	{
-		if (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
-		{
-			function->PushString(buffer);
-			function->PushCell(0);
+	
+	FILE* cmdFile = PosixOpen(Scommand, "r");
 
-			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-				_pclose(cmdFile);
-			#else
-				pclose(cmdFile);
-			#endif
+	if (cmdFile)
+	{
+		if (fgets(pReturn->pResultString, sizeof(pReturn->pResultString), cmdFile) == NULL)
+		{
+			strcpy(pReturn->pResultString, "EMPTY Reading Result!");
+			pReturn->result = 1;
 		}
 		else
 		{
-			function->PushString("EMPTY Reading Result!");
-			function->PushCell(1);
-
-			#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-				_pclose(cmdFile);
-			#else
-				pclose(cmdFile);
-			#endif
+			pReturn->result = 0;
 		}
+		
+		PosixClose(cmdFile);
 	}
-
-	function->Execute(NULL);
+	else
+	{
+		strcpy(pReturn->pResultString, "ERROR Executing Command!");
+		pReturn->result = 2;
+	}
+	
+	g_pPawnMutex->Lock();
+	vecPawnReturn.push_back(pReturn);
+	g_pPawnMutex->Unlock();
 }
 
 void sysThread::OnTerminate(IThreadHandle* pHandle, bool cancel)
