@@ -34,10 +34,12 @@
  * @brief Sample extension code header.
  */
 
+
 #include "smsdk_ext.h"
+
 #include <cstdlib>
 #include <stdio.h>
-
+#include <string.h>
 
 
 
