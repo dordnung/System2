@@ -199,6 +199,7 @@ void OnGameFrameHit(bool simulating)
 			if (((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1) && pReturn != NULL)
 			{
 				delete pReturn;
+				pReturn = NULL;
 			}
 		}
 	}
@@ -1147,8 +1148,8 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 
 
 	// Open both files
-	FILE* in = fopen(fullFilePath, "rb") ;
-	FILE* out = fopen(fullCopyPath, "wb") ;
+	FILE* in = fopen(fullFilePath, "rb");
+	FILE* out = fopen(fullCopyPath, "wb");
 
 	if (in == NULL || out == NULL)
 	{
