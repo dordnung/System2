@@ -50,7 +50,7 @@
 	#define PosixOpen popen
 	
 	// Linux stuff
-	unsigned long int __fdelt_chk (unsigned long int d);
+	unsigned long int __fdelt_chk (unsigned long int d)
 	{
 		if (d >= FD_SETSIZE)
 		{
