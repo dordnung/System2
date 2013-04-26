@@ -957,21 +957,12 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	};
 
 
-	// Open File
-	if (mode == MODE_UPLOAD)
-	{
-		pReturn->update = 10;
-		localReadFile = fopen(fullLocalPath, "rb");
-	}
-
-
 	// Uploading and file exists?
 	if (mode != MODE_UPLOAD || !stat(fullLocalPath, &file_info))
 	{
 		// Open File
 		if (mode == MODE_UPLOAD)
 		{
-			fsize = (curl_off_t)file_info.st_size;
 			localReadFile = fopen(fullLocalPath, "rb");
 		}
 
@@ -1011,6 +1002,8 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 			// Upload stuff
 			if (mode == MODE_UPLOAD)
 			{
+				fsize = (curl_off_t)file_info.st_size;
+
 				curl_easy_setopt(curl, CURLOPT_READFUNCTION, ftp_upload);
 				curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 				curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
