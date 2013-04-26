@@ -48,6 +48,17 @@
 	#pragma warning(disable: 4996)
 #else
 	#define PosixOpen popen
+	
+	// Linux stuff
+	unsigned long int __fdelt_chk (unsigned long int d);
+	{
+		if (d >= FD_SETSIZE)
+		{
+			__chk_fail ();
+		}
+		
+		return d / __NFDBITS;
+	}
 #endif
 
 #if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32

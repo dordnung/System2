@@ -43,13 +43,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/select.h>
-#include <fcntl.h>
 
-#ifdef WIN32
-	#include <io.h>
-#else
-	#include <unistd.h>
-#endif
 
 
 // Sourcemod
@@ -306,6 +300,11 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params);
 
 // Game Frame Hit
 void OnGameFrameHit(bool simulating);
+
+
+
+// Linux stuff
+unsigned long int __fdelt_chk (unsigned long int d);
 
 
 #endif
