@@ -44,15 +44,11 @@
 // Some Pre Definies
 #if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
 	#define PosixOpen _popen
-
+	#define PosixClose _pclose
+	
 	#pragma warning(disable: 4996)
 #else
 	#define PosixOpen popen
-#endif
-
-#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-	#define PosixClose _pclose
-#else
 	#define PosixClose pclose
 #endif
 
@@ -200,7 +196,7 @@ void OnGameFrameHit(bool simulating)
 
 
 			// Delete it from stack
-			if ((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1)
+			if ((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1 && pReturn != NULL)
 			{
 				delete pReturn;
 			}
@@ -495,7 +491,12 @@ cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params)
 
 
 		// Make command
-		sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
+		#if defined _WIN32
+			sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
+		#else
+			sprintf(command, "\"%s\" x \"%s\" -o\"%s\" -mmt -aoa", zdir, ldir, rdir);
+		#endif
+
 
 		// Start new thread
 		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
@@ -623,7 +624,12 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 
 
 		// Make command
-		sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
+		#if defined _WIN32
+			sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
+		#else
+			sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
+		#endif
+
 
 		// Start new thread
 		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
@@ -649,6 +655,7 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
 	// buffer
 	char buffer[4096];
+	char buffer2[4096];
 	bool found = false;
 
 	// Format string
@@ -667,6 +674,10 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	cell_t result = 0;
 
 
+	// Empty buffer
+	strcpy(buffer, "");
+
+
 	// Error?
 	if (!cmdFile)
 	{
@@ -675,13 +686,13 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 
 		return 2;
 	}
-
+	
 
 	// Empty result?
-	while (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
+	while (fgets(buffer2, sizeof(buffer2), cmdFile) != NULL)
 	{
 		found = true;
-		pContext->StringToLocal(params[1], params[2], buffer);
+		strcat(buffer, buffer2);
 	}
 
 
@@ -690,6 +701,10 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
 
 		result = 1;
+	}
+	else
+	{
+		pContext->StringToLocal(params[1], params[2], buffer);
 	}
 
 	// Close Posix
@@ -748,6 +763,10 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 // Thread executed
 void sysThread::RunThread(IThreadHandle *pHandle)
 {
+	char buffer[4096];
+	bool found = false;
+
+
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
 	
@@ -755,6 +774,7 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COMMAND;
 	pReturn->finished = 1;
+	pReturn->result = 0;
 
 	strcpy(pReturn->pCommandString, Scommand);
 	
@@ -774,17 +794,19 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	if (cmdFile)
 	{
 		// Empty result?
-		if (fgets(pReturn->pResultString, sizeof(pReturn->pResultString), cmdFile) == NULL)
+		while (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
+		{
+			found = true;
+			strcat(pReturn->pResultString, buffer);
+		}
+
+		if (!found)
 		{
 			strcpy(pReturn->pResultString, "EMPTY Reading Result!");
 
 			pReturn->result = 1;
 		}
-		else
-		{
-			// Everything is fine
-			pReturn->result = 0;
-		}
+
 		
 		// Close
 		PosixClose(cmdFile);
