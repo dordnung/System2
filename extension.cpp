@@ -48,17 +48,6 @@
 	#pragma warning(disable: 4996)
 #else
 	#define PosixOpen popen
-	
-	// Linux stuff
-	unsigned long int __fdelt_chk (unsigned long int d)
-	{
-		if (d >= FD_SETSIZE)
-		{
-			__chk_fail ();
-		}
-		
-		return d / __NFDBITS;
-	}
 #endif
 
 #if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
@@ -929,7 +918,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 {
 	// For Upload
 	FILE *localReadFile = NULL;
-	struct stat file_info;
 	curl_off_t fsize;
 
 	char fullLocalPath[PLATFORM_MAX_PATH + 1];
@@ -968,22 +956,23 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	};
 
 
-	// Uploading and file exists?
-	if (mode != MODE_UPLOAD || !stat(fullLocalPath, &file_info))
+
+	// Open File
+	if (mode == MODE_UPLOAD)
 	{
-		// Open File
-		if (mode == MODE_UPLOAD)
-		{
-			localReadFile = fopen(fullLocalPath, "rb");
-		}
+		localReadFile = fopen(fullLocalPath, "rb");
+	}
 
 
+	// Uploading and file exists?
+	if (mode != MODE_UPLOAD || localReadFile != NULL)
+	{
 		// Init. Curl
 		curl_global_init(CURL_GLOBAL_DEFAULT);
 		curl = curl_easy_init();
 
 
-		if (curl && (mode != MODE_UPLOAD || localReadFile))
+		if (curl)
 		{
 			// Get hole URL
 			sprintf(fullHost, "ftp://%s/%s", host, remoteFile);
@@ -1013,7 +1002,10 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 			// Upload stuff
 			if (mode == MODE_UPLOAD)
 			{
-				fsize = (curl_off_t)file_info.st_size;
+				// Get size
+				fseek(localReadFile, 0L, SEEK_END);
+				fsize = (curl_off_t)ftell(localReadFile);
+				fseek(localReadFile, 0L, SEEK_SET);
 
 				curl_easy_setopt(curl, CURLOPT_READFUNCTION, ftp_upload);
 				curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);

@@ -40,9 +40,6 @@
 // c++
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/select.h>
 
 
 
@@ -301,10 +298,6 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params);
 // Game Frame Hit
 void OnGameFrameHit(bool simulating);
 
-
-
-// Linux stuff
-unsigned long int __fdelt_chk (unsigned long int d);
 
 
 #endif
