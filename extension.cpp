@@ -196,7 +196,7 @@ void OnGameFrameHit(bool simulating)
 
 
 			// Delete it from stack
-			if ((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1 && pReturn != NULL)
+			if (((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1) && pReturn != NULL)
 			{
 				delete pReturn;
 			}
