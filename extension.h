@@ -35,16 +35,13 @@
 
 
 //// INCLUDSE
-
+// Sourcemod
+#include "smsdk_ext.h"
 
 // c++
 #include <stdio.h>
 #include <string.h>
 
-
-
-// Sourcemod
-#include "smsdk_ext.h"
 
 
 // We need curl

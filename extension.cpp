@@ -272,14 +272,17 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 
 	if (myp != NULL)
 	{
+		// Update data
+		myp->dlnow = dlnow;
+		myp->dltotal = dltotal;
+		myp->ultotal = ultotal;
+		myp->ulnow = ulnow;
+
+
 		if ((myp->count % myp->update) == 0)
 		{
 			// Update status
 			myp->finished = 0;
-			myp->dlnow = dlnow;
-			myp->dltotal = dltotal;
-			myp->ultotal = ultotal;
-			myp->ulnow = ulnow;
 
 
 			// Lock mutex and write to vec
@@ -960,6 +963,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	// Open File
 	if (mode == MODE_UPLOAD)
 	{
+		pReturn->update = 20;
 		localReadFile = fopen(fullLocalPath, "rb");
 	}
 
