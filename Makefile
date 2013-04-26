@@ -5,8 +5,8 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK = ../sourcemod-central
-CURL = ../curl
+SMSDK = ../../../sourcemod-central
+CURL = ../../../curl
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
