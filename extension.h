@@ -40,8 +40,15 @@
 // c++
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
+#ifdef WIN32
+	#include <io.h>
+#else
+	#include <unistd.h>
+#endif
 
 
 // Sourcemod
