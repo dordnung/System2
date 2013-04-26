@@ -46,7 +46,7 @@ CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti
 ### DO NOT EDIT BELOW HERE FOR MOST PROJECTS ###
 ################################################
 
-BINARY = $(PROJECT).ext
+BINARY = $(PROJECT).ext.so
 
 ifeq "$(DEBUG)" "true"
 	BIN_DIR = Debug
