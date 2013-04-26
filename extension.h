@@ -29,69 +29,78 @@
 #define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 
 
-/**
- * @file extension.h
- * @brief Sample extension code header.
- */
 
 
-#include "smsdk_ext.h"
 
-#include <cstdlib>
+
+
+//// INCLUDSE
+
+
+// c++
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+
+
+
+// Sourcemod
+#include "smsdk_ext.h"
+
+
+// We need curl
+#include <curl/curl.h>
 
 
 
 
-/**
- * @brief Sample implementation of the SDK Extension.
- * Note: Uncomment one of the pre-defined virtual functions in order to use it.
- */
-class System2Extension : public SDKExtension
+
+
+
+//// ENUMS
+
+
+// OS List
+enum OS
 {
-public:
-	/**
-	 * @brief This is called after the initial loading sequence has been processed.
-	 *
-	 * @param error		Error message buffer.
-	 * @param maxlength	Size of error message buffer.
-	 * @param late		Whether or not the module was loaded after map load.
-	 * @return			True to succeed loading, false to fail.
-	 */
-	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
-	
+	OS_Unknown,
+	OS_Windows,
+	OS_Linux,
+	OS_Mac
+};
 
-	/**
-	 * @brief This is called right before the extension is unloaded.
-	 */
-	virtual void SDK_OnUnload();
 
-	/**
-	 * @brief This is called once all known extensions have been loaded.
-	 * Note: It is is a good idea to add natives here, if any are provided.
-	 */
-	virtual void SDK_OnAllLoaded();
-
-	/**
-	 * @brief Called when the pause state is changed.
-	 */
-	//virtual void SDK_OnPauseChange(bool paused);
-
-	/**
-	 * @brief this is called when Core wants to know if your extension is working.
-	 *
-	 * @param error		Error message buffer.
-	 * @param maxlength	Size of error message buffer.
-	 * @return			True if working, false otherwise.
-	 */
-	virtual bool QueryRunning(char *error, size_t maxlength);
+// Modes
+enum MODES
+{
+	MODE_COMMAND,
+	MODE_DOWNLOAD,
+	MODE_UPLOAD,
+	MODE_COPY
 };
 
 
 
 
 
+
+
+//// CLASSES
+
+
+// System2 Extension Class
+class System2Extension : public SDKExtension
+{
+public:
+	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
+	virtual void SDK_OnUnload();
+};
+
+
+
+
+
+// system Thread
 class sysThread : public IThread
 {
 private:
@@ -113,25 +122,182 @@ public:
 
 
 
+// FTP Thread
+class FTPThread : public IThread
+{
+private:
+	// Data we need
+	char remoteFile[PLATFORM_MAX_PATH + 1];
+	char localFile[PLATFORM_MAX_PATH + 1];
+	char host[PLATFORM_MAX_PATH + 1];
+	char username[128];
+	char password[128];
+
+	int port;
+	MODES mode;
+
+	IPluginFunction* function;
+
+public:
+	void RunThread(IThreadHandle *pThread);
+	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
+	// Constructor
+	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int por, IPluginFunction* callback, MODES mod) : IThread()
+	{	
+		strcpy(remoteFile, rmFile);
+		strcpy(localFile, lcFile);
+		strcpy(host, url);
+		strcpy(username, user);
+		strcpy(password, pw);
+
+		port = por;
+		mode = mod;
+		function = callback;
+	}
+
+};
+
+
+
+
+
+// Download Thread
+class DownloadThread : public IThread
+{
+private:
+	// Data we need
+	char url[PLATFORM_MAX_PATH + 1];
+	char localFile[PLATFORM_MAX_PATH + 1];
+
+	IPluginFunction* function;
+
+public:
+	void RunThread(IThreadHandle *pThread);
+	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
+	// Constructor
+	DownloadThread(char* host, char* file, IPluginFunction* callback) : IThread()
+	{	
+		strcpy(url, host);
+		strcpy(localFile, file);
+
+		function = callback;
+	}
+
+};
+
+
+
+
+
+// Copy Thread
+class CopyThread : public IThread
+{
+private:
+	// Data we need
+	char file[PLATFORM_MAX_PATH + 1];
+	char copyPath[PLATFORM_MAX_PATH + 1];
+
+	IPluginFunction* function;
+
+public:
+	void RunThread(IThreadHandle *pThread);
+	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
+	// Constructor
+	CopyThread(char* lfile, char* path, IPluginFunction* callback) : IThread()
+	{	
+		strcpy(file, lfile);
+		strcpy(copyPath, path);
+
+		function = callback;
+	}
+
+};
+
+
+
+
+
+
+
+//// STRUCTS
+
+
+// Struct for result
 typedef struct
 {
 public:
+	// Chars
 	char pResultString[4096];
 	char pCommandString[2048];
+	char curlError[CURL_ERROR_SIZE + 1];
+
+	// finished?
+	int finished;
+	int count;
+	int update;
+
+	// doubles
+	double dltotal;
+	double dlnow;
+	double ultotal;
+	double ulnow;
+
+	// Mode
+	MODES mode;
+
 
 	IPluginFunction* pFunc;
 	cell_t result;
 
-} PawnFuncThreadReturn;
+} ThreadReturn;
 
 
 
 
-extern const sp_nativeinfo_t system2_natives[];
+// Struct for Curl
+struct FtpFile 
+{
+  const char *filename;
+  FILE *stream;
+};
 
+
+
+
+
+
+
+
+//// METHODS
+
+
+// Curl recieve
+size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream);
+size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream);
+int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
+
+
+
+// Natives
+cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params);
+cell_t sys_CopyFile(IPluginContext *pContext, const cell_t *params);
+cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params);
+cell_t sys_DownloadFileUrl(IPluginContext *pContext, const cell_t *params);
+cell_t sys_DownloadFile(IPluginContext *pContext, const cell_t *params);
+cell_t sys_UploadFile(IPluginContext *pContext, const cell_t *params);
+cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params);
+cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params);
+cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params);
+cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params);
+
+
+
+
+// Game Frame Hit
 void OnGameFrameHit(bool simulating);
 
 
-
-
-#endif // _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
+#endif

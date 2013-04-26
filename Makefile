@@ -6,6 +6,7 @@
 ###########################################
 
 SMSDK = ../sourcemod-central
+CURL = ../curl
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -33,10 +34,10 @@ CPP_OSX = clang
 ### SDK CONFIGURATIONS ###
 ##########################
 
-INCLUDE += -I. -I.. -Isdk -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
-LINK += -m32 -lm -ldl
+INCLUDE += -I. -I.. -Isdk -I$(CURL) -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
+LINK += $(CURL)/libcurl.a -m32 -lm -ldl
 
-CFLAGS += -DPOSIX -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
+CFLAGS += -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
 	-Wno-overloaded-virtual -Wno-switch -Wno-unused -msse -DSOURCEMOD_BUILD -DHAVE_STDINT_H -m32
 CPPFLAGS += -Wno-non-virtual-dtor -fno-exceptions -fno-rtti
