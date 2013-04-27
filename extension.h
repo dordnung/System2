@@ -81,6 +81,63 @@ enum MODES
 
 
 
+
+//// STRUCTS
+
+
+// Struct for result
+typedef struct
+{
+public:
+	// Chars
+	char pResultString[4096];
+	char pCommandString[2048];
+	char curlError[CURL_ERROR_SIZE + 1];
+
+	// finished?
+	int finished;
+
+	// doubles
+	double dltotal;
+	double dlnow;
+	double ultotal;
+	double ulnow;
+
+	// Mode
+	MODES mode;
+
+
+	IPluginFunction* pFunc;
+	cell_t result;
+
+} ThreadReturn;
+
+
+
+
+// Struct for Curl
+struct FtpFile 
+{
+	const char *filename;
+	FILE *stream;
+};
+
+
+// Struct for Curl Progress
+struct ProgressInfo
+{
+	IPluginFunction *func;
+	MODES mode;
+};
+
+
+
+
+
+
+
+
+
 //// CLASSES
 
 
@@ -218,47 +275,36 @@ public:
 
 
 
-//// STRUCTS
 
 
-// Struct for result
-typedef struct
+
+// QUEUE THREAD FOR CALLBACKS
+class Queue
 {
+private:
+	ThreadReturn *ret;
+	Queue *next;
+
 public:
-	// Chars
-	char pResultString[4096];
-	char pCommandString[2048];
-	char curlError[CURL_ERROR_SIZE + 1];
-
-	// finished?
-	int finished;
-	int count;
-	int update;
-
-	// doubles
-	double dltotal;
-	double dlnow;
-	double ultotal;
-	double ulnow;
-
-	// Mode
-	MODES mode;
+	Queue(ThreadReturn *threadReturn);
 
 
-	IPluginFunction* pFunc;
-	cell_t result;
+	// get methods
+	ThreadReturn *getThreadReturn() const;
+	Queue *getNext() const;
 
-} ThreadReturn;
+	
+	// Remove last item
+	void remove();
 
-
-
-
-// Struct for Curl
-struct FtpFile 
-{
-  const char *filename;
-  FILE *stream;
+	// Add new item at the end
+	void append(Queue *newQueue);
+	static void add(ThreadReturn *newQueue);
 };
+
+
+
+
 
 
 

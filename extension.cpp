@@ -31,7 +31,6 @@
 
 
 #include "extension.h"
-#include "sh_vector.h"
 
 
 
@@ -63,9 +62,8 @@
 
 
 // Global variables
-CVector<ThreadReturn *> vecPawnReturn;
 IMutex* g_pPawnMutex;
-
+Queue *queueStart = NULL;
 
 
 
@@ -154,54 +152,48 @@ void OnGameFrameHit(bool simulating)
 	
 
 	// No forwards to push?
-	if (!vecPawnReturn.empty())
+	if (queueStart != NULL)
 	{
 		// Get last forward
-		ThreadReturn *pReturn = vecPawnReturn.back();
+		ThreadReturn *pReturn = queueStart->getThreadReturn();
 
 		// Delete it
-		vecPawnReturn.pop_back();
+		queueStart->remove();
 
-		if (pReturn != NULL)
+
+		// Execute it
+		IPluginFunction* pFunc = pReturn->pFunc;
+
+		if (pReturn->mode == MODE_COMMAND)
 		{
-			// Execute it
-			IPluginFunction* pFunc = pReturn->pFunc;
-
-			if (pReturn->mode == MODE_COMMAND)
-			{
-				pFunc->PushString(pReturn->pCommandString);
-				pFunc->PushString(pReturn->pResultString);
-				pFunc->PushCell(pReturn->result);
-			}
-			else if (pReturn->mode != MODE_COPY)
-			{
-				pFunc->PushCell(pReturn->finished);
-				pFunc->PushString(pReturn->curlError);
-
-				pFunc->PushFloat((float)pReturn->dltotal);
-				pFunc->PushFloat((float)pReturn->dlnow);
-				pFunc->PushFloat((float)pReturn->ultotal);
-				pFunc->PushFloat((float)pReturn->ulnow);
-			}
-
-
-			// Result for copy
-			if (pReturn->mode == MODE_COPY)
-			{
-				pFunc->PushCell(pReturn->result);
-			}
-
-
-			pFunc->Execute(NULL);
-
-
-			// Delete it from stack
-			if (((pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_COPY) || pReturn->finished == 1) && pReturn != NULL)
-			{
-				delete pReturn;
-				pReturn = NULL;
-			}
+			pFunc->PushString(pReturn->pCommandString);
+			pFunc->PushString(pReturn->pResultString);
+			pFunc->PushCell(pReturn->result);
 		}
+		else if (pReturn->mode != MODE_COPY)
+		{
+			pFunc->PushCell(pReturn->finished);
+			pFunc->PushString(pReturn->curlError);
+
+			pFunc->PushFloat((float)pReturn->dltotal);
+			pFunc->PushFloat((float)pReturn->dlnow);
+			pFunc->PushFloat((float)pReturn->ultotal);
+			pFunc->PushFloat((float)pReturn->ulnow);
+		}
+
+
+		// Result for copy
+		if (pReturn->mode == MODE_COPY)
+		{
+			pFunc->PushCell(pReturn->result);
+		}
+
+
+		pFunc->Execute(NULL);
+
+
+		// Delete it from stack
+		delete pReturn;
 	}
 
 	// Unlock mutex
@@ -264,37 +256,33 @@ size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 // Progress Updated
 int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-	// Get progress strucht
-	ThreadReturn* myp = (ThreadReturn *)p;
-
-	if (myp != NULL)
+	if (dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0)
 	{
+		// Get progress struct
+		ProgressInfo *prog = (ProgressInfo *)p;
+		ThreadReturn *pReturn = new ThreadReturn;
+
+		// Save to func
+		pReturn->pFunc = prog->func;
+		pReturn->mode = prog->mode;
+		pReturn->finished = 0;
+
+
 		// Update data
-		myp->dlnow = dlnow;
-		myp->dltotal = dltotal;
-		myp->ultotal = ultotal;
-		myp->ulnow = ulnow;
+		pReturn->dlnow = dlnow;
+		pReturn->dltotal = dltotal;
+		pReturn->ultotal = ultotal;
+		pReturn->ulnow = ulnow;
 
 
-		if ((myp->count % myp->update) == 0)
+		// Lock mutex and write to vec
+		if (g_pPawnMutex->TryLock())
 		{
-			// Update status
-			myp->finished = 0;
+			Queue::add(pReturn);
 
-
-			// Lock mutex and write to vec
-			if (g_pPawnMutex->TryLock())
-			{
-				vecPawnReturn.push_back(myp);
-
-				g_pPawnMutex->Unlock();
-			}
+			g_pPawnMutex->Unlock();
 		}
-	
-		// Update count
-		myp->count++;
 	}
-
 
 	return 0;
 }
@@ -758,6 +746,97 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 
 
 
+
+
+
+
+
+
+
+//// QUEUE CLASS
+
+
+// Queue Class
+Queue::Queue(ThreadReturn *threadReturn)
+{
+	ret = threadReturn; 
+	next = NULL;
+}
+
+
+// Get Methods for queue
+Queue *Queue::getNext() const
+{
+	return next;
+}
+
+ThreadReturn *Queue::getThreadReturn() const
+{
+	return ret;
+}
+
+
+
+
+// Add new item at the end
+void Queue::add(ThreadReturn *newQueue) 
+{
+	// Add Head
+	if (queueStart == NULL)
+	{
+		queueStart = new Queue(newQueue);
+	}
+	else
+	{
+		// Add at end
+		queueStart->append(new Queue(newQueue));
+	}
+}
+
+
+
+// append new item at the end
+void Queue::append(Queue *newQueue) 
+{
+	// if next -> recursiv
+	if (next != NULL)
+	{
+		next->append(newQueue);
+	}
+	else
+	{
+		// if end -> at here
+		next = newQueue;
+	}
+}
+
+
+// Remove first item on the queue
+void Queue::remove()
+{
+	// Do we have a start?
+	if (queueStart != NULL)
+	{
+		// Get next item on the queue
+		Queue *buffer = queueStart->getNext();
+
+
+		// Delete first item
+		delete queueStart;
+
+		// Set new queue start
+		queueStart = buffer;
+	}
+}
+
+
+
+
+
+
+
+
+
 //// THREAD FOR SYSTEM COMMANDS
 
 
@@ -822,9 +901,16 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	
 
 	// Lock mutex and write to vec
-	g_pPawnMutex->Lock();
+	while (!g_pPawnMutex->TryLock())
+	{
+		#ifdef _WIN32
+			Sleep(50);
+		#else
+			usleep(50000)
+		#endif
+	}
 
-	vecPawnReturn.push_back(pReturn);
+	Queue::add(pReturn);
 
 	g_pPawnMutex->Unlock();
 }
@@ -853,12 +939,11 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
 
+
 	// Save to func
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_DOWNLOAD;
-	pReturn->count = 0;
-	pReturn->finished = 0;
-	pReturn->update = 50;
+	pReturn->finished = 1;
 
 	strcpy(pReturn->curlError, "");
 
@@ -873,6 +958,15 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	{
 		fullLocalPath,
 		NULL
+	};
+
+
+
+	// Progress Info
+	struct ProgressInfo prog=
+	{
+		function,
+		MODE_DOWNLOAD
 	};
 
 
@@ -895,8 +989,9 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftpfile);
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 		curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_updated);
-		curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, pReturn);
+		curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &prog);
 
 		// Perform
 		res = curl_easy_perform(curl);
@@ -916,14 +1011,19 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	}
 
 
-	// We are finished
-	pReturn->finished = 1;
 
 
 	// Lock mutex and write to vec
-	g_pPawnMutex->Lock();
+	while (!g_pPawnMutex->TryLock())
+	{
+		#ifdef _WIN32
+			Sleep(50);
+		#else
+			usleep(50000)
+		#endif
+	}
 
-	vecPawnReturn.push_back(pReturn);
+	Queue::add(pReturn);
 
 	g_pPawnMutex->Unlock();
 }
@@ -958,9 +1058,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	// Save to func
 	pReturn->pFunc = function;
 	pReturn->mode = mode;
-	pReturn->finished = 0;
-	pReturn->count = 0;
-	pReturn->update = 80;
+	pReturn->finished = 1;
 
 	strcpy(pReturn->curlError, "");
 
@@ -981,12 +1079,18 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		NULL
 	};
 
+	// Progress Info
+	struct ProgressInfo prog=
+	{
+		function,
+		mode
+	};
+
 
 
 	// Open File
 	if (mode == MODE_UPLOAD)
 	{
-		pReturn->update = 20;
 		localReadFile = fopen(fullLocalPath, "rb");
 	}
 
@@ -1011,9 +1115,9 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 			curl_easy_setopt(curl, CURLOPT_PORT, port);
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, pReturn->curlError);
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 			curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_updated);
-			curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, pReturn);
-
+			curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &prog);
 
 			// Login?
 			if (strlen(username) > 1)
@@ -1086,21 +1190,20 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 
 
 
-	// We are finished
-	pReturn->finished = 1;
-
-
-
 	// Lock mutex and write to vec
 	while (!g_pPawnMutex->TryLock())
 	{
-		// We need this callback!
+		#ifdef _WIN32
+			Sleep(50);
+		#else
+			usleep(50000)
+		#endif
 	}
 	
 
 	if (pReturn != NULL)
 	{
-		vecPawnReturn.push_back(pReturn);
+		Queue::add(pReturn);
 	}
 
 	g_pPawnMutex->Unlock();
@@ -1121,7 +1224,8 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 void CopyThread::RunThread(IThreadHandle *pHandle)
 {
 	size_t len = 0 ;
-	char buffer[BUFSIZ] = {'\0'} ;
+	char buffer[BUFSIZ] = {'\0'};
+
 
 	// Full Path
 	char fullFilePath[PLATFORM_MAX_PATH + 1];
@@ -1131,6 +1235,7 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
+
 
 	// Save to func
 	pReturn->pFunc = function;
@@ -1150,6 +1255,7 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	// Open both files
 	FILE* in = fopen(fullFilePath, "rb");
 	FILE* out = fopen(fullCopyPath, "wb");
+
 
 	if (in == NULL || out == NULL)
 	{
@@ -1179,9 +1285,16 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 
 
 	// Lock mutex and write to vec
-	g_pPawnMutex->Lock();
+	while (!g_pPawnMutex->TryLock())
+	{
+		#ifdef _WIN32
+			Sleep(50);
+		#else
+			usleep(50000)
+		#endif
+	}
 
-	vecPawnReturn.push_back(pReturn);
+	Queue::add(pReturn);
 
 	g_pPawnMutex->Unlock();
 }
