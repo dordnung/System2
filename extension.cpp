@@ -906,7 +906,7 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 		#ifdef _WIN32
 			Sleep(50);
 		#else
-			usleep(50000)
+			usleep(50000);
 		#endif
 	}
 
@@ -1019,7 +1019,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 		#ifdef _WIN32
 			Sleep(50);
 		#else
-			usleep(50000)
+			usleep(50000);
 		#endif
 	}
 
@@ -1196,7 +1196,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		#ifdef _WIN32
 			Sleep(50);
 		#else
-			usleep(50000)
+			usleep(50000);
 		#endif
 	}
 	
@@ -1290,7 +1290,7 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 		#ifdef _WIN32
 			Sleep(50);
 		#else
-			usleep(50000)
+			usleep(50000);
 		#endif
 	}
 
