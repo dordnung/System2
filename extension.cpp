@@ -870,7 +870,7 @@ void Queue::add(ThreadReturn *newQueue)
 		#ifdef _WIN32
 			Sleep(50);
 		#else
-			usleep(50000)
+			usleep(50000);
 		#endif
 	}
 
