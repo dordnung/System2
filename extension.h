@@ -30,7 +30,7 @@
 
 
 
-
+#define MAX_RESULT_LENGTH 4096
 
 
 
@@ -72,7 +72,8 @@ enum MODES
 	MODE_COMMAND,
 	MODE_DOWNLOAD,
 	MODE_UPLOAD,
-	MODE_COPY
+	MODE_COPY,
+	MODE_GET
 };
 
 
@@ -90,12 +91,12 @@ typedef struct
 {
 public:
 	// Chars
-	char pResultString[4096];
-	char pCommandString[2048];
+	char pResultString[MAX_RESULT_LENGTH];
 	char curlError[CURL_ERROR_SIZE + 1];
 
 	// finished?
 	int finished;
+
 
 	// doubles
 	double dltotal;
@@ -121,6 +122,7 @@ struct FtpFile
 	const char *filename;
 	FILE *stream;
 };
+
 
 
 // Struct for Curl Progress
@@ -157,7 +159,7 @@ public:
 class sysThread : public IThread
 {
 private:
-	char Scommand[2048];
+	char cmdString[2048];
 	IPluginFunction* function;
 
 public:
@@ -166,7 +168,7 @@ public:
 
 	sysThread(char* command, IPluginFunction* callback) : IThread()
 	{	
-		strcpy(Scommand, command);
+		strcpy(cmdString, command);
 		function = callback;
 	}
 
@@ -273,6 +275,36 @@ public:
 
 
 
+// GetPage Thread
+class PageThread : public IThread
+{
+private:
+	// Data we need
+	char url[PLATFORM_MAX_PATH + 1];
+	char post[PLATFORM_MAX_PATH + 1];
+	char useragent[64];
+
+	IPluginFunction* function;
+
+public:
+	void RunThread(IThreadHandle *pThread);
+	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
+	// Constructor
+	PageThread(char* link, char* postmethod, char* agent, IPluginFunction* callback) : IThread()
+	{	
+		strcpy(url, link);
+		strcpy(post, postmethod);
+		strcpy(useragent, agent);
+
+		function = callback;
+	}
+
+};
+
+
+
+
 
 
 
@@ -318,12 +350,14 @@ public:
 
 // Curl recieve
 size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream);
+size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream);
 size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream);
 int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
 
 
 
 // Natives
+cell_t sys_GetPage(IPluginContext *pContext, const cell_t *params);
 cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params);
 cell_t sys_CopyFile(IPluginContext *pContext, const cell_t *params);
 cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params);

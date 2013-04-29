@@ -77,6 +77,7 @@ const sp_nativeinfo_t system2_natives[] =
 	{"GetOS",						sys_GetOS},
 
 	// New ones
+	{"System2_GetPage",				sys_GetPage},
 	{"System2_CopyFile",			sys_CopyFile},
 	{"System2_CompressFile",		sys_CompressFile},
 	{"System2_ExtractArchive",		sys_ExtractArchive},
@@ -164,12 +165,16 @@ void OnGameFrameHit(bool simulating)
 		// Execute it
 		IPluginFunction* pFunc = pReturn->pFunc;
 
-		if (pReturn->mode == MODE_COMMAND)
+
+		// Cmd callback
+		if (pReturn->mode == MODE_COMMAND || pReturn->mode == MODE_GET)
 		{
-			pFunc->PushString(pReturn->pCommandString);
 			pFunc->PushString(pReturn->pResultString);
+			pFunc->PushCell(strlen(pReturn->pResultString) + 1);
 			pFunc->PushCell(pReturn->result);
 		}
+
+		// For progress callbacks
 		else if (pReturn->mode != MODE_COPY)
 		{
 			pFunc->PushCell(pReturn->finished);
@@ -181,14 +186,13 @@ void OnGameFrameHit(bool simulating)
 			pFunc->PushFloat((float)pReturn->ulnow);
 		}
 
-
 		// Result for copy
-		if (pReturn->mode == MODE_COPY)
+		else
 		{
 			pFunc->PushCell(pReturn->result);
 		}
 
-
+		// Execute
 		pFunc->Execute(NULL);
 
 
@@ -237,11 +241,49 @@ size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream)
 
 
 
+// Get something of the page
+size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream)
+{
+	// Buffer
+	ThreadReturn *pReturn = (ThreadReturn *)stream;
+
+	// real size
+	size_t realsize = size * nmemb;
+
+	
+	// More than MAX_RESULT_LENGTH?
+	if (strlen(pReturn->pResultString) + realsize >= MAX_RESULT_LENGTH-1)
+	{
+		// We only can push a string with a length of MAX_RESULT_LENGTH
+		ThreadReturn *pReturn2 = new ThreadReturn;
+
+		pReturn2->pFunc = pReturn->pFunc;
+		pReturn2->mode = MODE_GET;
+		pReturn2->result = 3;
+
+		strcpy(pReturn2->pResultString, pReturn->pResultString);
+
+		// Call forward
+		Queue::add(pReturn2);
+
+		// Empty buffer
+		strcpy(pReturn->pResultString, "");
+	}
+
+	// Add buffer
+	strcat(pReturn->pResultString, (char *) buffer);
+
+	return realsize;
+}
+
+
+
 // Upload progress
 size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 {
 	curl_off_t nread;
 
+	// Read file and return size
 	size_t retcode = fread(buffer, size, nmemb, (FILE *)stream);
 
 	nread = (curl_off_t)retcode;
@@ -299,6 +341,34 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 
 
 //// NATIVES
+
+
+
+// Gets the content of a page
+cell_t sys_GetPage(IPluginContext *pContext, const cell_t *params)
+{
+	// chars
+	char *post;
+	char *agent;
+	char *url;
+
+	// Get Chars
+	pContext->LocalToString(params[2], &url);
+	pContext->LocalToString(params[3], &post);
+	pContext->LocalToString(params[3], &agent);
+
+	// Start new thread
+	PageThread* myThread = new PageThread(url, post, agent, pContext->GetFunctionById(params[1]));
+	threader->MakeThread(myThread);
+
+
+
+	return 1;
+}
+
+
+
+
 
 
 // Download a file from a ftp server
@@ -643,28 +713,29 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
 	// buffer
-	char buffer[4096];
-	char buffer2[4096];
-	bool found = false;
+	char cmdString[2048];
+	char buffer[MAX_RESULT_LENGTH];
+	char resultString[MAX_RESULT_LENGTH];
+
+
 
 	// Format string
-	smutils->FormatString(buffer, sizeof(buffer), pContext, params, 3);
+	smutils->FormatString(cmdString, sizeof(cmdString), pContext, params, 3);
 
 
 	// Output linker
-	if (strstr(buffer, "2>&1") == NULL)
+	if (strstr(cmdString, "2>&1") == NULL)
 	{
-		strcat(buffer, " 2>&1");
+		strcat(cmdString, " 2>&1");
 	}
 	
 
+
+
 	// Execute
-	FILE* cmdFile = PosixOpen(buffer, "r");
+	FILE* cmdFile = PosixOpen(cmdString, "r");
 	cell_t result = 0;
 
-
-	// Empty buffer
-	strcpy(buffer, "");
 
 
 	// Error?
@@ -677,15 +748,27 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	}
 	
 
-	// Empty result?
-	while (fgets(buffer2, sizeof(buffer2), cmdFile) != NULL)
+	//Read Result
+	while (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 	{
-		found = true;
-		strcat(buffer, buffer2);
+		size_t realsize = strlen(buffer);
+		
+		// More than MAX_RESULT_LENGTH?
+		if (strlen(resultString) + realsize >= size_t(params[2]-1))
+		{
+			// Only make the result full!
+			strncat(resultString, buffer, (params[2]-strlen(resultString))-1);
+
+			pContext->StringToLocal(params[1], params[2], resultString);
+
+			break;
+		}
+		
+		strcat(resultString, buffer);
 	}
 
 
-	if (!found)
+	if (strlen(resultString) == 0)
 	{
 		pContext->StringToLocal(params[1], params[2], "EMPTY Reading Result!");
 
@@ -693,7 +776,7 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	}
 	else
 	{
-		pContext->StringToLocal(params[1], params[2], buffer);
+		pContext->StringToLocal(params[1], params[2], resultString);
 	}
 
 	// Close Posix
@@ -781,6 +864,17 @@ ThreadReturn *Queue::getThreadReturn() const
 // Add new item at the end
 void Queue::add(ThreadReturn *newQueue) 
 {
+	// Lock mutex and write to vec
+	while (!g_pPawnMutex->TryLock())
+	{
+		#ifdef _WIN32
+			Sleep(50);
+		#else
+			usleep(50000)
+		#endif
+	}
+
+
 	// Add Head
 	if (queueStart == NULL)
 	{
@@ -791,6 +885,10 @@ void Queue::add(ThreadReturn *newQueue)
 		// Add at end
 		queueStart->append(new Queue(newQueue));
 	}
+
+
+	// Unlock
+	g_pPawnMutex->Unlock();
 }
 
 
@@ -843,49 +941,75 @@ void Queue::remove()
 // Thread executed
 void sysThread::RunThread(IThreadHandle *pHandle)
 {
-	char buffer[4096];
-	bool found = false;
-
-
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
+
+
+	// Buffer
+	char buffer[MAX_RESULT_LENGTH];
+
+
+
 	
 	// Save to func
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COMMAND;
-	pReturn->finished = 1;
 	pReturn->result = 0;
 
-	strcpy(pReturn->pCommandString, Scommand);
-	
+	strcpy(pReturn->pResultString, "");
+
+
 
 	// Add linking
-	if (strstr(Scommand, "2>&1") == NULL)
+	if (strstr(cmdString, "2>&1") == NULL)
 	{
-		strcat(Scommand, " 2>&1");
+		strcat(cmdString, " 2>&1");
 	}
 	
 
-	// Ecevute
-	FILE* cmdFile = PosixOpen(Scommand, "r");
+
+
+	// Execute
+	FILE* cmdFile = PosixOpen(cmdString, "r");
 
 
 	// Error?
 	if (cmdFile)
 	{
-		// Empty result?
+		// get result
 		while (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 		{
-			found = true;
+			// More than MAX_RESULT_LENGTH?
+			if (strlen(pReturn->pResultString) + strlen(buffer) >= MAX_RESULT_LENGTH - 1)
+			{
+				// We only can push a string with a length of MAX_RESULT_LENGTH
+				ThreadReturn *pReturn2 = new ThreadReturn;
+
+				pReturn2->pFunc = function;
+				pReturn2->mode = MODE_COMMAND;
+				pReturn2->result = 3;
+
+				strcpy(pReturn2->pResultString, pReturn->pResultString);
+
+				// Call forward
+				Queue::add(pReturn2);
+
+				// Empty buffer
+				strcpy(pReturn->pResultString, "");
+			}
+
+			// Add buffer
 			strcat(pReturn->pResultString, buffer);
 		}
 
-		if (!found)
+		// Empty?
+		if (strlen(pReturn->pResultString) == 0)
 		{
 			strcpy(pReturn->pResultString, "EMPTY Reading Result!");
 
 			pReturn->result = 1;
 		}
+
 
 		
 		// Close
@@ -893,26 +1017,15 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	}
 	else
 	{
-		// Error occured
+		// Error
 		strcpy(pReturn->pResultString, "ERROR Executing Command!");
 
 		pReturn->result = 2;
 	}
-	
 
-	// Lock mutex and write to vec
-	while (!g_pPawnMutex->TryLock())
-	{
-		#ifdef _WIN32
-			Sleep(50);
-		#else
-			usleep(50000);
-		#endif
-	}
 
+	// Call Callback
 	Queue::add(pReturn);
-
-	g_pPawnMutex->Unlock();
 }
 
 
@@ -1013,19 +1126,86 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 
 
 
-	// Lock mutex and write to vec
-	while (!g_pPawnMutex->TryLock())
+	// Call callback
+	Queue::add(pReturn);
+}
+
+
+
+
+
+
+
+
+
+//// GETPAGE THREAD
+
+
+// Get Page content
+void PageThread::RunThread(IThreadHandle *pHandle)
+{
+	// Get func 
+	ThreadReturn *pReturn = new ThreadReturn;
+
+
+	// Save to func
+	pReturn->pFunc = function;
+	pReturn->mode = MODE_GET;
+	pReturn->result = 0;
+
+	strcpy(pReturn->curlError, "");
+	strcpy(pReturn->pResultString, "");
+
+
+	// Curl
+	CURL *curl;
+
+
+	// Init. Curl
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+
+
+	if (curl)
 	{
-		#ifdef _WIN32
-			Sleep(50);
-		#else
-			usleep(50000);
-		#endif
+		// Set up Curl
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, pReturn->curlError);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, page_get);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, pReturn);
+		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+		curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, MAX_RESULT_LENGTH - 1);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post);
+
+		// Useragent
+		if (strcmp(useragent, "") != 0)
+		{
+			curl_easy_setopt(curl, CURLOPT_USERAGENT, useragent);
+		}
+		
+
+		// Perform
+		if (curl_easy_perform(curl) != CURLE_OK)
+		{
+			strcpy(pReturn->pResultString, pReturn->curlError);
+			pReturn->result = 2;
+		}
+
+
+
+		// Clean
+		curl_easy_cleanup(curl);
 	}
 
-	Queue::add(pReturn);
 
-	g_pPawnMutex->Unlock();
+	// Clean
+	curl_global_cleanup();
+
+
+	// Call callback
+	Queue::add(pReturn);
 }
 
 
@@ -1188,25 +1368,10 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		curl_global_cleanup();
 	}
 
-
-
-	// Lock mutex and write to vec
-	while (!g_pPawnMutex->TryLock())
-	{
-		#ifdef _WIN32
-			Sleep(50);
-		#else
-			usleep(50000);
-		#endif
-	}
 	
 
-	if (pReturn != NULL)
-	{
-		Queue::add(pReturn);
-	}
-
-	g_pPawnMutex->Unlock();
+	// Call callback
+	Queue::add(pReturn);
 }
 
 
@@ -1283,20 +1448,10 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 		fclose(out);
 	}
 
+	
 
-	// Lock mutex and write to vec
-	while (!g_pPawnMutex->TryLock())
-	{
-		#ifdef _WIN32
-			Sleep(50);
-		#else
-			usleep(50000);
-		#endif
-	}
-
+	// Call callback
 	Queue::add(pReturn);
-
-	g_pPawnMutex->Unlock();
 }
 
 

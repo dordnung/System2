@@ -23,23 +23,24 @@
  */
 enum OS
 {
-	OS_UNKNOWN,
-	OS_WINDOWS,
-	OS_UNIX,
-	OS_MAC
+	OS_UNKNOWN,			// Shouldn't happen
+	OS_WINDOWS,			// Windows
+	OS_UNIX,			// Linux/Unix
+	OS_MAC 				// MAC
 }
 
 
 
 
 /**
- * A list of possible return statuses of System2_RunThreadCommand.
+ * A list of possible return statuses of System2_RunThreadCommand or System2_GetPage.
  */
 enum CMDReturn
 {
-	CMD_SUCCESS,
-	CMD_EMPTY,
-	CMD_ERROR,
+	CMD_SUCCESS,		// Fully finished
+	CMD_EMPTY,			// Result is empty (only System2_RunThreadCommand)
+	CMD_ERROR,			// An error appeared
+	CMD_PROGRESS		// Not finished yet
 }
 
 
@@ -50,8 +51,8 @@ enum CMDReturn
  */
 enum CompressArchive
 {
-	ARCHIVE_ZIP,
-	ARCHIVE_7Z,
+	ARCHIVE_ZIP,		// Zip
+	ARCHIVE_7Z,			// 7 Zip
 	ARCHIVE_GZIP,
 	ARCHIVE_BZIP2,
 	ARCHIVE_TAR
@@ -65,11 +66,11 @@ enum CompressArchive
  */
 enum CompressLevel
 {
-	LEVEL_1,
+	LEVEL_1,			// Weekest
 	LEVEL_3,
 	LEVEL_5,
 	LEVEL_7,
-	LEVEL_9
+	LEVEL_9				// Strongest
 }
 
 
@@ -81,15 +82,17 @@ enum CompressLevel
 
 
 /**
- * Called when finished with System2_RunThreadCommand.
+ * Called when finished with System2_RunThreadCommand or System2_GetPage.
+ * Maybe called more than once, if output > 4096.
+ * Use status to check if last call or not.
  *
- * @param command				The executed command.
- * @param output				Output of the command.
+ * @param output				Output of the command/page.
+ * @param size					Size of output string.
  * @param status				CMDReturn status
  */
-funcenum CmdCallback 
+funcenum CmdCallback
 {
-	public(const String:command[], const String:output[], CMDReturn:status)
+	public(const String:output[], const size, CMDReturn:status)
 };
 
 
@@ -108,7 +111,7 @@ funcenum CmdCallback
  * @param ultotal				Upload size total in bytes.
  * @param ulnow					Current upload size in bytes.
  */
-funcenum TransferUpdate 
+funcenum TransferUpdated
 {
 	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow)
 };
@@ -138,14 +141,31 @@ funcenum CopyCallback
 
 
 
+
 /**
- * Downloads a file from a HTTP site.
+ * Gets the content of a page
+ *
+ * @param callback				Callback function.
+ * @param URL					Page URL.
+ * @param POST					POST parameters (use like this: "name=test&pw=test2")
+ * @param useragent				Useragent to use. Leave empty for default one.
+ */
+native System2_GetPage(CmdCallback:callback, const String:URL[], const String:POST[] = "", const String:useragent[] = "");
+
+
+
+
+
+
+
+/**
+ * Downloads a file from a site.
  *
  * @param updateFunction		Function to call on update.
  * @param URL					Download URL.
  * @param localFile				Local file to save to.
  */
-native System2_DownloadFile(TransferUpdate:updateFunction, const String:URL[], const String:localFile[]);
+native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], const String:localFile[]);
 
 
 
@@ -196,7 +216,7 @@ native System2_UploadFTPFile(TransferUpdate:updateFunction, const String:localFi
  *
  * @param callback				Callback function.
  * @param pathToFile			Path to the file
- * @param pathToCopy			Path to copy to.
+ * @param pathToCopy			Path to copy to (including filename).
  *
  * @noreturn
  */
