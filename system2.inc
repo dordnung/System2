@@ -127,10 +127,12 @@ funcenum TransferUpdated
  * Called when finished with System2_CopyFile.
  *
  * @param success				Was copying successfull? (Or couldn't open current or new file)
+ * @param from					File which was copied
+ * @param to					New file
  */
 funcenum CopyCallback 
 {
-	public(bool:success)
+	public(bool:success, String:from[], String:to[])
 };
 
 
