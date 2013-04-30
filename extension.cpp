@@ -317,13 +317,7 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 		pReturn->ulnow = ulnow;
 
 
-		// Lock mutex and write to vec
-		if (g_pPawnMutex->TryLock())
-		{
-			Queue::add(pReturn);
-
-			g_pPawnMutex->Unlock();
-		}
+		Queue::add(pReturn);
 	}
 
 	return 0;
@@ -1085,7 +1079,6 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 
 	// Curl
 	CURL *curl;
-	CURLcode res;
 
 
 	// Init. Curl
@@ -1107,10 +1100,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 		curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &prog);
 
 		// Perform
-		res = curl_easy_perform(curl);
-
-		// Good result?
-		pReturn->result = (int)res;
+		curl_easy_perform(curl);
 
 		// Clean
 		curl_easy_cleanup(curl);

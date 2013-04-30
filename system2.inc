@@ -23,23 +23,23 @@
  */
 enum OS
 {
-	OS_UNKNOWN,			// Shouldn't happen
-	OS_WINDOWS,			// Windows
-	OS_UNIX,			// Linux/Unix
-	OS_MAC 				// MAC
+	OS_UNKNOWN,		// Shouldn't happen
+	OS_WINDOWS,		// Windows
+	OS_UNIX,		// Linux/Unix
+	OS_MAC 			// MAC
 }
 
 
 
 
 /**
- * A list of possible return statuses of System2_RunThreadCommand or System2_GetPage.
+ * A list of possible cmd return statuses
  */
 enum CMDReturn
 {
 	CMD_SUCCESS,		// Fully finished
-	CMD_EMPTY,			// Result is empty (only System2_RunThreadCommand)
-	CMD_ERROR,			// An error appeared
+	CMD_EMPTY,		// Result is empty (only System2_RunThreadCommand)
+	CMD_ERROR,		// An error appeared
 	CMD_PROGRESS		// Not finished yet
 }
 
@@ -47,12 +47,12 @@ enum CMDReturn
 
 
 /**
- * A list of possible archives of System2_CompressFile.
+ * A list of possible archives
  */
 enum CompressArchive
 {
 	ARCHIVE_ZIP,		// Zip
-	ARCHIVE_7Z,			// 7 Zip
+	ARCHIVE_7Z,		// 7 Zip
 	ARCHIVE_GZIP,
 	ARCHIVE_BZIP2,
 	ARCHIVE_TAR
@@ -62,15 +62,15 @@ enum CompressArchive
 
 
 /**
- * A list of possible compress levels of System2_CompressFile.
+ * A list of possible compress levels
  */
 enum CompressLevel
 {
-	LEVEL_1,			// Weekest
+	LEVEL_1,		// Weekest
 	LEVEL_3,
 	LEVEL_5,
 	LEVEL_7,
-	LEVEL_9				// Strongest
+	LEVEL_9			// Strongest
 }
 
 
@@ -82,7 +82,7 @@ enum CompressLevel
 
 
 /**
- * Called when finished with System2_RunThreadCommand or System2_GetPage.
+ * Called when finished with a command.
  * Maybe called more than once, if output > 4096.
  * Use status to check if last call or not.
  *
@@ -161,7 +161,7 @@ native System2_GetPage(CmdCallback:callback, const String:URL[], const String:PO
 /**
  * Downloads a file from a site.
  *
- * @param updateFunction		Function to call on update.
+ * @param updateFunction			Function to call on update.
  * @param URL					Download URL.
  * @param localFile				Local file to save to.
  */
@@ -176,8 +176,8 @@ native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], 
 /**
  * Downloads a file from a FTP server.
  *
- * @param updateFunction		Function to call on update.
- * @param remoteFile			Path to the file on the FTP server.
+ * @param updateFunction			Function to call on update.
+ * @param remoteFile				Path to the file on the FTP server.
  * @param localFile				Local file to save to.
  * @param host					The FTP host.
  * @param user					The FTP username.
@@ -195,9 +195,9 @@ native System2_DownloadFTPFile(TransferUpdate:updateFunction, const String:remot
 /**
  * Uploads a file to a FTP server.
  *
- * @param updateFunction		Function to call on update.
+ * @param updateFunction			Function to call on update.
  * @param localFile				Local file to upload.
- * @param remoteFile			Path to the file on the FTP server.
+ * @param remoteFile				Path to the file on the FTP server.
  * @param host					The FTP host.
  * @param user					The FTP username.
  * @param pass					The FTP password.
@@ -215,8 +215,8 @@ native System2_UploadFTPFile(TransferUpdate:updateFunction, const String:localFi
  * Copies a file
  *
  * @param callback				Callback function.
- * @param pathToFile			Path to the file
- * @param pathToCopy			Path to copy to (including filename).
+ * @param pathToFile				Path to the file
+ * @param pathToCopy				Path to copy to (including filename).
  *
  * @noreturn
  */
@@ -232,8 +232,8 @@ native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const 
  * Compresses a file to a archive
  *
  * @param callback				Callback function.
- * @param pathToFile			Path to the file/folder to compress.
- * @param pathToCompress		Path to archive file.
+ * @param pathToFile				Path to the file/folder to compress.
+ * @param pathToCompress			Path to archive file.
  * @param archive				Archive typ
  * @param level					Archive compress level
  *
@@ -250,8 +250,8 @@ native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], con
  * Extracts a lot of archives with 7zip
  *
  * @param callback				Callback function.
- * @param pathToArchive			Path to the archive file.
- * @param pathToExtract			Path to extract to.
+ * @param pathToArchive				Path to the archive file.
+ * @param pathToExtract				Path to extract to.
  *
  * @noreturn
  */
@@ -266,9 +266,9 @@ native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[]
 /**
  * Executes a threaded system command
  *
- * @param callback			Callback function.
- * @param command			Command string format
- * @param ...				Command string arguments.
+ * @param callback				Callback function.
+ * @param command				Command string format
+ * @param ...					Command string arguments.
  *
  * @noreturn
  */
@@ -286,10 +286,10 @@ native RunThreadCommand(CmdCallback:callback, const String:command[], any:...);
 /**
  * Executes a non threaded system command
  *
- * @param output			Output variable
- * @param size				Size of the output variable
- * @param command			Command string format
- * @param ...				Command string arguments.
+ * @param output				Output variable
+ * @param size					Size of the output variable
+ * @param command				Command string format
+ * @param ...					Command string arguments.
  *
  * @return					CMDReturn var
  */
@@ -307,8 +307,8 @@ native CMDReturn:RunCommand(String:output[], size, const String:command[], any:.
 /**
  * Gets the absolute gamedir (e.g. /home/.../.../cstrike)
  *
- * @param gamedir			String to save gamedir in.
- * @param maxlength			Size of the string.
+ * @param gamedir				String to save gamedir in.
+ * @param maxlength				Size of the string.
  *
  * @noreturn
  */
@@ -326,7 +326,7 @@ native GetGameDir(String:gamedir[], maxlength);
 /**
  * Gets the servers operating system
  *
- * @return						OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC
+ * @return					OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC
  */
 native OS:System2_GetOS();
 
