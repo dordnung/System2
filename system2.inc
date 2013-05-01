@@ -186,7 +186,7 @@ native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], 
  * @param pass					The FTP password.
  * @param port					The FTP port (Default: 21).
  */
-native System2_DownloadFTPFile(TransferUpdate:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
+native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
 
 
 
@@ -205,7 +205,7 @@ native System2_DownloadFTPFile(TransferUpdate:updateFunction, const String:remot
  * @param pass					The FTP password.
  * @param port					The FTP port (Default: 21).
  */
-native System2_UploadFTPFile(TransferUpdate:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
+native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
 
 
 
