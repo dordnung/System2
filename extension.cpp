@@ -307,7 +307,7 @@ size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 // Progress Updated
 int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-	if (dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0 && (currentFrame % 2 == 0))
+	if ((dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0) && (currentFrame % 2 == 0))
 	{
 		// Get progress struct
 		ProgressInfo *prog = (ProgressInfo *)p;
