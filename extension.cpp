@@ -1407,38 +1407,32 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 
 
 	// Open both files
-	FILE* in = fopen(fullFilePath, "rb");
-	FILE* out = fopen(fullCopyPath, "wb");
+	std::ifstream f1(fullFilePath, std::fstream::binary);
+	std::ofstream f2(fullCopyPath, std::fstream::trunc | std::fstream::binary);
+	
 
-
-	if (in == NULL || out == NULL)
+	if (f1.bad() || f2.bad())
 	{
 		pReturn->result = 0;
 	}
 	else
 	{
-		// End of file?
-		while (!feof(in))
-		{
-			if (fread(buffer, BUFSIZ, 1, in) > 0)
-			{
-				fwrite(buffer, BUFSIZ, 1, out);
-			}
-		}
+		// Copy
+		f2 << f1.rdbuf();
 
 		pReturn->result = 1;
 	}
 
 
 	// Close files
-	if (in != NULL)
+	if (f1.good())
 	{
-		fclose(in);
+		f1.close();
 	}
 
-	if (out != NULL)
+	if (f2.good())
 	{
-		fclose(out);
+		f2.close();
 	}
 
 	
