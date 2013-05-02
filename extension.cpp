@@ -1378,7 +1378,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 // Copy Thread executed
 void CopyThread::RunThread(IThreadHandle *pHandle)
 {
-	size_t len = 0 ;
 	char buffer[BUFSIZ] = {'\0'};
 
 
@@ -1421,8 +1420,10 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 		// End of file?
 		while (!feof(in))
 		{
-			fread(buffer, BUFSIZ, 1, in);
-			fwrite(buffer, BUFSIZ, 1, out);
+			if (fread(buffer, BUFSIZ, 1, in) > 0)
+			{
+				fwrite(buffer, BUFSIZ, 1, out);
+			}
 		}
 
 		pReturn->result = 1;
