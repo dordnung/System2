@@ -190,8 +190,6 @@ void OnGameFrameHit(bool simulating)
 		else
 		{
 			pFunc->PushCell(pReturn->result);
-			pFunc->PushString(pReturn->curlError);
-			pFunc->PushString(pReturn->pResultString);
 		}
 
 		// Execute
@@ -310,7 +308,7 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 		pReturn->pFunc = prog->func;
 		pReturn->mode = prog->mode;
 		pReturn->finished = 0;
-		strcpy(pReturn->curlError, "");
+
 
 		// Update data
 		pReturn->dlnow = dlnow;
@@ -1398,9 +1396,8 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COPY;
 	pReturn->finished = 1;
+	strcpy(pReturn->curlError, "");
 
-	strcpy(pReturn->curlError, file);
-	strcpy(pReturn->pResultString, copyPath);
 
 
 	// Get Full Path
@@ -1421,8 +1418,10 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	}
 	else
 	{
-		while ((len = fread(buffer, BUFSIZ, 1, in)) > 0)
+		// End of file?
+		while (!feof(in))
 		{
+			fread(buffer, BUFSIZ, 1, in);
 			fwrite(buffer, BUFSIZ, 1, out);
 		}
 
