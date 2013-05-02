@@ -307,10 +307,11 @@ size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 // Progress Updated
 int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-	if ((dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0) && (currentFrame % 2 == 0))
+	ProgressInfo *prog = (ProgressInfo *)p;
+
+	if ((dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0) && (currentFrame != prog->lastFrame))
 	{
 		// Get progress struct
-		ProgressInfo *prog = (ProgressInfo *)p;
 		ThreadReturn *pReturn = new ThreadReturn;
 
 		// Save to func
@@ -328,6 +329,11 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 
 		Queue::add(pReturn);
 	}
+
+
+	// Save current frame
+	prog->lastFrame = currentFrame;
+
 
 	return 0;
 }
@@ -1081,8 +1087,9 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	// Progress Info
 	struct ProgressInfo prog=
 	{
+		0,
 		function,
-		MODE_DOWNLOAD
+		MODE_DOWNLOAD,
 	};
 
 
@@ -1261,6 +1268,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	// Progress Info
 	struct ProgressInfo prog=
 	{
+		0,
 		function,
 		mode
 	};
