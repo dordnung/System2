@@ -128,6 +128,7 @@ struct FtpFile
 // Struct for Curl Progress
 struct ProgressInfo
 {
+	int lastFrame;
 	IPluginFunction *func;
 	MODES mode;
 };
