@@ -64,7 +64,7 @@
 // Global variables
 IMutex* g_pPawnMutex;
 Queue *queueStart = NULL;
-
+int currentFrame = 0;
 
 
 // Native List
@@ -144,6 +144,15 @@ void System2Extension::SDK_OnUnload()
 // Game Frame hit
 void OnGameFrameHit(bool simulating)
 {
+	// Increase current frame
+	currentFrame++;
+
+	if (currentFrame == 101)
+	{
+		currentFrame = 0;
+	}
+
+
 	// Lock the mutex
 	if (!g_pPawnMutex->TryLock())
 	{
@@ -298,7 +307,7 @@ size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 // Progress Updated
 int progress_updated(void *p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-	if (dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0)
+	if (dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0 && (currentFrame % 2 == 0))
 	{
 		// Get progress struct
 		ProgressInfo *prog = (ProgressInfo *)p;
