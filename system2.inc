@@ -89,9 +89,12 @@ enum CompressLevel
  * @param output				Output of the command/page.
  * @param size					Size of output string.
  * @param status				CMDReturn status
+ * @param data					Data passed
  */
 funcenum CmdCallback
 {
+	public(const String:output[], const size, CMDReturn:status, any:data),
+
 	public(const String:output[], const size, CMDReturn:status)
 };
 
@@ -110,9 +113,12 @@ funcenum CmdCallback
  * @param dlnow					Current download size in bytes.
  * @param ultotal				Upload size total in bytes.
  * @param ulnow					Current upload size in bytes.
+ * @param data					Data passed
  */
 funcenum TransferUpdated
 {
+	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow, any:data),
+
 	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow)
 };
 
@@ -129,9 +135,12 @@ funcenum TransferUpdated
  * @param success				Was copying successfull? (Or couldn't open current or new file)
  * @param from					File which was copied
  * @param to					New file
+ * @param data					Data passed
  */
 funcenum CopyCallback 
 {
+	public(bool:success, String:from[], String:to[], any:data),
+
 	public(bool:success, String:from[], String:to[])
 };
 
@@ -152,7 +161,7 @@ funcenum CopyCallback
  * @param POST					POST parameters (use like this: "name=test&pw=test2")
  * @param useragent				Useragent to use. Leave empty for default one.
  */
-native System2_GetPage(CmdCallback:callback, const String:URL[], const String:POST[] = "", const String:useragent[] = "");
+native System2_GetPage(CmdCallback:callback, const String:URL[], const String:POST[] = "", const String:useragent[] = "", any:data = INVALID_HANDLE);
 
 
 
@@ -167,7 +176,7 @@ native System2_GetPage(CmdCallback:callback, const String:URL[], const String:PO
  * @param URL					Download URL.
  * @param localFile				Local file to save to.
  */
-native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], const String:localFile[]);
+native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], const String:localFile[], any:data = INVALID_HANDLE);
 
 
 
@@ -186,7 +195,7 @@ native System2_DownloadFile(TransferUpdated:updateFunction, const String:URL[], 
  * @param pass					The FTP password.
  * @param port					The FTP port (Default: 21).
  */
-native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
+native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
 
 
 
@@ -205,7 +214,7 @@ native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remo
  * @param pass					The FTP password.
  * @param port					The FTP port (Default: 21).
  */
-native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21);
+native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
 
 
 
@@ -222,7 +231,7 @@ native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localF
  *
  * @noreturn
  */
-native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const String:pathToCopy[]);
+native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const String:pathToCopy[], any:data = INVALID_HANDLE);
 
 
 
@@ -241,7 +250,7 @@ native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const 
  *
  * @noreturn
  */
-native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], const String:pathToArchive[], CompressArchive:archive = ARCHIVE_ZIP, CompressLevel:level = LEVEL_9);
+native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], const String:pathToArchive[], CompressArchive:archive = ARCHIVE_ZIP, CompressLevel:level = LEVEL_9, any:data = INVALID_HANDLE);
 
 
 
@@ -257,7 +266,7 @@ native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], con
  *
  * @noreturn
  */
-native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[], const String:pathToExtract[]);
+native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[], const String:pathToExtract[], any:data = INVALID_HANDLE);
 
 
 
@@ -367,6 +376,7 @@ public Extension:__ext_system2 =
 
 	public __ext_system2_SetNTVOptional()
 	{
+		MarkNativeAsOptional("System2_GetPage");
 		MarkNativeAsOptional("System2_CompressFile");
 		MarkNativeAsOptional("System2_ExtractArchive");
 		MarkNativeAsOptional("System2_DownloadFile");

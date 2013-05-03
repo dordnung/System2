@@ -202,6 +202,7 @@ void OnGameFrameHit(bool simulating)
 		}
 
 		// Execute
+		pFunc->PushCell(pReturn->data);
 		pFunc->Execute(NULL);
 
 
@@ -267,6 +268,7 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream)
 		ThreadReturn *pReturn2 = new ThreadReturn;
 
 		pReturn2->pFunc = pReturn->pFunc;
+		pReturn2->data = pReturn->data;
 		pReturn2->mode = MODE_GET;
 		pReturn2->result = 3;
 
@@ -318,7 +320,7 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 		pReturn->pFunc = prog->func;
 		pReturn->mode = prog->mode;
 		pReturn->finished = 0;
-
+		pReturn->data = prog->data;
 
 		// Update data
 		pReturn->dlnow = dlnow;
@@ -364,10 +366,10 @@ cell_t sys_GetPage(IPluginContext *pContext, const cell_t *params)
 	// Get Chars
 	pContext->LocalToString(params[2], &url);
 	pContext->LocalToString(params[3], &post);
-	pContext->LocalToString(params[3], &agent);
+	pContext->LocalToString(params[4], &agent);
 
 	// Start new thread
-	PageThread* myThread = new PageThread(url, post, agent, pContext->GetFunctionById(params[1]));
+	PageThread* myThread = new PageThread(url, post, agent, pContext->GetFunctionById(params[1]), params[5]);
 	threader->MakeThread(myThread);
 
 
@@ -393,7 +395,7 @@ cell_t sys_DownloadFileUrl(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	DownloadThread* myThread = new DownloadThread(url, localFile, pContext->GetFunctionById(params[1]));
+	DownloadThread* myThread = new DownloadThread(url, localFile, pContext->GetFunctionById(params[1]), params[4]);
 	threader->MakeThread(myThread);
 
 
@@ -425,7 +427,7 @@ cell_t sys_DownloadFile(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	FTPThread* myThread = new FTPThread(remoteFile, localFile, host, username, password, params[7], pContext->GetFunctionById(params[1]), MODE_DOWNLOAD);
+	FTPThread* myThread = new FTPThread(remoteFile, localFile, host, username, password, params[7], pContext->GetFunctionById(params[1]), MODE_DOWNLOAD, params[8]);
 	threader->MakeThread(myThread);
 
 
@@ -457,7 +459,7 @@ cell_t sys_UploadFile(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	FTPThread* myThread = new FTPThread(remoteFile, localFile, host, username, password, params[7], pContext->GetFunctionById(params[1]), MODE_UPLOAD);
+	FTPThread* myThread = new FTPThread(remoteFile, localFile, host, username, password, params[7], pContext->GetFunctionById(params[1]), MODE_UPLOAD, params[8]);
 	threader->MakeThread(myThread);
 
 
@@ -483,7 +485,7 @@ cell_t sys_CopyFile(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	CopyThread* myThread = new CopyThread(file, path, pContext->GetFunctionById(params[1]));
+	CopyThread* myThread = new CopyThread(file, path, pContext->GetFunctionById(params[1]), params[4]);
 	threader->MakeThread(myThread);
 
 
@@ -507,7 +509,7 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
+	sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), 0);
 	threader->MakeThread(myThread);
 
 
@@ -567,7 +569,7 @@ cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params)
 
 
 		// Start new thread
-		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
+		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), params[4]);
 		threader->MakeThread(myThread);
 	}
 	else
@@ -700,7 +702,7 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 
 
 		// Start new thread
-		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]));
+		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), params[6]);
 		threader->MakeThread(myThread);
 	}
 	else
@@ -964,6 +966,7 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COMMAND;
 	pReturn->result = 0;
+	pReturn->data = data;
 
 	strcpy(pReturn->pResultString, "");
 
@@ -997,6 +1000,7 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 				pReturn2->pFunc = function;
 				pReturn2->mode = MODE_COMMAND;
 				pReturn2->result = 3;
+				pReturn2->data = data;
 
 				strcpy(pReturn2->pResultString, pReturn->pResultString);
 
@@ -1066,6 +1070,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_DOWNLOAD;
 	pReturn->finished = 1;
+	pReturn->data = data;
 
 	strcpy(pReturn->curlError, "");
 
@@ -1088,6 +1093,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	struct ProgressInfo prog=
 	{
 		0,
+		data,
 		function,
 		MODE_DOWNLOAD,
 	};
@@ -1158,6 +1164,7 @@ void PageThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_GET;
 	pReturn->result = 0;
+	pReturn->data = data;
 
 	strcpy(pReturn->curlError, "");
 	strcpy(pReturn->pResultString, "");
@@ -1245,6 +1252,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = mode;
 	pReturn->finished = 1;
+	pReturn->data = data;
 
 	strcpy(pReturn->curlError, "");
 
@@ -1269,6 +1277,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	struct ProgressInfo prog=
 	{
 		0,
+		data,
 		function,
 		mode
 	};
@@ -1412,6 +1421,8 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COPY;
 	pReturn->finished = 1;
+	pReturn->data = data;
+
 	strcpy(pReturn->curlError, "");
 
 
