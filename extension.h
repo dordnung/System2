@@ -96,7 +96,7 @@ public:
 
 	// finished?
 	int finished;
-	cell_t data;
+	int data;
 
 
 	// doubles
@@ -130,7 +130,7 @@ struct FtpFile
 struct ProgressInfo
 {
 	int lastFrame;
-	cell_t data;
+	int data;
 	IPluginFunction *func;
 	MODES mode;
 };
@@ -164,13 +164,13 @@ class sysThread : public IThread
 private:
 	char cmdString[2048];
 	IPluginFunction* function;
-	cell_t data;
+	int data;
 
 public:
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 
-	sysThread(char* command, IPluginFunction* callback, cell_t any) : IThread()
+	sysThread(char* command, IPluginFunction* callback, int any) : IThread()
 	{	
 		strcpy(cmdString, command);
 		function = callback;
@@ -195,7 +195,7 @@ private:
 
 	int port;
 	MODES mode;
-	cell_t data;
+	int data;
 
 	IPluginFunction* function;
 
@@ -204,7 +204,7 @@ public:
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 
 	// Constructor
-	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int por, IPluginFunction* callback, MODES mod, cell_t any) : IThread()
+	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int por, IPluginFunction* callback, MODES mod, int any) : IThread()
 	{	
 		strcpy(remoteFile, rmFile);
 		strcpy(localFile, lcFile);
@@ -233,14 +233,14 @@ private:
 	char localFile[PLATFORM_MAX_PATH + 1];
 
 	IPluginFunction* function;
-	cell_t data;
+	int data;
 
 public:
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 
 	// Constructor
-	DownloadThread(char* host, char* file, IPluginFunction* callback, cell_t any) : IThread()
+	DownloadThread(char* host, char* file, IPluginFunction* callback, int any) : IThread()
 	{	
 		strcpy(url, host);
 		strcpy(localFile, file);
@@ -264,14 +264,14 @@ private:
 	char copyPath[PLATFORM_MAX_PATH + 1];
 
 	IPluginFunction* function;
-	cell_t data;
+	int data;
 
 public:
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 
 	// Constructor
-	CopyThread(char* lfile, char* path, IPluginFunction* callback, cell_t any) : IThread()
+	CopyThread(char* lfile, char* path, IPluginFunction* callback, int any) : IThread()
 	{	
 		strcpy(file, lfile);
 		strcpy(copyPath, path);
@@ -296,14 +296,14 @@ private:
 	char useragent[64];
 
 	IPluginFunction* function;
-	cell_t data;
+	int data;
 
 public:
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 
 	// Constructor
-	PageThread(char* link, char* postmethod, char* agent, IPluginFunction* callback, cell_t any) : IThread()
+	PageThread(char* link, char* postmethod, char* agent, IPluginFunction* callback, int any) : IThread()
 	{	
 		strcpy(url, link);
 		strcpy(post, postmethod);

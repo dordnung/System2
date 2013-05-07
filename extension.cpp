@@ -194,7 +194,7 @@ void OnGameFrameHit(bool simulating)
 			pFunc->PushFloat((float)pReturn->ultotal);
 			pFunc->PushFloat((float)pReturn->ulnow);
 		}
-
+		
 		// Result for copy
 		else
 		{
