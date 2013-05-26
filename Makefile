@@ -6,8 +6,8 @@
 ###########################################
 
 SMSDK = ../../../sourcemod-central
-CURL = ../../../curl
-OPENSSL = ../../../openssl
+CURL = ../../../popoklopsi/curl
+OPENSSL = ../../../popoklopsi/openssl
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
