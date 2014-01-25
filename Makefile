@@ -5,9 +5,9 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK = ../../../sourcemod-central
-CURL = ../../../popoklopsi/curl
-OPENSSL = ../../../popoklopsi/openssl
+SMSDK = ../sourcemod-central
+CURL = ../curl
+OPENSSL = ../openssl
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -36,7 +36,7 @@ CPP_OSX = clang
 ##########################
 
 INCLUDE += -I. -I.. -Isdk -I$(CURL) -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
-LINK += $(CURL)/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a -m32 -lm -ldl -lrt
+LINK += -L$(CURL) -L$(OPENSSL) -lcurl -lssl -lcrypto -m32 -lm -ldl -lrt
 
 CFLAGS += -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
