@@ -6,7 +6,7 @@
 ###########################################
 
 SMSDK = ../sourcemod-central
-CURL = ../../curl
+CURL = ../curl
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
