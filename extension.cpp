@@ -107,12 +107,14 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
 	sharesys->AddNatives(myself, system2_natives);
 	sharesys->RegisterLibrary(myself, "system2");
 
+	curl_global_init(CURL_GLOBAL_ALL);
 
 
 	// Thread stuff
 	smutils->AddGameFrameHook(&OnGameFrameHit);
 
 	g_pPawnMutex = threader->MakeMutex();
+
 
 
 	// Loaded
@@ -128,6 +130,9 @@ void System2Extension::SDK_OnUnload()
 	smutils->RemoveGameFrameHook(&OnGameFrameHit);
 
 	g_pPawnMutex->DestroyThis();
+
+	// Clean
+	curl_global_cleanup();
 }
 
 
@@ -1175,7 +1180,6 @@ void PageThread::RunThread(IThreadHandle *pHandle)
 
 
 	// Init. Curl
-	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 
 
@@ -1211,10 +1215,6 @@ void PageThread::RunThread(IThreadHandle *pHandle)
 		// Clean
 		curl_easy_cleanup(curl);
 	}
-
-
-	// Clean
-	curl_global_cleanup();
 
 
 	// Call callback
@@ -1295,7 +1295,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	if (mode != MODE_UPLOAD || localReadFile != NULL)
 	{
 		// Init. Curl
-		curl_global_init(CURL_GLOBAL_DEFAULT);
 		curl = curl_easy_init();
 
 
@@ -1377,11 +1376,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		{
 			fclose(localReadFile);
 		}
-
-
-
-		// Now clean global curl
-		curl_global_cleanup();
 	}
 
 	
