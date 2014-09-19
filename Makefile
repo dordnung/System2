@@ -40,7 +40,7 @@ CPP_OSX = clang
 INCLUDE += -I. -I.. -Isdk -I$(CURL) -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
 
 # We using only a minimized version of libcurl with ssl support. For a better libcurl you have to compile against more static libs.
-LINK += $(CURL)/libcurl.a $(LIBPATH)/libssl.a $(LIBPATH)/libcrypto.a $(LIBPATH)/libz.a -m32 -lm -ldl -lrt
+LINK += $(CURL)/libcurl.a $(LIBPATH)/libssl.a $(LIBPATH)/libcrypto.a $(LIBPATH)/libz.a -m32 -lm -ldl -lrt -lstdc++
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
