@@ -5,11 +5,7 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK = ../sourcemod-central
-
-# We using only a minimized version of libcurl with ssl support
-CURL = ../curl
-LIBPATH = /usr/lib/i386-linux-gnu
+SMSDK = ../sourcemod-1.6
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -37,10 +33,8 @@ CPP_OSX = clang
 ### SDK CONFIGURATIONS ###
 ##########################
 
-INCLUDE += -I. -I.. -Isdk -I$(CURL) -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
-
-# We using only a minimized version of libcurl with ssl support. For a better libcurl you have to compile against more static libs.
-LINK += $(CURL)/libcurl.a $(LIBPATH)/libssl.a $(LIBPATH)/libcrypto.a $(LIBPATH)/libz.a -m32 -lm -ldl -lrt -lstdc++
+INCLUDE += -I. -I.. -Isdk -I$(SMSDK)/public -I$(SMSDK)/public/sourcepawn -I$(SMSDK)/core
+LINK += -m32 -lm -ldl -lrt -lstdc++ -Wl,-Bstatic -lcurl -lssl -lcrypto -lz -Wl,-Bdynamic
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
