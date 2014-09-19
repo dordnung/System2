@@ -1,0 +1,34 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+
+# Visual Studio
+*.sdf
+*.suo
+*.cd
+*.user
+*.ipch
+*.exp
+*.tlog
+*.pdb
+*.manifest
+*.obj
+*.log
+*.lastb
+*.opensdf
+
+
+# Builds
+*.smx
+*.exe
+*.sq3
+Release*/
+Debug*/
