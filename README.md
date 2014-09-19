@@ -1,9 +1,9 @@
 System2
 =======
 
-System2 adds internet and server functions to Sourcemod
+System2 extends Sourcemod with usefull internet and server functions.
 
-## Howto build on apt based systems: ##
+### How-to build on apt based systems: ###
 
 1. `sudo apt-get install libssl-dev`
 2. `wget http://curl.haxx.se/download/curl-7.38.0.tar.gz`
