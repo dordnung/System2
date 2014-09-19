@@ -1,7 +1,7 @@
 System2
 =======
 
-System2 extends Sourcemod with usefull internet and server functions.
+System2 extends Sourcemod with usefully internet and server natives.
 
 ### How-to build on apt based systems: ###
 
