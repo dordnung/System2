@@ -61,10 +61,10 @@ enum CompressLevel
  * Maybe called more than once, if output is greater than 4096.
  * Use status variable to check if it's the last call or not.
  *
- * @param output				Output of the command / page.
- * @param size					Size of output string.
- * @param status				CMDReturn status
- * @param data					Data passed.
+ * @param output                Output of the command / page.
+ * @param size                  Size of output string.
+ * @param status                CMDReturn status
+ * @param data                  Data passed.
  */
 funcenum CmdCallback
 {
@@ -75,13 +75,13 @@ funcenum CmdCallback
 /**
  * Called on every update when downloading / uploading a file.
  *
- * @param finished				Is downloading / uploading finished?
- * @param error					Error when finished. If no error string is empty.
- * @param dltotal				Downloaded size total in bytes.
- * @param dlnow					Current downloaded size in bytes.
- * @param ultotal				Uploaded size total in bytes.
- * @param ulnow					Current uploaded size in bytes.
- * @param data					Data passed.
+ * @param finished              Is downloading / uploading finished?
+ * @param error                 Error when finished. If no error string is empty.
+ * @param dltotal               Downloaded size total in bytes.
+ * @param dlnow                 Current downloaded size in bytes.
+ * @param ultotal               Uploaded size total in bytes.
+ * @param ulnow                 Current uploaded size in bytes.
+ * @param data                  Data passed.
  */
 funcenum TransferUpdated
 {
@@ -92,10 +92,10 @@ funcenum TransferUpdated
 /**
  * Called when finished with System2_CopyFile.
  *
- * @param success				Was copying successfull? (Or couldn't open current or new file)
- * @param from					File which was copied.
- * @param to					New file.
- * @param data					Data passed.
+ * @param success               Was copying successfull? (Or couldn't open current or new file)
+ * @param from                  File which was copied.
+ * @param to                    New file.
+ * @param data                  Data passed.
  */
 funcenum CopyCallback 
 {
