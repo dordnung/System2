@@ -5,26 +5,23 @@
  * License     GPLv3
  * Web         http://popoklopsi.de
  * -----------------------------------------------------
- * 
- * 
+ *
+ *
  * Copyright (C) 2013 David <popoklopsi> Ordnung, Sourcemod
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
-
-
 
 
 //// INCLUDES
@@ -33,29 +30,19 @@
 #include "extension.h"
 
 
-
-
-
-
 //// DEFINES
 
 
 // Some Pre Definies
 #if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-	#define PosixOpen _popen
-	#define PosixClose _pclose
-	
-	#pragma warning(disable: 4996)
+#define PosixOpen _popen
+#define PosixClose _pclose
+
+#pragma warning(disable: 4996)
 #else
-	#define PosixOpen popen
-	#define PosixClose pclose
+#define PosixOpen popen
+#define PosixClose pclose
 #endif
-
-
-
-
-
-
 
 
 //// GLOBAL VARS
@@ -68,32 +55,29 @@ int currentFrame = 0;
 
 
 // Native List
-const sp_nativeinfo_t system2_natives[] = 
+const sp_nativeinfo_t system2_natives[] =
 {
 	// Backwards Compatiblity
-	{"RunThreadCommand",			sys_RunThreadCommand},
-	{"RunCommand",					sys_RunCommand},
-	{"GetGameDir",					sys_GetGameDir},
-	{"GetOS",						sys_GetOS},
+	{"RunThreadCommand", sys_RunThreadCommand},
+	{"RunCommand", sys_RunCommand},
+	{"GetGameDir", sys_GetGameDir},
+	{"GetOS", sys_GetOS},
 
 	// New ones
-	{"System2_GetPage",				sys_GetPage},
-	{"System2_CopyFile",			sys_CopyFile},
-	{"System2_CompressFile",		sys_CompressFile},
-	{"System2_ExtractArchive",		sys_ExtractArchive},
-	{"System2_DownloadFile",		sys_DownloadFileUrl},
-	{"System2_DownloadFTPFile",		sys_DownloadFile},
-	{"System2_UploadFTPFile",		sys_UploadFile},
-	{"System2_RunThreadCommand",	sys_RunThreadCommand},
-	{"System2_RunCommand",			sys_RunCommand},
-	{"System2_GetGameDir",			sys_GetGameDir},
-	{"System2_GetOS",				sys_GetOS},
-	{NULL,							NULL},
+	{"System2_GetPage", sys_GetPage},
+	{"System2_CopyFile", sys_CopyFile},
+	{"System2_CompressFile", sys_CompressFile},
+	{"System2_ExtractArchive", sys_ExtractArchive},
+	{"System2_DownloadFile", sys_DownloadFileUrl},
+	{"System2_DownloadFTPFile", sys_DownloadFile},
+	{"System2_UploadFTPFile", sys_UploadFile},
+	{"System2_RunThreadCommand", sys_RunThreadCommand},
+	{"System2_RunThreadCommandWithData", sys_RunThreadCommandWithData},
+	{"System2_RunCommand", sys_RunCommand},
+	{"System2_GetGameDir", sys_GetGameDir},
+	{"System2_GetOS", sys_GetOS},
+	{NULL, NULL},
 };
-
-
-
-
 
 
 
@@ -122,7 +106,6 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late)
 }
 
 
-
 // Extension unloaded
 void System2Extension::SDK_OnUnload()
 {
@@ -134,12 +117,6 @@ void System2Extension::SDK_OnUnload()
 	// Clean
 	curl_global_cleanup();
 }
-
-
-
-
-
-
 
 
 
@@ -164,7 +141,7 @@ void OnGameFrameHit(bool simulating)
 		// Couldn't lock
 		return;
 	}
-	
+
 
 	// No forwards to push?
 	if (queueStart != NULL)
@@ -199,7 +176,7 @@ void OnGameFrameHit(bool simulating)
 			pFunc->PushFloat((float)pReturn->ultotal);
 			pFunc->PushFloat((float)pReturn->ulnow);
 		}
-		
+
 		// Result for copy
 		else
 		{
@@ -222,13 +199,6 @@ void OnGameFrameHit(bool simulating)
 
 
 
-
-
-
-
-
-
-
 //// CURL STUFF
 
 
@@ -236,10 +206,10 @@ void OnGameFrameHit(bool simulating)
 size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream)
 {
 	// FTP Struct
-	struct FtpFile *out=(struct FtpFile *)stream;
+	struct FtpFile *out = (struct FtpFile *)stream;
 
 	// Not opened? Open it
-	if(out && !out->stream) 
+	if (out && !out->stream)
 	{
 		out->stream = fopen(out->filename, "wb");
 
@@ -265,9 +235,9 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream)
 	// real size
 	size_t realsize = size * nmemb;
 
-	
+
 	// More than MAX_RESULT_LENGTH?
-	if (strlen(pReturn->pResultString) + realsize >= MAX_RESULT_LENGTH-1)
+	if (strlen(pReturn->pResultString) + realsize >= MAX_RESULT_LENGTH - 1)
 	{
 		// We only can push a string with a length of MAX_RESULT_LENGTH
 		ThreadReturn *pReturn2 = new ThreadReturn;
@@ -287,7 +257,7 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream)
 	}
 
 	// Add buffer
-	strcat(pReturn->pResultString, (char *) buffer);
+	strcat(pReturn->pResultString, (char *)buffer);
 
 	return realsize;
 }
@@ -306,9 +276,6 @@ size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *stream)
 
 	return retcode;
 }
-
-
-
 
 
 // Progress Updated
@@ -346,16 +313,6 @@ int progress_updated(void *p, double dltotal, double dlnow, double ultotal, doub
 }
 
 
-
-
-
-
-
-
-
-
-
-
 //// NATIVES
 
 
@@ -384,9 +341,6 @@ cell_t sys_GetPage(IPluginContext *pContext, const cell_t *params)
 
 
 
-
-
-
 // Download a file from a ftp server
 cell_t sys_DownloadFileUrl(IPluginContext *pContext, const cell_t *params)
 {
@@ -403,13 +357,8 @@ cell_t sys_DownloadFileUrl(IPluginContext *pContext, const cell_t *params)
 	DownloadThread* myThread = new DownloadThread(url, localFile, pContext->GetFunctionById(params[1]), params[4]);
 	threader->MakeThread(myThread);
 
-
-
 	return 1;
 }
-
-
-
 
 
 
@@ -435,13 +384,8 @@ cell_t sys_DownloadFile(IPluginContext *pContext, const cell_t *params)
 	FTPThread* myThread = new FTPThread(remoteFile, localFile, host, username, password, params[7], pContext->GetFunctionById(params[1]), MODE_DOWNLOAD, params[8]);
 	threader->MakeThread(myThread);
 
-
-
 	return 1;
 }
-
-
-
 
 
 // Upload a file to a ftp server
@@ -453,7 +397,6 @@ cell_t sys_UploadFile(IPluginContext *pContext, const cell_t *params)
 	char *host;
 	char *username;
 	char *password;
-
 
 	// Get Chars
 	pContext->LocalToString(params[2], &localFile);
@@ -471,10 +414,6 @@ cell_t sys_UploadFile(IPluginContext *pContext, const cell_t *params)
 
 	return 1;
 }
-
-
-
-
 
 // Copy a file
 cell_t sys_CopyFile(IPluginContext *pContext, const cell_t *params)
@@ -499,10 +438,6 @@ cell_t sys_CopyFile(IPluginContext *pContext, const cell_t *params)
 }
 
 
-
-
-
-
 // Run a system command, threaded
 cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 {
@@ -514,17 +449,28 @@ cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params)
 
 
 	// Start new thread
-	sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), 0);
+	SysThread* myThread = new SysThread(command, pContext->GetFunctionById(params[1]), 0);
 	threader->MakeThread(myThread);
-
-
 
 	return 1;
 }
 
 
+// Run a system command with data, threaded
+cell_t sys_RunThreadCommandWithData(IPluginContext *pContext, const cell_t *params)
+{
+	// command
+	char command[2048];
 
+	// Get command
+	smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
+	// Start new thread
+	SysThread* myThread = new SysThread(command, pContext->GetFunctionById(params[1]), params[2]);
+	threader->MakeThread(myThread);
+
+	return 1;
+}
 
 
 // Extracts a lot of archives
@@ -542,19 +488,17 @@ cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params)
 
 	FILE* testExist;
 
-
-
 	// Get Paths
 	pContext->LocalToString(params[2], &file);
 	pContext->LocalToString(params[3], &folder);
 
 
 	// Build Paths
-	#if defined _WIN32
-		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
-	#else
-		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
-	#endif
+#if defined _WIN32
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
+#else
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
+#endif
 	g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
 
@@ -566,15 +510,15 @@ cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params)
 
 
 		// Make command
-		#if defined _WIN32
-			sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
-		#else
-			sprintf(command, "\"%s\" x \"%s\" -o\"%s\" -mmt -aoa", zdir, ldir, rdir);
-		#endif
+#if defined _WIN32
+		sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
+#else
+		sprintf(command, "\"%s\" x \"%s\" -o\"%s\" -mmt -aoa", zdir, ldir, rdir);
+#endif
 
 
 		// Start new thread
-		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), params[4]);
+		SysThread* myThread = new SysThread(command, pContext->GetFunctionById(params[1]), params[4]);
 		threader->MakeThread(myThread);
 	}
 	else
@@ -584,10 +528,6 @@ cell_t sys_ExtractArchive(IPluginContext *pContext, const cell_t *params)
 
 	return 1;
 }
-
-
-
-
 
 
 // Compresses a file to a archive
@@ -616,80 +556,75 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 
 
 	// Build Paths
-	#if defined _WIN32
-		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
-	#else
-		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
-	#endif
+#if defined _WIN32
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
+#else
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
+#endif
 	g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
 
 
 
 	// Get Compress level
-	switch(params[5])
+	switch (params[5])
 	{
 		case 0:
 		{
-			strcpy(level, "-mx1");
-			break;
+				  strcpy(level, "-mx1");
+				  break;
 		}
 		case 1:
 		{
-			strcpy(level, "-mx3");
-			break;
+				  strcpy(level, "-mx3");
+				  break;
 		}
 		case 2:
 		{
-			strcpy(level, "-mx5");
-			break;
+				  strcpy(level, "-mx5");
+				  break;
 		}
 		case 3:
 		{
-			strcpy(level, "-mx7");
-			break;
+				  strcpy(level, "-mx7");
+				  break;
 		}
 		case 4:
 		{
-			strcpy(level, "-mx9");
-			break;
+				  strcpy(level, "-mx9");
+				  break;
 		}
 	}
-
-
-
 
 	// Get Archive
-	switch(params[4])
+	switch (params[4])
 	{
 		case 0:
 		{
-			strcpy(archive, "-tzip");
-			break;
+				  strcpy(archive, "-tzip");
+				  break;
 		}
 		case 1:
 		{
-			strcpy(archive, "-t7z");
-			break;
+				  strcpy(archive, "-t7z");
+				  break;
 		}
 		case 2:
 		{
-			strcpy(archive, "-tgzip");
-			break;
+				  strcpy(archive, "-tgzip");
+				  break;
 		}
 		case 3:
 		{
-			strcpy(archive, "-tbzip2");
-			break;
+				  strcpy(archive, "-tbzip2");
+				  break;
 		}
 		case 4:
 		{
-			strcpy(archive, "-ttar");
-			break;
+				  strcpy(archive, "-ttar");
+				  break;
 		}
 	}
-
-
 
 	// 7z exists?
 	if ((testExist = fopen(zdir, "rb")) != NULL)
@@ -699,15 +634,15 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 
 
 		// Make command
-		#if defined _WIN32
-			sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
-		#else
-			sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
-		#endif
+#if defined _WIN32
+		sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
+#else
+		sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
+#endif
 
 
 		// Start new thread
-		sysThread* myThread = new sysThread(command, pContext->GetFunctionById(params[1]), params[6]);
+		SysThread* myThread = new SysThread(command, pContext->GetFunctionById(params[1]), params[6]);
 		threader->MakeThread(myThread);
 	}
 	else
@@ -719,12 +654,6 @@ cell_t sys_CompressFile(IPluginContext *pContext, const cell_t *params)
 }
 
 
-
-
-
-
-
-
 // Run a system command, threaded
 cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 {
@@ -732,8 +661,6 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	char cmdString[2048];
 	char buffer[MAX_RESULT_LENGTH];
 	char resultString[MAX_RESULT_LENGTH];
-
-
 
 	// Format string
 	smutils->FormatString(cmdString, sizeof(cmdString), pContext, params, 3);
@@ -744,14 +671,11 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 	{
 		strcat(cmdString, " 2>&1");
 	}
-	
-
 
 
 	// Execute
 	FILE* cmdFile = PosixOpen(cmdString, "r");
 	cell_t result = 0;
-
 
 
 	// Error?
@@ -762,24 +686,24 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 
 		return 2;
 	}
-	
+
 
 	//Read Result
 	while (fgets(buffer, sizeof(buffer), cmdFile) != NULL)
 	{
 		size_t realsize = strlen(buffer);
-		
+
 		// More than MAX_RESULT_LENGTH?
-		if (strlen(resultString) + realsize >= size_t(params[2]-1))
+		if (strlen(resultString) + realsize >= size_t(params[2] - 1))
 		{
 			// Only make the result full!
-			strncat(resultString, buffer, (params[2]-strlen(resultString))-1);
+			strncat(resultString, buffer, (params[2] - strlen(resultString)) - 1);
 
 			pContext->StringToLocal(params[1], params[2], resultString);
 
 			break;
 		}
-		
+
 		strcat(resultString, buffer);
 	}
 
@@ -804,10 +728,6 @@ cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params)
 }
 
 
-
-
-
-
 // Get the game dir
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
 {
@@ -818,36 +738,20 @@ cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params)
 }
 
 
-
-
-
-
 // Get the os
 cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 {
 	// So what we have now :)
-	#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
-		return OS_Windows;
-	#elif defined __unix__ || __linux__ || __unix
-		return OS_Linux;
-	#elif defined __APPLE__ || __darwin__
-		return OS_Mac;
-	#else
-		return OS_Unknown;
-	#endif
+#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+	return OS_Windows;
+#elif defined __unix__ || __linux__ || __unix
+	return OS_Linux;
+#elif defined __APPLE__ || __darwin__
+	return OS_Mac;
+#else
+	return OS_Unknown;
+#endif
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -858,7 +762,7 @@ cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params)
 // Queue Class
 Queue::Queue(ThreadReturn *threadReturn)
 {
-	ret = threadReturn; 
+	ret = threadReturn;
 	next = NULL;
 }
 
@@ -869,27 +773,24 @@ Queue *Queue::getNext() const
 	return next;
 }
 
+
 ThreadReturn *Queue::getThreadReturn() const
 {
 	return ret;
 }
 
-
-
-
 // Add new item at the end
-void Queue::add(ThreadReturn *newQueue) 
+void Queue::add(ThreadReturn *newQueue)
 {
 	// Lock mutex and write to vec
 	while (!g_pPawnMutex->TryLock())
 	{
-		#ifdef _WIN32
-			Sleep(50);
-		#else
-			usleep(50000);
-		#endif
+#ifdef _WIN32
+		Sleep(50);
+#else
+		usleep(50000);
+#endif
 	}
-
 
 	// Add Head
 	if (queueStart == NULL)
@@ -902,15 +803,13 @@ void Queue::add(ThreadReturn *newQueue)
 		queueStart->append(new Queue(newQueue));
 	}
 
-
 	// Unlock
 	g_pPawnMutex->Unlock();
 }
 
 
-
 // append new item at the end
-void Queue::append(Queue *newQueue) 
+void Queue::append(Queue *newQueue)
 {
 	// if next -> recursiv
 	if (next != NULL)
@@ -945,17 +844,11 @@ void Queue::remove()
 
 
 
-
-
-
-
-
-
 //// THREAD FOR SYSTEM COMMANDS
 
 
 // Thread executed
-void sysThread::RunThread(IThreadHandle *pHandle)
+void SysThread::RunThread(IThreadHandle *pHandle)
 {
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
@@ -965,8 +858,6 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	char buffer[MAX_RESULT_LENGTH];
 
 
-
-	
 	// Save to func
 	pReturn->pFunc = function;
 	pReturn->mode = MODE_COMMAND;
@@ -975,20 +866,15 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 
 	strcpy(pReturn->pResultString, "");
 
-
-
 	// Add linking
 	if (strstr(cmdString, "2>&1") == NULL)
 	{
 		strcat(cmdString, " 2>&1");
 	}
-	
-
 
 
 	// Execute
 	FILE* cmdFile = PosixOpen(cmdString, "r");
-
 
 	// Error?
 	if (cmdFile)
@@ -1029,7 +915,6 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 		}
 
 
-		
 		// Close
 		PosixClose(cmdFile);
 	}
@@ -1045,15 +930,6 @@ void sysThread::RunThread(IThreadHandle *pHandle)
 	// Call Callback
 	Queue::add(pReturn);
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1080,22 +956,20 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	strcpy(pReturn->curlError, "");
 
 
-
 	// Get Full Path
 	g_pSM->BuildPath(Path_Game, fullLocalPath, sizeof(fullLocalPath), "%s", localFile);
 
 
 	// Info
-	struct FtpFile ftpfile=
+	struct FtpFile ftpfile =
 	{
 		fullLocalPath,
 		NULL
 	};
 
 
-
 	// Progress Info
-	struct ProgressInfo prog=
+	struct ProgressInfo prog =
 	{
 		0,
 		data,
@@ -1141,17 +1015,9 @@ void DownloadThread::RunThread(IThreadHandle *pHandle)
 	}
 
 
-
-
 	// Call callback
 	Queue::add(pReturn);
 }
-
-
-
-
-
-
 
 
 
@@ -1201,7 +1067,7 @@ void PageThread::RunThread(IThreadHandle *pHandle)
 		{
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, useragent);
 		}
-		
+
 
 		// Perform
 		if (curl_easy_perform(curl) != CURLE_OK)
@@ -1223,12 +1089,6 @@ void PageThread::RunThread(IThreadHandle *pHandle)
 
 
 
-
-
-
-
-
-
 //// FTP THREAD
 
 
@@ -1241,8 +1101,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 
 	char fullLocalPath[PLATFORM_MAX_PATH + 1];
 	char fullHost[PLATFORM_MAX_PATH + 20];
-
-
 
 
 	// Get func 
@@ -1261,27 +1119,24 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 	CURL *curl;
 	CURLcode res;
 
-
-
 	// Get Full Path
 	g_pSM->BuildPath(Path_Game, fullLocalPath, sizeof(fullLocalPath), "%s", localFile);
 
 
-	struct FtpFile ftpfile=
+	struct FtpFile ftpfile =
 	{
 		fullLocalPath,
 		NULL
 	};
 
 	// Progress Info
-	struct ProgressInfo prog=
+	struct ProgressInfo prog =
 	{
 		0,
 		data,
 		function,
 		mode
 	};
-
 
 
 	// Open File
@@ -1302,7 +1157,6 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		{
 			// Get hole URL
 			sprintf(fullHost, "ftp://%s/%s", host, remoteFile);
-
 
 
 			// Set up Curl
@@ -1347,22 +1201,15 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 			}
 
 
-
-
 			// Perform
 			res = curl_easy_perform(curl);
-
 
 			// Good result?
 			pReturn->result = (int)res;
 
-
 			// Clean
 			curl_easy_cleanup(curl);
 		}
-
-
-
 
 		// Close file if opened
 		if (ftpfile.stream != NULL)
@@ -1378,17 +1225,9 @@ void FTPThread::RunThread(IThreadHandle *pHandle)
 		}
 	}
 
-	
-
 	// Call callback
 	Queue::add(pReturn);
 }
-
-
-
-
-
-
 
 
 
@@ -1405,8 +1244,6 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	char fullFilePath[PLATFORM_MAX_PATH + 1];
 	char fullCopyPath[PLATFORM_MAX_PATH + 1];
 
-
-
 	// Get func 
 	ThreadReturn *pReturn = new ThreadReturn;
 
@@ -1420,18 +1257,15 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 	strcpy(pReturn->curlError, "");
 
 
-
 	// Get Full Path
 	g_pSM->BuildPath(Path_Game, fullFilePath, sizeof(fullFilePath), "%s", file);
 	g_pSM->BuildPath(Path_Game, fullCopyPath, sizeof(fullCopyPath), "%s", copyPath);
 
 
-
-
 	// Open both files
 	std::ifstream f1(fullFilePath, std::fstream::binary);
 	std::ofstream f2(fullCopyPath, std::fstream::trunc | std::fstream::binary);
-	
+
 
 	if (f1.bad() || f2.bad())
 	{
@@ -1445,7 +1279,6 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 		pReturn->result = 1;
 	}
 
-
 	// Close files
 	if (f1.good())
 	{
@@ -1457,15 +1290,9 @@ void CopyThread::RunThread(IThreadHandle *pHandle)
 		f2.close();
 	}
 
-	
-
 	// Call callback
 	Queue::add(pReturn);
 }
-
-
-
-
 
 
 

@@ -179,7 +179,7 @@ native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const 
  * @param callback              Callback function when finished with compressing.
  * @param pathToFile            Path to the file / folder to compress.
  * @param pathToCompress        Path to archive file.
- * @param archive               Archive typ.
+ * @param archive               Archive type.
  * @param level                 Archive compress level.
  * @param data                  Additional data to pass to the callback.
  *
@@ -209,6 +209,18 @@ native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[]
  * @noreturn
  */
 native System2_RunThreadCommand(CmdCallback:callback, const String:command[], any:...);
+
+/**
+ * Executes a threaded system command and allows to pass additional data.
+ *
+ * @param callback              Callback function when executed the command.
+ * @param data                  Additional data to pass to the callback.
+ * @param command               Command string format
+ * @param ...                   Command string arguments.
+ *
+ * @noreturn
+ */
+native System2_RunThreadCommandWithData(CmdCallback:callback, any:data = INVALID_HANDLE, const String:command[], any:...);
 
 /**
  * Executes a non threaded system command.

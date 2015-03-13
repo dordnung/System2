@@ -5,20 +5,20 @@
  * License     GPLv3
  * Web         http://popoklopsi.de
  * -----------------------------------------------------
- * 
- * 
+ *
+ *
  * Copyright (C) 2013 David <popoklopsi> Ordnung, Sourcemod
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
@@ -33,7 +33,6 @@
 #define MAX_RESULT_LENGTH 4096
 
 
-
 //// INCLUDSE
 // Sourcemod
 #include "smsdk_ext.h"
@@ -46,11 +45,6 @@
 
 // We need curl
 #include <curl/curl.h>
-
-
-
-
-
 
 
 //// ENUMS
@@ -75,12 +69,6 @@ enum MODES
 	MODE_COPY,
 	MODE_GET
 };
-
-
-
-
-
-
 
 
 //// STRUCTS
@@ -116,9 +104,8 @@ public:
 
 
 
-
 // Struct for Curl
-struct FtpFile 
+struct FtpFile
 {
 	const char *filename;
 	FILE *stream;
@@ -136,13 +123,6 @@ struct ProgressInfo
 };
 
 
-
-
-
-
-
-
-
 //// CLASSES
 
 
@@ -155,11 +135,8 @@ public:
 };
 
 
-
-
-
 // system Thread
-class sysThread : public IThread
+class SysThread : public IThread
 {
 private:
 	char cmdString[2048];
@@ -168,18 +145,17 @@ private:
 
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+	void OnTerminate(IThreadHandle *pThread, bool cancel)
+	{}
 
-	sysThread(char* command, IPluginFunction* callback, int any) : IThread()
-	{	
+	SysThread(char* command, IPluginFunction* callback, int any) : IThread()
+	{
 		strcpy(cmdString, command);
 		function = callback;
 		data = any;
 	}
 
 };
-
-
 
 
 // FTP Thread
@@ -201,11 +177,12 @@ private:
 
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+	void OnTerminate(IThreadHandle *pThread, bool cancel)
+	{}
 
 	// Constructor
 	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int por, IPluginFunction* callback, MODES mod, int any) : IThread()
-	{	
+	{
 		strcpy(remoteFile, rmFile);
 		strcpy(localFile, lcFile);
 		strcpy(host, url);
@@ -221,9 +198,6 @@ public:
 };
 
 
-
-
-
 // Download Thread
 class DownloadThread : public IThread
 {
@@ -237,11 +211,12 @@ private:
 
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+	void OnTerminate(IThreadHandle *pThread, bool cancel)
+	{}
 
 	// Constructor
 	DownloadThread(char* host, char* file, IPluginFunction* callback, int any) : IThread()
-	{	
+	{
 		strcpy(url, host);
 		strcpy(localFile, file);
 
@@ -250,9 +225,6 @@ public:
 	}
 
 };
-
-
-
 
 
 // Copy Thread
@@ -268,11 +240,12 @@ private:
 
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+	void OnTerminate(IThreadHandle *pThread, bool cancel)
+	{}
 
 	// Constructor
 	CopyThread(char* lfile, char* path, IPluginFunction* callback, int any) : IThread()
-	{	
+	{
 		strcpy(file, lfile);
 		strcpy(copyPath, path);
 
@@ -281,9 +254,6 @@ public:
 	}
 
 };
-
-
-
 
 
 // GetPage Thread
@@ -300,11 +270,12 @@ private:
 
 public:
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+	void OnTerminate(IThreadHandle *pThread, bool cancel)
+	{}
 
 	// Constructor
 	PageThread(char* link, char* postmethod, char* agent, IPluginFunction* callback, int any) : IThread()
-	{	
+	{
 		strcpy(url, link);
 		strcpy(post, postmethod);
 		strcpy(useragent, agent);
@@ -314,12 +285,6 @@ public:
 	}
 
 };
-
-
-
-
-
-
 
 
 
@@ -338,7 +303,7 @@ public:
 	ThreadReturn *getThreadReturn() const;
 	Queue *getNext() const;
 
-	
+
 	// Remove last item
 	void remove();
 
@@ -346,15 +311,6 @@ public:
 	void append(Queue *newQueue);
 	static void add(ThreadReturn *newQueue);
 };
-
-
-
-
-
-
-
-
-
 
 
 
@@ -378,10 +334,10 @@ cell_t sys_DownloadFileUrl(IPluginContext *pContext, const cell_t *params);
 cell_t sys_DownloadFile(IPluginContext *pContext, const cell_t *params);
 cell_t sys_UploadFile(IPluginContext *pContext, const cell_t *params);
 cell_t sys_RunThreadCommand(IPluginContext *pContext, const cell_t *params);
+cell_t sys_RunThreadCommandWithData(IPluginContext *pContext, const cell_t *params);
 cell_t sys_RunCommand(IPluginContext *pContext, const cell_t *params);
 cell_t sys_GetGameDir(IPluginContext *pContext, const cell_t *params);
 cell_t sys_GetOS(IPluginContext *pContext, const cell_t *params);
-
 
 
 
