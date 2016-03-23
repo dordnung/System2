@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        extension.h
- * Authors     David <popoklopsi> Ordnung, Sourcemod
+ * Authors     Popoklopsi, Sourcemod
  * License     GPLv3
  * Web         http://popoklopsi.de
  * -----------------------------------------------------
  *
  *
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Sourcemod
+ * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-
-
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 
-
-
 #define MAX_RESULT_LENGTH 4096
 
-
-//// INCLUDSE
-// Sourcemod
+ // Sourcemod
 #include "smsdk_ext.h"
 
 // c++
@@ -50,7 +44,9 @@
 //// ENUMS
 
 
-// OS List
+/**
+ * OS List
+ */
 enum OS
 {
 	OS_Unknown,
@@ -60,7 +56,9 @@ enum OS
 };
 
 
-// Modes
+/*
+ * Modes
+ */
 enum MODES
 {
 	MODE_COMMAND,
@@ -181,7 +179,7 @@ public:
 	{}
 
 	// Constructor
-	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int por, IPluginFunction* callback, MODES mod, int any) : IThread()
+	FTPThread(char* rmFile, char* lcFile, char* url, char* user, char* pw, int port, IPluginFunction* callback, MODES mod, int any) : IThread()
 	{
 		strcpy(remoteFile, rmFile);
 		strcpy(localFile, lcFile);
@@ -189,7 +187,7 @@ public:
 		strcpy(username, user);
 		strcpy(password, pw);
 
-		port = por;
+		port = port;
 		mode = mod;
 		function = callback;
 		data = any;

@@ -1,13 +1,13 @@
 /**
  * -----------------------------------------------------
  * File        extension.cpp
- * Authors     David <popoklopsi> Ordnung, Sourcemod
+ * Authors     Popoklopsi, Sourcemod
  * License     GPLv3
  * Web         http://popoklopsi.de
  * -----------------------------------------------------
  *
  *
- * Copyright (C) 2013 David <popoklopsi> Ordnung, Sourcemod
+ * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-
-//// INCLUDES
-
-
 #include "extension.h"
-
-
-//// DEFINES
 
 
 // Some Pre Definies
@@ -43,10 +36,6 @@
 #define PosixOpen popen
 #define PosixClose pclose
 #endif
-
-
-//// GLOBAL VARS
-
 
 // Global variables
 IMutex* g_pPawnMutex;
