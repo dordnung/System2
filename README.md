@@ -31,8 +31,9 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
   4. `cd $BUILD_DIR`
 
 - **Get Sourcemod and Sourcepawn**
-  - `wget https://github.com/alliedmodders/sourcemod/archive/master.zip -O sourcemod.zip && unzip sourcemod.zip`
-  - `wget https://github.com/alliedmodders/sourcepawn/archive/master.zip -O sourcepawn.zip && unzip sourcepawn.zip`
+  1. `wget https://github.com/alliedmodders/sourcemod/archive/master.zip -O sourcemod.zip && unzip sourcemod.zip`
+  2. `wget https://github.com/alliedmodders/sourcepawn/archive/master.zip -O sourcepawn.zip && unzip sourcepawn.zip`
+  3. `cp -r sourcepawn-master/* sourcemod-master/sourcepawn/`
 
 - **Build system2**
   1. `wget https://github.com/popoklopsi/System2/archive/master.zip -O system2.zip && unzip system2.zip`
