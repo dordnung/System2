@@ -5,8 +5,12 @@
 #define _system2_included
 
 
-// Max Size of the Command Output.
+
+/**
+ * Max Size of the command output in CmdCallback.
+ */
 #define CMD_MAX_RETURN 4096
+
 
 
 /**
@@ -20,16 +24,18 @@ enum OS
 	OS_MAC                      // MAC
 }
 
+
 /**
- * A list of possible cmd return states
+ * A list of possible command return states
  */
 enum CMDReturn
 {
 	CMD_SUCCESS,                // Fully finished
 	CMD_EMPTY,                  // Result is empty (only System2_RunThreadCommand)
 	CMD_ERROR,                  // An error appeared
-	CMD_PROGRESS                // Not finished yet
+	CMD_PROGRESS                // Not finished yet -> Wait for other state
 }
+
 
 /**
  * A list of possible archives
@@ -42,6 +48,7 @@ enum CompressArchive
 	ARCHIVE_BZIP2,              // bzip2
 	ARCHIVE_TAR                 // tar
 }
+
 
 /**
  * A list of possible compress levels
@@ -56,14 +63,15 @@ enum CompressLevel
 }
 
 
+
 /**
  * Called when finished with a command.
- * Maybe called more than once, if output is greater than 4096.
+ * Maybe called more than once, if output is greater than 4096 bytes.
  * Use status variable to check if it's the last call or not.
  *
  * @param output                Output of the command / page.
  * @param size                  Size of output string.
- * @param status                CMDReturn status
+ * @param status                CMDReturn status.
  * @param data                  Data passed.
  */
 funcenum CmdCallback
@@ -72,14 +80,15 @@ funcenum CmdCallback
 	public(const String:output[], const size, CMDReturn:status)
 };
 
+
 /**
  * Called on every update when downloading / uploading a file.
  *
  * @param finished              Is downloading / uploading finished?
  * @param error                 Error when finished. If no error string is empty.
- * @param dltotal               Downloaded size total in bytes.
+ * @param dltotal               Total downloaded size in bytes.
  * @param dlnow                 Current downloaded size in bytes.
- * @param ultotal               Uploaded size total in bytes.
+ * @param ultotal               Total uploaded size in bytes.
  * @param ulnow                 Current uploaded size in bytes.
  * @param data                  Data passed.
  */
@@ -89,10 +98,11 @@ funcenum TransferUpdated
 	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow)
 };
 
+
 /**
  * Called when finished with System2_CopyFile.
  *
- * @param success               Was copying successfull? (Or couldn't open current or new file)
+ * @param success               Was copying successfull? (Or couldn't open current or new file).
  * @param from                  File which was copied.
  * @param to                    New file.
  * @param data                  Data passed.
@@ -104,12 +114,13 @@ funcenum CopyCallback
 };
 
 
+
 /**
- * Gets the contents of a page
+ * Gets the content of a page.
  *
  * @param callback              Callback function when finished.
  * @param url                   The URL of the page to load.
- * @param post                  POST parameters (use like this: "name=test&pw=test2")
+ * @param post                  POST parameters (use like this: "name=test&pw=test2").
  * @param useragent             Useragent to use. Leave empty for default one.
  * @param data                  Additional data to pass to the callback.
  *
@@ -117,8 +128,9 @@ funcenum CopyCallback
  */
 native System2_GetPage(CmdCallback:callback, const String:url[], const String:post[] = "", const String:useragent[] = "", any:data = INVALID_HANDLE);
 
+
 /**
- * Downloads a file from a URL.
+ * Downloads a file from an URL.
  *
  * @param updateFunction        Function to call on update.
  * @param url                   File URL to download from.
@@ -128,6 +140,7 @@ native System2_GetPage(CmdCallback:callback, const String:url[], const String:po
  * @noreturn
  */
 native System2_DownloadFile(TransferUpdated:updateFunction, const String:url[], const String:localFile[], any:data = INVALID_HANDLE);
+
 
 /**
  * Downloads a file from a FTP server.
@@ -145,6 +158,7 @@ native System2_DownloadFile(TransferUpdated:updateFunction, const String:url[], 
  */
 native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
 
+
 /**
  * Uploads a file to a FTP server.
  *
@@ -161,6 +175,7 @@ native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remo
  */
 native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
 
+
 /**
  * Copies a file to another location.
  *
@@ -173,19 +188,21 @@ native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localF
  */
 native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const String:pathToCopy[], any:data = INVALID_HANDLE);
 
+
 /**
  * Compresses a file to an archive.
  *
  * @param callback              Callback function when finished with compressing.
  * @param pathToFile            Path to the file / folder to compress.
- * @param pathToCompress        Path to archive file.
- * @param archive               Archive type.
- * @param level                 Archive compress level.
+ * @param pathToCompress        Path to save archive file to.
+ * @param archive               Archive type to use.
+ * @param level                 Archive compress level to use.
  * @param data                  Additional data to pass to the callback.
  *
  * @noreturn
  */
 native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], const String:pathToArchive[], CompressArchive:archive = ARCHIVE_ZIP, CompressLevel:level = LEVEL_9, any:data = INVALID_HANDLE);
+
 
 /**
  * Extracts a lot of archive types with 7zip
@@ -199,28 +216,31 @@ native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], con
  */
 native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[], const String:pathToExtract[], any:data = INVALID_HANDLE);
 
+
 /**
  * Executes a threaded system command.
  *
  * @param callback              Callback function when executed the command.
- * @param command               Command string format
+ * @param command               Command string format.
  * @param ...                   Command string arguments.
  *
  * @noreturn
  */
 native System2_RunThreadCommand(CmdCallback:callback, const String:command[], any:...);
 
+
 /**
  * Executes a threaded system command and allows to pass additional data.
  *
  * @param callback              Callback function when executed the command.
  * @param data                  Data to pass to the callback.
- * @param command               Command string format
+ * @param command               Command string format.
  * @param ...                   Command string arguments.
  *
  * @noreturn
  */
 native System2_RunThreadCommandWithData(CmdCallback:callback, any:data, const String:command[], any:...);
+
 
 /**
  * Executes a non threaded system command.
@@ -230,12 +250,13 @@ native System2_RunThreadCommandWithData(CmdCallback:callback, any:data, const St
  * @param command               Command string format.
  * @param ...                   Command string arguments.
  *
- * @return                      CMDReturn var.
+ * @return                      CMDReturn status.
  */
 native CMDReturn:System2_RunCommand(String:output[], size, const String:command[], any:...);
 
+
 /**
- * Gets the absolute gamedir (e.g. /home/.../.../cstrike)
+ * Gets the absolute gamedir of the current running game (e.g. /home/.../.../cstrike).
  *
  * @param gamedir               String to save gamedir in.
  * @param maxlength             Size of the string.
@@ -244,10 +265,11 @@ native CMDReturn:System2_RunCommand(String:output[], size, const String:command[
  */
 native System2_GetGameDir(String:gamedir[], maxlength);
 
+
 /**
- * Gets the servers operating system
+ * Gets the servers operating system.
  *
- * @return                      OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC
+ * @return                      OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC.
  */
 native OS:System2_GetOS();
 
