@@ -214,13 +214,13 @@ native System2_RunThreadCommand(CmdCallback:callback, const String:command[], an
  * Executes a threaded system command and allows to pass additional data.
  *
  * @param callback              Callback function when executed the command.
- * @param data                  Additional data to pass to the callback.
+ * @param data                  Data to pass to the callback.
  * @param command               Command string format
  * @param ...                   Command string arguments.
  *
  * @noreturn
  */
-native System2_RunThreadCommandWithData(CmdCallback:callback, any:data = INVALID_HANDLE, const String:command[], any:...);
+native System2_RunThreadCommandWithData(CmdCallback:callback, any:data, const String:command[], any:...);
 
 /**
  * Executes a non threaded system command.
