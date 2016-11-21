@@ -52,7 +52,7 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
 
 - **Get Sourcemod and Sourcepawn**
   1. Download sourcemod from `https://github.com/alliedmodders/sourcemod/archive/master.zip` and unzip
-  1. Download sourcepawn from `https://github.com/alliedmodders/sourcepawn/archive/master.zip`, unzip it and move it to the extracted sourcemod folder
+  1. Download sourcepawn from `https://github.com/alliedmodders/sourcepawn/archive/master.zip`, unzip it and move  the content of the folder to the extracted sourcemod/sourcepawn folder
   2. Add a new system variable named `SOURCEMOD` with the path to sourcemod
 
 - **Build system2**
