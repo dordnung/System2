@@ -50,7 +50,7 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
   5. Type `nmake /f Makefile.vc mode=static VC=14 MACHINE=x86` and press ENTER
   6. Add a new system variable named `CURL` pointing to the 'curl-7.51.0/builds/libcurl-vc14-x86-release-static-ipv6-sspi-winssl' folder
 
-- **Get Sourcemod and Sourcepawn **
+- **Get Sourcemod and Sourcepawn**
   1. Download sourcemod from `https://github.com/alliedmodders/sourcemod/archive/master.zip` and unzip
   1. Download sourcepawn from `https://github.com/alliedmodders/sourcepawn/archive/master.zip`, unzip it and move it to the extracted sourcemod folder
   2. Add a new system variable named `SOURCEMOD` with the path to sourcemod
