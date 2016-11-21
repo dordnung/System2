@@ -122,7 +122,7 @@ size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream) {
 int progress_updated(void *data, double dltotal, double dlnow, double ultotal, double ulnow) {
 	progress_info *progress = (progress_info *)data;
 
-	if ((dlnow > 0 || dltotal > 0 || ultotal > 0 || ulnow > 0) && (system2Extension.GetFrames() != progress->lastFrame)) {
+	if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != progress->lastFrame)) {
 		// Create a thread return struct
 		ThreadReturn *threadReturn = new ThreadReturn;
 

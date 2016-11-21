@@ -29,7 +29,7 @@
 
 
 typedef struct {
-	int lastFrame;
+	uint32_t lastFrame;
 	int data;
 	IPluginFunction *function;
 	Mode mode;

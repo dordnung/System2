@@ -19,7 +19,7 @@ PROJECT = system2
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp extension.cpp
+OBJECTS = sdk/smsdk_ext.cpp threads/command.cpp threads/copy.cpp threads/download.cpp threads/ftp.cpp threads/page.cpp natives.cpp extension.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
@@ -36,7 +36,7 @@ CPP_OSX = clang
 ### SDK CONFIGURATIONS ###
 ##########################
 
-INCLUDE += -I. -I.. -Isdk -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include
+INCLUDE += -I. -I.. -Isdk -Ithreads -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include
 LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a $(ZLIB)/libz.a
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
@@ -112,6 +112,7 @@ $(BIN_DIR)/%.o: %.cpp
 
 all: check
 	mkdir -p $(BIN_DIR)/sdk
+	mkdir -p $(BIN_DIR)/threads
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -127,5 +128,6 @@ default: all
 clean: check
 	rm -rf $(BIN_DIR)/*.o
 	rm -rf $(BIN_DIR)/sdk/*.o
+	rm -rf $(BIN_DIR)/threads/*.o
 	rm -rf $(BIN_DIR)/$(BINARY)
 
