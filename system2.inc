@@ -225,7 +225,7 @@ native void System2_CopyFile(CopyCallback callback, const char[] pathToFile, con
  *
  * @param callback              Callback function when finished with compressing. Check callback.status to check if process is finished.
  * @param pathToFile            Path to the file / folder to compress.
- * @param pathToCompress        Path to save archive file to.
+ * @param pathToCompress        Path to save archive file to (including filename).
  * @param archive               Archive type to use.
  * @param level                 Archive compress level to use.
  * @param data                  Additional data to pass to the callback.
