@@ -12,7 +12,7 @@ char testFileToCompressPath[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
-bool gotLongPage = false;
+bool gotLongPage;
 
 public void OnPluginStart() {
 	RegServerCmd("test_system2", OnTest);
@@ -97,9 +97,13 @@ void PerformTests() {
 	// Assert GetPage works, also test user agent, post data and the any parameter
 	PrintToServer("INFO: Getting a simple test page with set user agent");
 	System2_GetPage(GetPageCallbackUserAgent, "http://dordnung.de/system2/testPage.php", "", "testUseragent", 5);
+
 	PrintToServer("INFO: Getting a simple test page by POST");
 	System2_GetPage(GetPageCallbackPost, "http://dordnung.de/system2/testPage.php", "test=testData");
+
 	PrintToServer("INFO: Getting a long test page");
+	gotLongPage = false
+	strcopy(longPage, sizeof(longPage), "");
 	System2_GetPage(GetPageLongCallback, "http://dordnung.de/system2/testPage.php?test");
 
 	// Test download file is successful
