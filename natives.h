@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        natives.h
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +44,6 @@ cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
 {
-	// Backwards Compatiblity
-	{ "RunThreadCommand", NativeRunThreadCommand },
-	{ "RunCommand", NativeRunCommand },
-	{ "GetGameDir", NativeGetGameDir },
-	{ "GetOS", NativeGetOS },
-
 	{ "System2_GetPage", NativeGetPage },
 	{ "System2_CopyFile", NativeCopyFile },
 	{ "System2_CompressFile", NativeCompressFile },

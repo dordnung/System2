@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        command.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 	threadReturn->result = CMD_SUCCESS;
 	threadReturn->data = data;
 
+	strcpy(threadReturn->command, this->command);
 	strcpy(threadReturn->resultString, "");
 
 	// Prevent output to console
@@ -54,7 +55,11 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 
 	// Was there an error?
 	if (command) {
+		bool foundOne = false;
+
 		while (fgets(buffer, sizeof(buffer), command) != NULL) {
+			foundOne = true;
+
 			// More than MAX_RESULT_LENGTH?
 			if (strlen(threadReturn->resultString) + strlen(buffer) >= MAX_RESULT_LENGTH - 1) {
 				// We only can push a string with a length of MAX_RESULT_LENGTH
@@ -65,6 +70,7 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 				threadReturn2->result = CMD_PROGRESS;
 				threadReturn2->data = data;
 
+				strcpy(threadReturn2->command, this->command);
 				strcpy(threadReturn2->resultString, threadReturn->resultString);
 
 				// Add return status to queue
@@ -77,14 +83,15 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 		}
 
 		// Empty result?
-		if (strlen(threadReturn->resultString) == 0) {
+		if (strlen(threadReturn->resultString) == 0 && !foundOne) {
 			strcpy(threadReturn->resultString, "Empty reading result!");
 			threadReturn->result = CMD_EMPTY;
 		}
 
 		// Close
 		PosixClose(command);
-	} else {
+	}
+	else {
 		// Error
 		strcpy(threadReturn->resultString, "ERROR: Couldn't execute the command!");
 		threadReturn->result = CMD_ERROR;

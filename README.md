@@ -13,21 +13,22 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
   2. `cd $BUILD_DIR`
 
 - **Build openssl**
-  1. `wget https://www.openssl.org/source/openssl-1.1.0c.tar.gz && tar -xvzf openssl-1.1.0c.tar.gz`
-  2. `cd openssl-1.1.0c`
+  1. `wget https://www.openssl.org/source/openssl-1.1.0e.tar.gz && tar -xvzf openssl-1.1.0e.tar.gz`
+  2. `cd openssl-1.1.0e`
   3. `setarch i386 ./config -m32 no-shared && make`
   4. `cd $BUILD_DIR`
 
 - **Build zlib**
-  1. `wget http://zlib.net/zlib128.zip && unzip zlib128.zip`
-  2. `cd zlib-1.2.8`
+  1. `wget http://zlib.net/zlib1211.zip && unzip zlib1211.zip`
+  2. `cd zlib-1.2.11`
   3. `CFLAGS=-m32 ./configure -static && make`
   4. `cd $BUILD_DIR`
 
 - **Build libcurl**
-  1. `wget http://curl.haxx.se/download/curl-7.51.0.zip && unzip curl-7.51.0.zip`
-  2. `cd curl-7.51.0`
-  3. `env LIBS="-ldl" CPPFLAGS="-I$BUILD_DIR/zlib-1.2.8" LDFLAGS="-L$BUILD_DIR/openssl-1.1.0c -L$BUILD_DIR/zlib-1.2.8" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0c --with-zlib=$BUILD_DIR/zlib-1.2.8 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-sspi --disable-tls-srp --without-librtmp --without-libidn --without-libssh2 --without-nghttp2 --without-gssapi --host=i686-pc-linux-gnu CFLAGS=-m32 CC=/usr/bin/gcc && make`
+  1. `wget http://curl.haxx.se/download/curl-7.54.0.zip && unzip curl-7.54.0.zip`
+  2. `cd curl-7.54.0`
+  3. `env LIBS="-ldl" CPPFLAGS="-I$BUILD_DIR/zlib-1.2.11" LDFLAGS="-L$BUILD_DIR/openssl-1.1.0e -L$BUILD_DIR/zlib-1.2.11" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0e --with-zlib=$BUILD_DIR/zlib-1.2.11 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-sspi --disable-tls-srp --without-librtmp --without-libidn --without-libssh2 --without-nghttp2 --without-gssapi --host=i686-pc-linux-gnu CFLAGS=-m32 CC=/usr/bin/gcc && make`
+  4. **DO NOT INSTALL IT!**
   4. `cd $BUILD_DIR`
 
 - **Get Sourcemod and Sourcepawn**
@@ -38,17 +39,14 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
 - **Build system2**
   1. `wget https://github.com/popoklopsi/System2/archive/master.zip -O system2.zip && unzip system2.zip`
   2. `cd System2-master`
-  3. `make SMSDK=$BUILD_DIR/sourcemod-master OPENSSL=$BUILD_DIR/openssl-1.1.0c ZLIB=$BUILD_DIR/zlib-1.2.8 CURL=$BUILD_DIR/curl-7.51.0`
+  3. `make SMSDK=$BUILD_DIR/sourcemod-master OPENSSL=$BUILD_DIR/openssl-1.1.0e ZLIB=$BUILD_DIR/zlib-1.2.11 CURL=$BUILD_DIR/curl-7.54.0`
 
-### On Windows (Visual Studio 2015): ###
+### On Windows (Visual Studio 2015/2017): ###
 - **Build libcurl**
-  1. Download curl from `http://curl.haxx.se/download/curl-7.51.0.zip` and unzip
-  2. Add VS to the system PATH:
-    - For example: `C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin` 
-  3. Open command line at `curl-7.51.0/winbuild`
-  4. Type `vcvars32.bat` and press ENTER
-  5. Type `nmake /f Makefile.vc mode=static VC=14 MACHINE=x86` and press ENTER
-  6. Add a new system variable named `CURL` pointing to the 'curl-7.51.0/builds/libcurl-vc14-x86-release-static-ipv6-sspi-winssl' folder
+  1. Download curl from `http://curl.haxx.se/download/curl-7.54.0.zip` and unzip
+  2. Open the Visual Studio Command Propt (x86!) at `curl-7.54.0/winbuild`
+  3. Type `nmake /f Makefile.vc mode=static VC=14 MACHINE=x86` and press ENTER
+  4. Add a new system variable named `CURL` pointing to the 'curl-7.54.0/builds/libcurl-vc14-x86-release-static-ipv6-sspi-winssl' folder
 
 - **Get Sourcemod and Sourcepawn**
   1. Download sourcemod from `https://github.com/alliedmodders/sourcemod/archive/master.zip` and unzip

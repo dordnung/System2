@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        ftp.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 
 	threadReturn->function = function;
 	threadReturn->mode = mode;
-	threadReturn->finished = CMD_EMPTY;
+	threadReturn->finished = 1;
 	threadReturn->data = data;
 
 	strcpy(threadReturn->curlError, "");
@@ -120,7 +120,8 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 				curl_easy_setopt(curl, CURLOPT_READDATA, localReadFile);
 				curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
 
-			} else {
+			}
+			else {
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
 				curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftp_info);
 			}

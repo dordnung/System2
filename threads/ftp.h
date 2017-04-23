@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        ftp.h
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

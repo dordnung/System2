@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        natives.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@
 #include "download.h"
 #include "ftp.h"
 #include "page.h"
+
+#if defined __unix__ || defined __linux__ || defined __unix
+	#include <sys/utsname.h>
+#endif
 
 
 cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
@@ -120,7 +124,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
-	char command[2048];
+	char command[MAX_COMMAND_LENGTH];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 2);
 
@@ -133,7 +137,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *params) {
-	char command[2048];
+	char command[MAX_COMMAND_LENGTH];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
@@ -152,7 +156,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 	char zdir[PLATFORM_MAX_PATH + 1];
 	char ldir[PLATFORM_MAX_PATH + 1];
 	char rdir[PLATFORM_MAX_PATH + 1];
-	char command[(PLATFORM_MAX_PATH * 3) + 10];
+	char command[MAX_COMMAND_LENGTH];
 
 	FILE *testExist;
 
@@ -160,10 +164,18 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 	pContext->LocalToString(params[3], &folder);
 
 	// Build the path to the files and folders
-#if defined _WIN32
-	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
+#if defined _WIN32 || defined _WIN64
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/win/7z.exe");
 #else
-	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
+	struct utsname unameData;
+	uname(&unameData);
+
+	if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
+		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
+	}
+	else {
+		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
+	}
 #endif
 	g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
@@ -182,7 +194,8 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
 		threader->MakeThread(commandThread);
-	} else {
+	}
+	else {
 		g_pSM->LogError(myself, "Attention: Coulnd't find %s to extract %s", zdir, ldir);
 	}
 
@@ -200,7 +213,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 	char zdir[PLATFORM_MAX_PATH + 1];
 	char ldir[PLATFORM_MAX_PATH + 1];
 	char rdir[PLATFORM_MAX_PATH + 1];
-	char command[(PLATFORM_MAX_PATH * 3) + 30];
+	char command[MAX_COMMAND_LENGTH];
 
 	FILE* testExist;
 
@@ -208,70 +221,78 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 	pContext->LocalToString(params[3], &folder);
 
 	// Build the path to the files and folders
-#if defined _WIN32
-	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z.exe");
+#if defined _WIN32 || defined _WIN64
+	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/win/7z.exe");
 #else
-	g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/7z");
+	struct utsname unameData;
+	uname(&unameData);
+
+	if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
+		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
+	}
+	else {
+		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
+	}
 #endif
 	g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
 
 	// Get the compress level
 	switch (params[5]) {
-		case 0:
-		{
-			strcpy(level, "-mx1");
-			break;
-		}
-		case 1:
-		{
-			strcpy(level, "-mx3");
-			break;
-		}
-		case 2:
-		{
-			strcpy(level, "-mx5");
-			break;
-		}
-		case 3:
-		{
-			strcpy(level, "-mx7");
-			break;
-		}
-		case 4:
-		{
-			strcpy(level, "-mx9");
-			break;
-		}
+	case 0:
+	{
+		strcpy(level, "-mx1");
+		break;
+	}
+	case 1:
+	{
+		strcpy(level, "-mx3");
+		break;
+	}
+	case 2:
+	{
+		strcpy(level, "-mx5");
+		break;
+	}
+	case 3:
+	{
+		strcpy(level, "-mx7");
+		break;
+	}
+	case 4:
+	{
+		strcpy(level, "-mx9");
+		break;
+	}
 	}
 
 	// Get the archive to use
 	switch (params[4]) {
-		case 0:
-		{
-			strcpy(archive, "-tzip");
-			break;
-		}
-		case 1:
-		{
-			strcpy(archive, "-t7z");
-			break;
-		}
-		case 2:
-		{
-			strcpy(archive, "-tgzip");
-			break;
-		}
-		case 3:
-		{
-			strcpy(archive, "-tbzip2");
-			break;
-		}
-		case 4:
-		{
-			strcpy(archive, "-ttar");
-			break;
-		}
+	case 0:
+	{
+		strcpy(archive, "-tzip");
+		break;
+	}
+	case 1:
+	{
+		strcpy(archive, "-t7z");
+		break;
+	}
+	case 2:
+	{
+		strcpy(archive, "-tgzip");
+		break;
+	}
+	case 3:
+	{
+		strcpy(archive, "-tbzip2");
+		break;
+	}
+	case 4:
+	{
+		strcpy(archive, "-ttar");
+		break;
+	}
 	}
 
 	// 7z exists?
@@ -279,7 +300,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 		fclose(testExist);
 
 		// Create the compress command
-#if defined _WIN32
+#if defined _WIN32 || defined _WIN64
 		sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
 #else
 		sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
@@ -288,7 +309,8 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
 		threader->MakeThread(commandThread);
-	} else {
+	}
+	else {
 		g_pSM->LogError(myself, "Attention: Coulnd't find %s to compress %s", zdir, ldir);
 	}
 
@@ -297,7 +319,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
-	char cmdString[2048];
+	char cmdString[MAX_COMMAND_LENGTH];
 	char buffer[MAX_RESULT_LENGTH];
 	char resultString[MAX_RESULT_LENGTH];
 
@@ -311,22 +333,21 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 
 	// Execute the command
 	FILE *command = PosixOpen(cmdString, "r");
-	cell_t result = 0;
+	cell_t result = CMD_SUCCESS;
 
 	// Was there an error?
 	if (!command) {
 		// Return the error
 		pContext->StringToLocal(params[1], params[2], "ERROR: Couldn't execute the command!");
-
-		return 2;
+		return CMD_ERROR;
 	}
 
 	// Read the result
+	strcpy(buffer, "");
+	strcpy(resultString, "");
 	while (fgets(buffer, sizeof(buffer), command) != NULL) {
-		size_t realsize = strlen(buffer);
-
 		// More than MAX_RESULT_LENGTH?
-		if (strlen(resultString) + realsize >= size_t(params[2] - 1)) {
+		if (strlen(resultString) + strlen(buffer) >= size_t(params[2] - 1)) {
 			// Only make the result full!
 			strncat(resultString, buffer, (params[2] - strlen(resultString)) - 1);
 			pContext->StringToLocal(params[1], params[2], resultString);
@@ -340,8 +361,9 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 
 	if (strlen(resultString) == 0) {
 		pContext->StringToLocal(params[1], params[2], "Empty reading result!");
-		result = 1;
-	} else {
+		result = CMD_EMPTY;
+	}
+	else {
 		pContext->StringToLocal(params[1], params[2], resultString);
 	}
 
@@ -362,11 +384,11 @@ cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
 // Get the os
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 	// So what we have now :)
-#if defined __WIN32__ || _MSC_VER || __CYGWIN32__ || _Windows || __MSDOS__ || _WIN64 || _WIN32
+#if defined __WIN32__ || defined _MSC_VER || defined __CYGWIN32__ || defined _Windows || defined __MSDOS__ || defined _WIN64 || defined _WIN32
 	return OS_WIN;
-#elif defined __unix__ || __linux__ || __unix
+#elif defined __unix__ || defined __linux__ || defined __unix
 	return OS_UNIX;
-#elif defined __APPLE__ || __darwin__
+#elif defined __APPLE__ || defined __darwin__
 	return OS_MAC;
 #else
 	return OS_UNKNOWN;

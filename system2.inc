@@ -1,3 +1,27 @@
+/**
+ * -----------------------------------------------------
+ * File        system2.inc
+ * Authors     David Ordnung
+ * License     GPLv3
+ * Web         http://dordnung.de
+ * -----------------------------------------------------
+ * 
+ * Copyright (C) 2017 David Ordnung
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
+
 #if defined _system2_included
 	#endinput
 #endif
@@ -5,6 +29,11 @@
 #define _system2_included
 
 
+
+/**
+ * Max Size of a command.
+ */
+#define CMD_MAX_LENGTH 2048
 
 /**
  * Max Size of the command output in CmdCallback.
@@ -18,7 +47,7 @@
  */
 enum OS
 {
-	OS_UNKNOWN,                 // Shouldn't happen
+	OS_UNKNOWN,                 // OS couldn't be determined
 	OS_WINDOWS,                 // Windows
 	OS_UNIX,                    // Linux / Unix
 	OS_MAC                      // MAC
@@ -73,11 +102,13 @@ enum CompressLevel
  * @param size                  Size of output string.
  * @param status                CMDReturn status.
  * @param data                  Data passed.
+ * @param command               The command that was executed. Will be empty with PageGet.
  */
-funcenum CmdCallback
+typeset CmdCallback
 {
-	public(const String:output[], const size, CMDReturn:status, any:data),
-	public(const String:output[], const size, CMDReturn:status)
+	function void (const char[] output, const int size, CMDReturn status, any data, const char[] command);
+	function void (const char[] output, const int size, CMDReturn status, any data);
+	function void (const char[] output, const int size, CMDReturn status);
 };
 
 
@@ -92,10 +123,10 @@ funcenum CmdCallback
  * @param ulnow                 Current uploaded size in bytes.
  * @param data                  Data passed.
  */
-funcenum TransferUpdated
+typeset TransferUpdated
 {
-	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow, any:data),
-	public(bool:finished, const String:error[], Float:dltotal, Float:dlnow, Float:ultotal, Float:ulnow)
+	function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data);
+	function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow);
 };
 
 
@@ -107,10 +138,10 @@ funcenum TransferUpdated
  * @param to                    New file.
  * @param data                  Data passed.
  */
-funcenum CopyCallback 
+typeset CopyCallback 
 {
-	public(bool:success, String:from[], String:to[], any:data),
-	public(bool:success, String:from[], String:to[])
+	function void (bool success, const char[] from, const char[] to, any data);
+	function void (bool success, const char[] from, const char[] to);
 };
 
 
@@ -118,34 +149,34 @@ funcenum CopyCallback
 /**
  * Gets the content of a page.
  *
- * @param callback              Callback function when finished.
+ * @param callback              Callback function when finished. Check callback.status to check if process is finished.
  * @param url                   The URL of the page to load.
  * @param post                  POST parameters (use like this: "name=test&pw=test2").
- * @param useragent             Useragent to use. Leave empty for default one.
+ * @param userAgent             Useragent to use. Leave empty for default one.
  * @param data                  Additional data to pass to the callback.
  *
  * @noreturn
  */
-native System2_GetPage(CmdCallback:callback, const String:url[], const String:post[] = "", const String:useragent[] = "", any:data = INVALID_HANDLE);
+native void System2_GetPage(CmdCallback callback, const char[] url, const char[] post = "", const char[] userAgent = "", any data = INVALID_HANDLE);
 
 
 /**
  * Downloads a file from an URL.
  *
- * @param updateFunction        Function to call on update.
+ * @param updateFunction        Function to call on update. Check updateFunction.finished to check if downloading is finished.
  * @param url                   File URL to download from.
  * @param localFile             Local file to save to.
  * @param data                  Additional data to pass to the callback.
  *
  * @noreturn
  */
-native System2_DownloadFile(TransferUpdated:updateFunction, const String:url[], const String:localFile[], any:data = INVALID_HANDLE);
+native void System2_DownloadFile(TransferUpdated updateFunction, const char[] url, const char[] localFile, any data = INVALID_HANDLE);
 
 
 /**
  * Downloads a file from a FTP server.
  *
- * @param updateFunction        Function to call on update.
+ * @param updateFunction        Function to call on update. Check updateFunction.finished to check if downloading is finished.
  * @param remoteFile            Path to the file on the FTP server.
  * @param localFile             Local file to save to.
  * @param host                  The FTP host.
@@ -156,13 +187,13 @@ native System2_DownloadFile(TransferUpdated:updateFunction, const String:url[], 
  *
  * @noreturn
  */
-native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remoteFile[], const String:localFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
+native void System2_DownloadFTPFile(TransferUpdated updateFunction, const char[] remoteFile, const char[] localFile, const char[] host, const char[] user = "", const char[] pass = "", int port = 21, any data = INVALID_HANDLE);
 
 
 /**
  * Uploads a file to a FTP server.
  *
- * @param updateFunction        Function to call on update.
+ * @param updateFunction        Function to call on update. Check updateFunction.finished to check if uploading is finished.
  * @param localFile             Local file to upload.
  * @param remoteFile            Path to the file on the FTP server.
  * @param host                  The FTP host.
@@ -173,26 +204,26 @@ native System2_DownloadFTPFile(TransferUpdated:updateFunction, const String:remo
  *
  * @noreturn
  */
-native System2_UploadFTPFile(TransferUpdated:updateFunction, const String:localFile[], const String:remoteFile[], const String:host[], const String:user[] = "", const String:pass[] = "", port = 21, any:data = INVALID_HANDLE);
+native void System2_UploadFTPFile(TransferUpdated updateFunction, const char[] localFile, const char[] remoteFile, const char[] host, const char[] user = "", const char[] pass = "", int port = 21, any data = INVALID_HANDLE);
 
 
 /**
  * Copies a file to another location.
  *
- * @param callback              Callback function when finished with copy.
- * @param pathToFile            Path to the file
+ * @param callback              Callback function when finished with copy. Check callback.success to check if copying was successful.
+ * @param pathToFile            Path to the file.
  * @param pathToCopy            Path to copy to (including filename).
  * @param data                  Additional data to pass to the callback.
  *
  * @noreturn
  */
-native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const String:pathToCopy[], any:data = INVALID_HANDLE);
+native void System2_CopyFile(CopyCallback callback, const char[] pathToFile, const char[] pathToCopy, any data = INVALID_HANDLE);
 
 
 /**
  * Compresses a file to an archive.
  *
- * @param callback              Callback function when finished with compressing.
+ * @param callback              Callback function when finished with compressing. Check callback.status to check if process is finished.
  * @param pathToFile            Path to the file / folder to compress.
  * @param pathToCompress        Path to save archive file to.
  * @param archive               Archive type to use.
@@ -201,45 +232,45 @@ native System2_CopyFile(CopyCallback:callback, const String:pathToFile[], const 
  *
  * @noreturn
  */
-native System2_CompressFile(CmdCallback:callback, const String:pathToFile[], const String:pathToArchive[], CompressArchive:archive = ARCHIVE_ZIP, CompressLevel:level = LEVEL_9, any:data = INVALID_HANDLE);
+native void System2_CompressFile(CmdCallback callback, const char[] pathToFile, const char[] pathToArchive, CompressArchive archive = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = INVALID_HANDLE);
 
 
 /**
- * Extracts a lot of archive types with 7zip
+ * Extracts a lot of archive types with 7zip.
  *
- * @param callback              Callback function when finished with extracting.
+ * @param callback              Callback function when finished with extracting. Check callback.status to check if process is finished.
  * @param pathToArchive         Path to the archive file.
  * @param pathToExtract         Path to extract to.
  * @param data                  Additional data to pass to the callback.
  *
  * @noreturn
  */
-native System2_ExtractArchive(CmdCallback:callback, const String:pathToArchive[], const String:pathToExtract[], any:data = INVALID_HANDLE);
+native void System2_ExtractArchive(CmdCallback callback, const char[] pathToArchive, const char[] pathToExtract, any data = INVALID_HANDLE);
 
 
 /**
  * Executes a threaded system command.
  *
- * @param callback              Callback function when executed the command.
+ * @param callback              Callback function when command was executed. Check callback.status to check if process is finished.
  * @param command               Command string format.
  * @param ...                   Command string arguments.
  *
  * @noreturn
  */
-native System2_RunThreadCommand(CmdCallback:callback, const String:command[], any:...);
+native void System2_RunThreadCommand(CmdCallback callback, const char[] command, any ...);
 
 
 /**
  * Executes a threaded system command and allows to pass additional data.
  *
- * @param callback              Callback function when executed the command.
+ * @param callback              Callback function when command was executed. Check callback.status to check if process is finished.
  * @param data                  Data to pass to the callback.
  * @param command               Command string format.
  * @param ...                   Command string arguments.
  *
  * @noreturn
  */
-native System2_RunThreadCommandWithData(CmdCallback:callback, any:data, const String:command[], any:...);
+native void System2_RunThreadCommandWithData(CmdCallback callback, any data, const char[] command, any ...);
 
 
 /**
@@ -252,18 +283,19 @@ native System2_RunThreadCommandWithData(CmdCallback:callback, any:data, const St
  *
  * @return                      CMDReturn status.
  */
-native CMDReturn:System2_RunCommand(String:output[], size, const String:command[], any:...);
+native CMDReturn System2_RunCommand(char[] output, int size, const char[] command, any ...);
 
 
 /**
  * Gets the absolute gamedir of the current running game (e.g. /home/.../.../cstrike).
+ * You may need this when running system commands.
  *
  * @param gamedir               String to save gamedir in.
  * @param maxlength             Size of the string.
  *
  * @noreturn
  */
-native System2_GetGameDir(String:gamedir[], maxlength);
+native void System2_GetGameDir(char[] gamedir, int maxlength);
 
 
 /**
@@ -271,14 +303,7 @@ native System2_GetGameDir(String:gamedir[], maxlength);
  *
  * @return                      OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC.
  */
-native OS:System2_GetOS();
-
-
-// Backwards Compatiblity
-native RunThreadCommand(CmdCallback:callback, const String:command[], any:...);
-native CMDReturn:RunCommand(String:output[], size, const String:command[], any:...);
-native GetGameDir(String:gamedir[], maxlength);
-native OS:GetOS();
+native OS System2_GetOS();
 
 
 
@@ -291,9 +316,9 @@ native OS:GetOS();
  * @param safe                  Adding additional safe strings.
  * @param format                Is the string formatted.
  */
-stock URLEncode(String:stringToEncode[], maxlength, String:safe[] = "/", bool:format = false)
+stock void URLEncode(char[] stringToEncode, int maxlength, char[] safe = "/", bool format = false)
 {
-	decl String:sAlwaysSafe[256];
+	char sAlwaysSafe[256];
 	Format(sAlwaysSafe, sizeof(sAlwaysSafe), "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-%s", safe);
 	
 	// Need 2 '%' since sp's Format parses one as a parameter to replace
@@ -308,10 +333,10 @@ stock URLEncode(String:stringToEncode[], maxlength, String:safe[] = "/", bool:fo
 	}
 	
 	
-	new String:sChar[8];
-	new String:sReplaceChar[8];
+	char sChar[8];
+	char sReplaceChar[8];
 	
-	for (new i = 1; i < 256; i++)
+	for (new int i = 1; i < 256; i++)
 	{
 		// Skip the '%' double replace ftw..
 		if (i == 37)
@@ -340,7 +365,7 @@ stock URLEncode(String:stringToEncode[], maxlength, String:safe[] = "/", bool:fo
 
 
 
-public Extension:__ext_system2 =
+public Extension __ext_system2 =
 {
 	name = "System2",
 	file = "system2.ext",
@@ -360,7 +385,7 @@ public Extension:__ext_system2 =
 
 
 #if !defined REQUIRE_EXTENSIONS
-	public __ext_system2_SetNTVOptional()
+	public void __ext_system2_SetNTVOptional()
 	{
 		MarkNativeAsOptional("System2_GetPage");
 		MarkNativeAsOptional("System2_CompressFile");
@@ -372,11 +397,5 @@ public Extension:__ext_system2 =
 		MarkNativeAsOptional("System2_RunCommand");
 		MarkNativeAsOptional("System2_GetGameDir");
 		MarkNativeAsOptional("System2_GetOS");
-
-		// Backwarts Compatiblity
-		MarkNativeAsOptional("RunThreadCommand");
-		MarkNativeAsOptional("RunCommand");
-		MarkNativeAsOptional("GetGameDir");
-		MarkNativeAsOptional("GetOS");
 	}
 #endif

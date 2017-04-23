@@ -41,7 +41,7 @@
 #define SMEXT_CONF_NAME			"System2"
 #define SMEXT_CONF_DESCRIPTION	"System and Internet commands for Sourcemod"
 #define SMEXT_CONF_VERSION		"2.4"
-#define SMEXT_CONF_AUTHOR		"Popoklopsi"
+#define SMEXT_CONF_AUTHOR		"David Ordnung"
 #define SMEXT_CONF_URL			"http://forums.alliedmods.net/showthread.php?t=146019"
 #define SMEXT_CONF_LOGTAG		"System2"
 #define SMEXT_CONF_LICENSE		"GPL"

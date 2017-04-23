@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        extension.h
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,11 @@
 #include <curl/curl.h>
 
 #define MAX_RESULT_LENGTH 4096
+#define MAX_COMMAND_LENGTH 2048
 
 
 enum OS {
-	OS_UNKOWN,
+	OS_UNKNOWN,
 	OS_WIN,
 	OS_UNIX,
 	OS_MAC
@@ -61,8 +62,13 @@ enum ReturnState {
 
 
 typedef struct {
+	char command[MAX_COMMAND_LENGTH];
+
 	char resultString[MAX_RESULT_LENGTH];
 	char curlError[CURL_ERROR_SIZE + 1];
+
+	char copyFrom[PLATFORM_MAX_PATH + 1];
+	char copyTo[PLATFORM_MAX_PATH + 1];
 
 	int finished;
 	int data;

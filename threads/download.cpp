@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        download.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle) {
 
 	threadReturn->function = function;
 	threadReturn->mode = MODE_DOWNLOAD;
-	threadReturn->finished = CMD_EMPTY;
+	threadReturn->finished = 1;
 	threadReturn->data = data;
 
 	strcpy(threadReturn->curlError, "");
@@ -77,7 +77,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle) {
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, threadReturn->curlError);
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 20);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &download_info);
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);

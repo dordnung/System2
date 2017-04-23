@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        page.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ void PageThread::RunThread(IThreadHandle *pHandle) {
 	threadReturn->result = CMD_SUCCESS;
 	threadReturn->data = data;
 
+	strcpy(threadReturn->command, "");
 	strcpy(threadReturn->curlError, "");
 	strcpy(threadReturn->resultString, "");
 
@@ -99,6 +100,7 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream) {
 		threadReturn2->mode = MODE_GET;
 		threadReturn2->result = CMD_PROGRESS;
 
+		strcpy(threadReturn2->command, "");
 		strcpy(threadReturn2->resultString, threadReturn->resultString);
 
 		// Add return status to queue
@@ -108,8 +110,7 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream) {
 		strcpy(threadReturn->resultString, "");
 	}
 
-	// Add buffer
-	strcat(threadReturn->resultString, (char *)buffer);
-
+	// Add to buffer
+	strncat(threadReturn->resultString, (char *)buffer, realsize);
 	return realsize;
 }

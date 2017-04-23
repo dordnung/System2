@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        copy.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,23 +45,25 @@ void CopyThread::RunThread(IThreadHandle *pHandle) {
 	threadReturn->finished = 1;
 	threadReturn->data = data;
 
-	strcpy(threadReturn->curlError, "");
+	strcpy(threadReturn->copyFrom, this->file);
+	strcpy(threadReturn->copyTo, this->copyPath);
 
 	// Get the full paths to the files
 	g_pSM->BuildPath(Path_Game, fullFilePath, sizeof(fullFilePath), file);
 	g_pSM->BuildPath(Path_Game, fullCopyPath, sizeof(fullCopyPath), copyPath);
 
 	// Open both files
-	std::ifstream file1(fullFilePath, std::fstream::binary);
-	std::ofstream file2(fullCopyPath, std::fstream::trunc | std::fstream::binary);
+	std::ifstream file1(fullFilePath, std::ifstream::binary);
+	std::ofstream file2(fullCopyPath, std::ofstream::trunc | std::ofstream::binary);
 
 	if (file1.bad() || file2.bad()) {
 		// Couldn't open a file
-		threadReturn->result = CMD_SUCCESS;
-	} else {
+		threadReturn->result = CMD_ERROR;
+	}
+	else {
 		// Copy the file
 		file2 << file1.rdbuf();
-		threadReturn->result = CMD_ERROR;
+		threadReturn->result = CMD_SUCCESS;
 	}
 
 	// Close the files

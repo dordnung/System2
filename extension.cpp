@@ -1,12 +1,12 @@
 /**
  * -----------------------------------------------------
  * File        extension.cpp
- * Authors     Popoklopsi, Sourcemod
+ * Authors     David Ordnung
  * License     GPLv3
- * Web         http://popoklopsi.de
+ * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2016 Popoklopsi, Sourcemod
+ * Copyright (C) 2013-2017 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,10 @@ void System2Extension::GameFrameHit() {
 			function->PushString(threadReturn->resultString);
 			function->PushCell(strlen(threadReturn->resultString) + 1);
 			function->PushCell(threadReturn->result);
-		} else if (threadReturn->mode != MODE_COPY) {
+			function->PushCell(threadReturn->data);
+			function->PushString(threadReturn->command);
+		}
+		else if (threadReturn->mode != MODE_COPY) {
 			// ... for a progress callback
 			function->PushCell(threadReturn->finished);
 			function->PushString(threadReturn->curlError);
@@ -95,13 +98,17 @@ void System2Extension::GameFrameHit() {
 			function->PushFloat((float)threadReturn->dlnow);
 			function->PushFloat((float)threadReturn->ultotal);
 			function->PushFloat((float)threadReturn->ulnow);
-		} else {
+			function->PushCell(threadReturn->data);
+		}
+		else {
 			// ... for a result for a copy
-			function->PushCell(threadReturn->result);
+			function->PushCell((threadReturn->result == CMD_ERROR) ? 0 : 1);
+			function->PushString(threadReturn->copyFrom);
+			function->PushString(threadReturn->copyTo);
+			function->PushCell(threadReturn->data);
 		}
 
 		// Finally execute the forward
-		function->PushCell(threadReturn->data);
 		function->Execute(NULL);
 
 		// Delete it and remove it from the queue
