@@ -11,6 +11,8 @@ char testFileCopyToPath[PLATFORM_MAX_PATH + 1];
 char testFileToCompressPath[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
+char longPage[4300];
+bool gotLongPage = false;
 
 public void OnPluginStart() {
 	RegServerCmd("test_system2", OnTest);
@@ -97,6 +99,8 @@ void PerformTests() {
 	System2_GetPage(GetPageCallbackUserAgent, "http://dordnung.de/system2/testPage.php", "", "testUseragent", 5);
 	PrintToServer("INFO: Getting a simple test page by POST");
 	System2_GetPage(GetPageCallbackPost, "http://dordnung.de/system2/testPage.php", "test=testData");
+	PrintToServer("INFO: Getting a long test page");
+	System2_GetPage(GetPageLongCallback, "http://dordnung.de/system2/testPage.php?test");
 
 	// Test download file is successful
 	PrintToServer("INFO: Downloading a file");
@@ -153,6 +157,26 @@ void GetPageCallbackPost(const char[] output, const int size, CMDReturn status) 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(strlen(output) + 1, size);
 	assertStringEquals("testData", output);
+}
+
+void GetPageLongCallback(const char[] output, const int size, CMDReturn status) {
+	PrintToServer("INFO: Got a long page");
+
+	StrCat(longPage, sizeof(longPage), output);
+
+	if (!gotLongPage) {
+		gotLongPage = true;
+		assertValueEquals(view_as<int>(CMDReturn:CMD_PROGRESS), view_as<int>(status));
+		assertValueEquals(strlen(output) + 1, size);
+	} else {
+		assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
+		assertValueEquals(strlen(output) + 1, size);
+		assertValueEquals(4238, strlen(longPage));
+
+		for (int i = 0; i < 4238 / 26; i++) {
+			asserCharEquals((i % 26) + 97, longPage[i]);
+		}
+	}
 }
 
 void DownloadFileCallback(bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data) {
@@ -266,6 +290,12 @@ stock void assertTrue(const char[] message, bool value) {
 stock void assertFalse(const char[] message, bool value) {
 	if (value) {
 		ThrowError("FAILURE: %s. Expected false, but was true", message);
+	}
+}
+
+stock void asserCharEquals(const char expected, const char actual) {
+	if (expected != actual) {
+		ThrowError("FAILURE: expected '%s', found '%s'", expected, actual);
 	}
 }
 
