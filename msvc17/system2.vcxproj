@@ -10,7 +10,7 @@
     <ProjectGuid>{B3E797CF-4E77-4C9D-B8A8-7589B6902206}</ProjectGuid>
     <RootNamespace>sdk</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -70,6 +70,7 @@
     <ClCompile Include="..\threads\copy.cpp" />
     <ClCompile Include="..\threads\download.cpp" />
     <ClCompile Include="..\threads\ftp.cpp" />
+    <ClCompile Include="..\threads\md5.cpp" />
     <ClCompile Include="..\threads\page.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +82,7 @@
     <ClInclude Include="..\threads\copy.h" />
     <ClInclude Include="..\threads\download.h" />
     <ClInclude Include="..\threads\ftp.h" />
+    <ClInclude Include="..\threads\md5.h" />
     <ClInclude Include="..\threads\page.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

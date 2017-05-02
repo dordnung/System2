@@ -42,6 +42,9 @@
     <ClCompile Include="..\threads\page.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\threads\md5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\threads\download.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\md5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

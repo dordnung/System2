@@ -363,7 +363,17 @@ stock void URLEncode(char[] stringToEncode, int maxlength, char[] safe = "/", bo
 	}
 }
 
-
+/**
+ *	gets md5 hash file.
+ * @param sFile					The path to the file.
+ * @param sBuffer				The string will be recorded hash.
+ * @param len					Length of the line.
+ *	-
+ * @return	Return true if successful.
+ *	-
+ * @error sFile does not exist.
+*/
+native bool System2_GetFileMD5(const char[] sFile, char[] sBuffer, int len)
 
 public Extension __ext_system2 =
 {
@@ -397,5 +407,6 @@ public Extension __ext_system2 =
 		MarkNativeAsOptional("System2_RunCommand");
 		MarkNativeAsOptional("System2_GetGameDir");
 		MarkNativeAsOptional("System2_GetOS");
+		MarkNativeAsOptional("System2_GetFileMD5");
 	}
 #endif
