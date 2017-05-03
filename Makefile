@@ -19,7 +19,7 @@ PROJECT = system2
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp threads/command.cpp threads/copy.cpp threads/download.cpp threads/ftp.cpp threads/page.cpp natives.cpp extension.cpp
+OBJECTS = sdk/smsdk_ext.cpp threads/command.cpp threads/copy.cpp threads/download.cpp threads/ftp.cpp threads/page.cpp natives.cpp extension.cpp hash/md5.cpp hash/crc32.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###

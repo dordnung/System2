@@ -9,7 +9,7 @@ char testDownloadFtpFile[PLATFORM_MAX_PATH + 1];
 char testFileCopyFromPath[PLATFORM_MAX_PATH + 1];
 char testFileCopyToPath[PLATFORM_MAX_PATH + 1];
 char testFileToCompressPath[PLATFORM_MAX_PATH + 1];
-char testFileMD5[PLATFORM_MAX_PATH + 1];
+char testFileHashes[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
@@ -25,7 +25,7 @@ public void OnPluginStart() {
 	Format(testFileCopyFromPath, sizeof(testFileCopyFromPath), "%s/testCopyFromFile.txt", path);
 	Format(testFileCopyToPath, sizeof(testFileCopyToPath), "%s/testCopyToFile.txt", path);
 	Format(testFileToCompressPath, sizeof(testFileToCompressPath), "%s/testCompressFile.txt", path);
-	Format(testFileMD5, sizeof(testFileMD5), "%s/testMD5.txt", path);
+	Format(testFileHashes, sizeof(testFileHashes), "%s/testMD5.txt", path);
 	Format(testArchivePath, sizeof(testArchivePath), "%s/testCompressFile.zip", path);
 }
 
@@ -75,8 +75,8 @@ void PerformTests() {
 			DeleteFile(testFileToCompressPath);
 		}
 
-		if (FileExists(testFileMD5)) {
-			DeleteFile(testFileMD5);
+		if (FileExists(testFileHashes)) {
+			DeleteFile(testFileHashes);
 		}
 
 		if (FileExists(testArchivePath)) {
@@ -92,8 +92,8 @@ void PerformTests() {
 	file.WriteString("This is a file to compress. Content should be equal.", false);
 	file.Close();
 
-	file = OpenFile(testFileMD5, "w");
-	file.WriteString("This is a test string for md5 hashes", false);
+	file = OpenFile(testFileHashes, "w");
+	file.WriteString("This is a test string for hashes", false);
 	file.Close();
 
 	Handle profiler = CreateProfiler();
@@ -151,15 +151,29 @@ void PerformTests() {
 	char md5[33];
 	PrintToServer("INFO: Testing MD5 hash of a string");
 
-	System2_GetStringMD5("This is a test string for md5 hashes", md5, sizeof(md5));
-	assertStringEquals("d8854b6c9961442cabd15f17bf5f1786", md5);
+	System2_GetStringMD5("This is a test string for hashes", md5, sizeof(md5));
+	assertStringEquals("4070731cd404d301ab8621b4cb805362", md5);
 
 	// Assert calculating MD5 hash of a file
 	char fileMD5[33];
 	PrintToServer("INFO: Testing MD5 hash of a file");
 	
-	assertTrue("Getting the MD5 hash of a file should be successful", System2_GetFileMD5(testFileMD5, fileMD5, sizeof(fileMD5)));
-	assertStringEquals("d8854b6c9961442cabd15f17bf5f1786", fileMD5);
+	assertTrue("Getting the MD5 hash of a file should be successful", System2_GetFileMD5(testFileHashes, fileMD5, sizeof(fileMD5)));
+	assertStringEquals("4070731cd404d301ab8621b4cb805362", fileMD5);
+
+	// Assert calculating CRC32 hash of a string
+	char crc32[9];
+	PrintToServer("INFO: Testing CRC32 hash of a string");
+
+	System2_GetStringCRC32("This is a test string for hashes", crc32, sizeof(crc32));
+	assertStringEquals("c627da91", crc32);
+
+	// Assert calculating CRC32 hash of a file
+	char filecCRC32[9];
+	PrintToServer("INFO: Testing CRC32 hash of a file");
+	
+	assertTrue("Getting the CRC32 hash of a file should be successful", System2_GetFileCRC32(testFileHashes, filecCRC32, sizeof(filecCRC32)));
+	assertStringEquals("c627da91", filecCRC32);
 
 	StopProfiling(profiler);
 

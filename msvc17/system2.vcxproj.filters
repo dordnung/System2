@@ -16,6 +16,12 @@
     <Filter Include="SourceMod SDK">
       <UniqueIdentifier>{31958233-BB2D-4e41-A8F9-CE8A4684F436}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\hash">
+      <UniqueIdentifier>{fed95fab-255e-4843-913e-b089f62327f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hash">
+      <UniqueIdentifier>{6259f88e-ae7c-473e-ae0a-041471c10152}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -42,8 +48,11 @@
     <ClCompile Include="..\threads\page.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\md5\md5.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\hash\md5.cpp">
+      <Filter>Source Files\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hash\crc32.cpp">
+      <Filter>Source Files\hash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,8 +83,11 @@
     <ClInclude Include="..\threads\download.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\md5\md5.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\hash\md5.h">
+      <Filter>Header Files\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hash\crc.h">
+      <Filter>Header Files\hash</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;..\sdk;..\threads;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\sdk;..\threads;..\hash;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -64,7 +64,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp" />
-    <ClCompile Include="..\md5\md5.cpp" />
+    <ClCompile Include="..\hash\crc32.cpp" />
+    <ClCompile Include="..\hash\md5.cpp" />
     <ClCompile Include="..\natives.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
     <ClCompile Include="..\threads\command.cpp" />
@@ -75,7 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h" />
-    <ClInclude Include="..\md5\md5.h" />
+    <ClInclude Include="..\hash\crc.h" />
+    <ClInclude Include="..\hash\md5.h" />
     <ClInclude Include="..\natives.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />

@@ -328,6 +328,28 @@ native void System2_GetStringMD5(const char[] str, char[] buffer, int maxlength)
 native bool System2_GetFileMD5(const char[] file, char[] buffer, int maxlength);
 
 
+/**
+ * Gets the CRC32 hex hash of a string.
+ *
+ * @param string                The string to create the CRC32 hash of.
+ * @param buffer                The string the CRC32 hash will be recorded in.
+ * @param maxlength             Max length of the buffer. Should be greather or equal to 9 (9 CRC32 + 1 terminator)
+ * @noreturn
+ */
+native void System2_GetStringCRC32(const char[] str, char[] buffer, int maxlength);
+
+
+/**
+ * Gets the CRC32 hex hash of a files content.
+ *
+ * @param file                  The path to the file.
+ * @param buffer                The string the CRC32 hash will be recorded in.
+ * @param maxlength             Max length of the buffer. Should be greather or equal to 9 (9 CRC32 + 1 terminator)
+ * @return                      True on success, false when file couldn't be opened.
+ */
+native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength);
+
+
 
 /**
  * Encodes a string for safe url transfer.
@@ -419,5 +441,7 @@ public Extension __ext_system2 =
 		MarkNativeAsOptional("System2_GetOS");
 		MarkNativeAsOptional("System2_GetStringMD5");
 		MarkNativeAsOptional("System2_GetFileMD5");
+		MarkNativeAsOptional("System2_GetStringCRC32");
+		MarkNativeAsOptional("System2_GetFileXRX32");
 	}
 #endif

@@ -28,7 +28,8 @@
 #include "download.h"
 #include "ftp.h"
 #include "page.h"
-#include "md5/md5.h"
+#include "md5.h"
+#include "crc.h"
 
 
 #if defined __unix__ || defined __linux__ || defined __unix
@@ -446,6 +447,67 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
 
 	// Save the MD5 hash to the plugins buffer
 	pContext->StringToLocal(params[2], params[3], md5.hexdigest().c_str());
+
+	return 1;
+}
+
+
+cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {
+	char *str;
+
+	// Get the string
+	pContext->LocalToString(params[1], &str);
+	if (strlen(str) == 0) {
+		return 1;
+	}
+
+	// Calculate the CRC32 hash
+	char crc32[9];
+	crc32ToHex(crc32buf(str, strlen(str)), crc32, sizeof(crc32));
+
+	// Save the crc32 hash to the plugins buffer
+	pContext->StringToLocal(params[2], params[3], crc32);
+	return 1;
+}
+
+
+cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
+	char *memblock;
+	char *filePath;
+	char fullFilePath[PLATFORM_MAX_PATH + 1];
+
+	// Get the full paths to the file
+	pContext->LocalToString(params[1], &filePath);
+	g_pSM->BuildPath(Path_Game, fullFilePath, sizeof(fullFilePath), filePath);
+
+	// Open the file
+	std::ifstream file(fullFilePath, std::ifstream::binary | std::ifstream::ate);
+	if (file.bad() || !file.is_open()) {
+		pContext->StringToLocal(params[2], params[3], "");
+		return 0;
+	}
+
+	// Get the size of the file and save the content to a var
+	int size = (int)file.tellg();
+	if (size < 1) {
+		pContext->StringToLocal(params[2], params[3], "");
+		return 0;
+	}
+
+	memblock = new char[size];
+	file.seekg(0, std::ios::beg);
+	file.read(memblock, size);
+	file.close();
+
+	// Calculate the CRC32 hash
+	char crc32[9];
+	crc32ToHex(crc32buf(memblock, size), crc32, sizeof(crc32));
+
+	// Free the memory from reading again
+	delete[] memblock;
+
+	// Save the CRC32 hash to the plugins buffer
+	pContext->StringToLocal(params[2], params[3], crc32);
 
 	return 1;
 }
