@@ -9,6 +9,7 @@ char testDownloadFtpFile[PLATFORM_MAX_PATH + 1];
 char testFileCopyFromPath[PLATFORM_MAX_PATH + 1];
 char testFileCopyToPath[PLATFORM_MAX_PATH + 1];
 char testFileToCompressPath[PLATFORM_MAX_PATH + 1];
+char testFileMD5[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
@@ -24,6 +25,7 @@ public void OnPluginStart() {
 	Format(testFileCopyFromPath, sizeof(testFileCopyFromPath), "%s/testCopyFromFile.txt", path);
 	Format(testFileCopyToPath, sizeof(testFileCopyToPath), "%s/testCopyToFile.txt", path);
 	Format(testFileToCompressPath, sizeof(testFileToCompressPath), "%s/testCompressFile.txt", path);
+	Format(testFileMD5, sizeof(testFileMD5), "%s/testMD5.txt", path);
 	Format(testArchivePath, sizeof(testArchivePath), "%s/testCompressFile.zip", path);
 }
 
@@ -73,6 +75,10 @@ void PerformTests() {
 			DeleteFile(testFileToCompressPath);
 		}
 
+		if (FileExists(testFileMD5)) {
+			DeleteFile(testFileMD5);
+		}
+
 		if (FileExists(testArchivePath)) {
 			DeleteFile(testArchivePath);
 		}
@@ -84,6 +90,10 @@ void PerformTests() {
 
 	file = OpenFile(testFileToCompressPath, "w");
 	file.WriteString("This is a file to compress. Content should be equal.", false);
+	file.Close();
+
+	file = OpenFile(testFileMD5, "w");
+	file.WriteString("This is a test string for md5 hashes", false);
 	file.Close();
 
 	Handle profiler = CreateProfiler();
@@ -135,7 +145,21 @@ void PerformTests() {
 
 	// Assert GetOs does not return unkown
 	PrintToServer("INFO: Testing OS is defined");
-	assertValueNotEquals(view_as<int>(OS:OS_UNKNOWN), view_as<int>(System2_GetOS()))
+	assertValueNotEquals(view_as<int>(OS:OS_UNKNOWN), view_as<int>(System2_GetOS()));
+
+	// Assert calculating MD5 hash of a string
+	char md5[33];
+	PrintToServer("INFO: Testing MD5 hash of a string");
+
+	System2_GetStringMD5("This is a test string for md5 hashes", md5, sizeof(md5));
+	assertStringEquals("d8854b6c9961442cabd15f17bf5f1786", md5);
+
+	// Assert calculating MD5 hash of a file
+	char fileMD5[33];
+	PrintToServer("INFO: Testing MD5 hash of a file");
+	
+	assertTrue("Getting the MD5 hash of a file should be successful", System2_GetFileMD5(testFileMD5, fileMD5, sizeof(fileMD5)));
+	assertStringEquals("d8854b6c9961442cabd15f17bf5f1786", fileMD5);
 
 	StopProfiling(profiler);
 

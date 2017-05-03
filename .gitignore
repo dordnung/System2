@@ -30,5 +30,7 @@
 *.smx
 *.exe
 *.sq3
+*.dll
+*.so
 Release*/
 Debug*/

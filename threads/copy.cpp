@@ -56,22 +56,21 @@ void CopyThread::RunThread(IThreadHandle *pHandle) {
 	std::ifstream file1(fullFilePath, std::ifstream::binary);
 	std::ofstream file2(fullCopyPath, std::ofstream::trunc | std::ofstream::binary);
 
-	if (file1.bad() || file2.bad()) {
+	if (file1.bad() || file2.bad() || !file1.is_open() || !file2.is_open()) {
 		// Couldn't open a file
 		threadReturn->result = CMD_ERROR;
-	}
-	else {
+	} else {
 		// Copy the file
 		file2 << file1.rdbuf();
 		threadReturn->result = CMD_SUCCESS;
 	}
 
 	// Close the files
-	if (file1.good()) {
+	if (file1.good() || file1.is_open()) {
 		file1.close();
 	}
 
-	if (file2.good()) {
+	if (file2.good() || file2.is_open()) {
 		file2.close();
 	}
 

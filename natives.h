@@ -40,6 +40,7 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
 cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
+cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
@@ -56,6 +57,7 @@ const sp_nativeinfo_t system2_natives[] =
 	{ "System2_RunCommand", NativeRunCommand },
 	{ "System2_GetGameDir", NativeGetGameDir },
 	{ "System2_GetOS", NativeGetOS },
+	{ "System2_GetStringMD5", NativeGetStringMD5 },
 	{ "System2_GetFileMD5", NativeGetFileMD5 },
 	{ NULL, NULL },
 };

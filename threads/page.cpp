@@ -59,7 +59,7 @@ void PageThread::RunThread(IThreadHandle *pHandle) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, page_get);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, threadReturn);
 		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
-		curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, MAX_RESULT_LENGTH - 1);
+		curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, MAX_RESULT_LENGTH);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post);
 
 		// Set the useragent
@@ -91,7 +91,7 @@ size_t page_get(void *buffer, size_t size, size_t nmemb, void *stream) {
 	size_t realsize = size * nmemb;
 
 	// More than MAX_RESULT_LENGTH?
-	if (strlen(threadReturn->resultString) + realsize >= MAX_RESULT_LENGTH - 1) {
+	if (strlen(threadReturn->resultString) + realsize >= MAX_RESULT_LENGTH) {
 		// We only can push a string with a length of MAX_RESULT_LENGTH
 		ThreadReturn *threadReturn2 = new ThreadReturn;
 

@@ -28,20 +28,18 @@
 #include "download.h"
 #include "ftp.h"
 #include "page.h"
-#include "md5.h"
-
-
+#include "md5/md5.h"
 
 
 #if defined __unix__ || defined __linux__ || defined __unix
-	#include <sys/utsname.h>
+#include <sys/utsname.h>
 #endif
 
 
 cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
+	char *url;
 	char *post;
 	char *agent;
-	char *url;
 
 	pContext->LocalToString(params[2], &url);
 	pContext->LocalToString(params[3], &post);
@@ -56,8 +54,8 @@ cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params) {
-	char *localFile;
 	char *url;
+	char *localFile;
 
 	pContext->LocalToString(params[2], &url);
 	pContext->LocalToString(params[3], &localFile);
@@ -92,8 +90,8 @@ cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params) {
-	char *remoteFile;
 	char *localFile;
+	char *remoteFile;
 	char *host;
 	char *username;
 	char *password;
@@ -128,7 +126,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
-	char command[MAX_COMMAND_LENGTH];
+	char command[MAX_COMMAND_LENGTH + 1];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 2);
 
@@ -141,7 +139,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *params) {
-	char command[MAX_COMMAND_LENGTH];
+	char command[MAX_COMMAND_LENGTH + 1];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
@@ -160,9 +158,6 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 	char zdir[PLATFORM_MAX_PATH + 1];
 	char ldir[PLATFORM_MAX_PATH + 1];
 	char rdir[PLATFORM_MAX_PATH + 1];
-	char command[MAX_COMMAND_LENGTH];
-
-	FILE *testExist;
 
 	pContext->LocalToString(params[2], &file);
 	pContext->LocalToString(params[3], &folder);
@@ -176,8 +171,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 
 	if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
 		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
-	}
-	else {
+	} else {
 		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
 	}
 #endif
@@ -185,10 +179,12 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
 
 	// Test if the local file exists
+	FILE *testExist;
 	if ((testExist = fopen(zdir, "rb")) != NULL) {
 		fclose(testExist);
 
 		// Create the extract command
+		char command[MAX_COMMAND_LENGTH + 1];
 #if defined _WIN32
 		sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
 #else
@@ -198,9 +194,8 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
 		threader->MakeThread(commandThread);
-	}
-	else {
-		g_pSM->LogError(myself, "Attention: Coulnd't find %s to extract %s", zdir, ldir);
+	} else {
+		g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to extract %s", zdir, ldir);
 	}
 
 	return 1;
@@ -211,15 +206,9 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 	char *file;
 	char *folder;
 
-	char archive[12];
-	char level[6];
-
 	char zdir[PLATFORM_MAX_PATH + 1];
 	char ldir[PLATFORM_MAX_PATH + 1];
 	char rdir[PLATFORM_MAX_PATH + 1];
-	char command[MAX_COMMAND_LENGTH];
-
-	FILE* testExist;
 
 	pContext->LocalToString(params[2], &file);
 	pContext->LocalToString(params[3], &folder);
@@ -233,8 +222,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
 	if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
 		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
-	}
-	else {
+	} else {
 		g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
 	}
 #endif
@@ -242,68 +230,72 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 	g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
 
 	// Get the compress level
+	char level[6];
 	switch (params[5]) {
-	case 0:
-	{
-		strcpy(level, "-mx1");
-		break;
-	}
-	case 1:
-	{
-		strcpy(level, "-mx3");
-		break;
-	}
-	case 2:
-	{
-		strcpy(level, "-mx5");
-		break;
-	}
-	case 3:
-	{
-		strcpy(level, "-mx7");
-		break;
-	}
-	case 4:
-	{
-		strcpy(level, "-mx9");
-		break;
-	}
+		case 0:
+		{
+			strcpy(level, "-mx1");
+			break;
+		}
+		case 1:
+		{
+			strcpy(level, "-mx3");
+			break;
+		}
+		case 2:
+		{
+			strcpy(level, "-mx5");
+			break;
+		}
+		case 3:
+		{
+			strcpy(level, "-mx7");
+			break;
+		}
+		default:
+		{
+			strcpy(level, "-mx9");
+			break;
+		}
 	}
 
 	// Get the archive to use
+	char archive[12];
 	switch (params[4]) {
-	case 0:
-	{
-		strcpy(archive, "-tzip");
-		break;
-	}
-	case 1:
-	{
-		strcpy(archive, "-t7z");
-		break;
-	}
-	case 2:
-	{
-		strcpy(archive, "-tgzip");
-		break;
-	}
-	case 3:
-	{
-		strcpy(archive, "-tbzip2");
-		break;
-	}
-	case 4:
-	{
-		strcpy(archive, "-ttar");
-		break;
-	}
+		case 0:
+		{
+			strcpy(archive, "-tzip");
+			break;
+		}
+		case 1:
+		{
+			strcpy(archive, "-t7z");
+			break;
+		}
+		case 2:
+		{
+			strcpy(archive, "-tgzip");
+			break;
+		}
+		case 3:
+		{
+			strcpy(archive, "-tbzip2");
+			break;
+		}
+		default:
+		{
+			strcpy(archive, "-ttar");
+			break;
+		}
 	}
 
 	// 7z exists?
+	FILE *testExist;
 	if ((testExist = fopen(zdir, "rb")) != NULL) {
 		fclose(testExist);
 
 		// Create the compress command
+		char command[MAX_COMMAND_LENGTH + 1];
 #if defined _WIN32 || defined _WIN64
 		sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
 #else
@@ -313,9 +305,8 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
 		threader->MakeThread(commandThread);
-	}
-	else {
-		g_pSM->LogError(myself, "Attention: Coulnd't find %s to compress %s", zdir, ldir);
+	} else {
+		g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to compress %s", zdir, ldir);
 	}
 
 	return 1;
@@ -323,9 +314,9 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
-	char cmdString[MAX_COMMAND_LENGTH];
-	char buffer[MAX_RESULT_LENGTH];
-	char resultString[MAX_RESULT_LENGTH];
+	char cmdString[MAX_COMMAND_LENGTH + 1];
+	char buffer[MAX_RESULT_LENGTH + 1];
+	char resultString[MAX_RESULT_LENGTH + 1];
 
 	// Format the command string
 	smutils->FormatString(cmdString, sizeof(cmdString), pContext, params, 3);
@@ -366,8 +357,7 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 	if (strlen(resultString) == 0) {
 		pContext->StringToLocal(params[1], params[2], "Empty reading result!");
 		result = CMD_EMPTY;
-	}
-	else {
+	} else {
 		pContext->StringToLocal(params[1], params[2], resultString);
 	}
 
@@ -380,12 +370,10 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
 	// Save to string
 	pContext->StringToLocal(params[1], params[2], smutils->GetGamePath());
-
 	return 1;
 }
 
 
-// Get the os
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 	// So what we have now :)
 #if defined __WIN32__ || defined _MSC_VER || defined __CYGWIN32__ || defined _Windows || defined __MSDOS__ || defined _WIN64 || defined _WIN32
@@ -400,45 +388,64 @@ cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params)
-{
-	FILE *pFile;
-	MD5_CTX context;
-	unsigned char digest[16], temp[1024];
-	unsigned int len, sum = 0;
+cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params) {
+	char *str;
 
-	char *filename;
-	pContext->LocalToString(params[1], &filename);
-	const char *path = g_pSM->GetGamePath();
-	char filepath[1024];
-	g_pSM->Format(filepath, 1024, "%s/%s", path, filename);
-
-
-	pFile = fopen(filepath, "rb");
-	if (!pFile)
-	{
-		pContext->ThrowNativeError("File \"%s\" can not be open!", filepath);
-		return 0;
+	// Get the string
+	pContext->LocalToString(params[1], &str);
+	if (strlen(str) == 0) {
+		return 1;
 	}
-	// init md5
-	MD5Init(&context);
 
-	while ((len = fread(temp, 1, 1024, pFile)) != 0)
-	{
-		MD5Update(&context, temp, len);
-	}
-	fclose(pFile);
+	// Calculate the MD5 hash
+	MD5 md5 = MD5();
+	md5.update(str, strlen(str));
+	md5.finalize();
 
-	MD5Final(&context, digest);
-
-	char *buffer;
-	pContext->LocalToString(params[2], &buffer);
-
-	g_pSM->Format(buffer, params[3], "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7], digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
-
+	// Save the MD5 hash to the plugins buffer
+	pContext->StringToLocal(params[2], params[3], md5.hexdigest().c_str());
 	return 1;
 }
 
 
+cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
+	char *memblock;
+	char *filePath;
+	char fullFilePath[PLATFORM_MAX_PATH + 1];
 
+	// Get the full paths to the file
+	pContext->LocalToString(params[1], &filePath);
+	g_pSM->BuildPath(Path_Game, fullFilePath, sizeof(fullFilePath), filePath);
 
+	// Open the file
+	std::ifstream file(fullFilePath, std::ifstream::binary | std::ifstream::ate);
+	if (file.bad() || !file.is_open()) {
+		pContext->StringToLocal(params[2], params[3], "");
+		return 0;
+	}
+
+	// Get the size of the file and save the content to a var
+	int size = (int)file.tellg();
+	if (size < 1) {
+		pContext->StringToLocal(params[2], params[3], "");
+		return 0;
+	}
+
+	memblock = new char[size];
+	file.seekg(0, std::ios::beg);
+	file.read(memblock, size);
+	file.close();
+
+	// Calculate the MD5 hash
+	MD5 md5 = MD5();
+	md5.update(memblock, size);
+	md5.finalize();
+
+	// Free the memory from reading again
+	delete[] memblock;
+
+	// Save the MD5 hash to the plugins buffer
+	pContext->StringToLocal(params[2], params[3], md5.hexdigest().c_str());
+
+	return 1;
+}

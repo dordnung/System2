@@ -42,7 +42,7 @@
     <ClCompile Include="..\threads\page.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\md5.cpp">
+    <ClCompile Include="..\md5\md5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClInclude Include="..\threads\download.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\md5.h">
+    <ClInclude Include="..\md5\md5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

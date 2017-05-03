@@ -35,7 +35,7 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 	// Create a thread return struct
 	ThreadReturn *threadReturn = new ThreadReturn;
 
-	char buffer[MAX_RESULT_LENGTH];
+	char buffer[MAX_RESULT_LENGTH + 1];
 
 	threadReturn->function = function;
 	threadReturn->mode = MODE_COMMAND;
@@ -54,14 +54,13 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 	FILE *command = PosixOpen(this->command, "r");
 
 	// Was there an error?
-	if (command) {
+	if (command != NULL) {
 		bool foundOne = false;
-
 		while (fgets(buffer, sizeof(buffer), command) != NULL) {
 			foundOne = true;
 
 			// More than MAX_RESULT_LENGTH?
-			if (strlen(threadReturn->resultString) + strlen(buffer) >= MAX_RESULT_LENGTH - 1) {
+			if (strlen(threadReturn->resultString) + strlen(buffer) >= MAX_RESULT_LENGTH) {
 				// We only can push a string with a length of MAX_RESULT_LENGTH
 				ThreadReturn *threadReturn2 = new ThreadReturn;
 
@@ -90,8 +89,7 @@ void CommandThread::RunThread(IThreadHandle *pHandle) {
 
 		// Close
 		PosixClose(command);
-	}
-	else {
+	} else {
 		// Error
 		strcpy(threadReturn->resultString, "ERROR: Couldn't execute the command!");
 		threadReturn->result = CMD_ERROR;

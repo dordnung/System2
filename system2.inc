@@ -306,6 +306,28 @@ native void System2_GetGameDir(char[] gamedir, int maxlength);
 native OS System2_GetOS();
 
 
+/**
+ * Gets the MD5 hex hash of a string.
+ *
+ * @param string                The string to create the MD5 hash of.
+ * @param buffer                The string the MD5 hash will be recorded in.
+ * @param maxlength             Max length of the buffer. Should be greather or equal to 33 (32 MD5 + 1 terminator)
+ * @noreturn
+ */
+native void System2_GetStringMD5(const char[] str, char[] buffer, int maxlength);
+
+
+/**
+ * Gets the MD5 hex hash of a files content.
+ *
+ * @param file                  The path to the file.
+ * @param buffer                The string the MD5 hash will be recorded in.
+ * @param maxlength             Max length of the buffer. Should be greather or equal to 33 (32 MD5 + 1 terminator)
+ * @return                      True on success, false when file couldn't be opened.
+ */
+native bool System2_GetFileMD5(const char[] file, char[] buffer, int maxlength);
+
+
 
 /**
  * Encodes a string for safe url transfer.
@@ -363,18 +385,6 @@ stock void URLEncode(char[] stringToEncode, int maxlength, char[] safe = "/", bo
 	}
 }
 
-/**
- *	gets md5 hash file.
- * @param sFile					The path to the file.
- * @param sBuffer				The string will be recorded hash.
- * @param len					Length of the line.
- *	-
- * @return	Return true if successful.
- *	-
- * @error sFile does not exist.
-*/
-native bool System2_GetFileMD5(const char[] sFile, char[] sBuffer, int len)
-
 public Extension __ext_system2 =
 {
 	name = "System2",
@@ -407,6 +417,7 @@ public Extension __ext_system2 =
 		MarkNativeAsOptional("System2_RunCommand");
 		MarkNativeAsOptional("System2_GetGameDir");
 		MarkNativeAsOptional("System2_GetOS");
+		MarkNativeAsOptional("System2_GetStringMD5");
 		MarkNativeAsOptional("System2_GetFileMD5");
 	}
 #endif

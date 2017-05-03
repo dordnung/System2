@@ -62,9 +62,9 @@ enum ReturnState {
 
 
 typedef struct {
-	char command[MAX_COMMAND_LENGTH];
+	char command[MAX_COMMAND_LENGTH + 1];
 
-	char resultString[MAX_RESULT_LENGTH];
+	char resultString[MAX_RESULT_LENGTH + 1];
 	char curlError[CURL_ERROR_SIZE + 1];
 
 	char copyFrom[PLATFORM_MAX_PATH + 1];

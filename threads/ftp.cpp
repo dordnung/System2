@@ -120,8 +120,7 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 				curl_easy_setopt(curl, CURLOPT_READDATA, localReadFile);
 				curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
 
-			}
-			else {
+			} else {
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
 				curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ftp_info);
 			}

@@ -72,7 +72,7 @@ void DownloadThread::RunThread(IThreadHandle *pHandle) {
 	// Init. Curl
 	CURL *curl = curl_easy_init();
 
-	if (curl) {
+	if (curl != NULL) {
 		// Set up Curl
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, threadReturn->curlError);

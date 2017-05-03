@@ -88,8 +88,7 @@ void System2Extension::GameFrameHit() {
 			function->PushCell(threadReturn->result);
 			function->PushCell(threadReturn->data);
 			function->PushString(threadReturn->command);
-		}
-		else if (threadReturn->mode != MODE_COPY) {
+		} else if (threadReturn->mode != MODE_COPY) {
 			// ... for a progress callback
 			function->PushCell(threadReturn->finished);
 			function->PushString(threadReturn->curlError);
@@ -99,8 +98,7 @@ void System2Extension::GameFrameHit() {
 			function->PushFloat((float)threadReturn->ultotal);
 			function->PushFloat((float)threadReturn->ulnow);
 			function->PushCell(threadReturn->data);
-		}
-		else {
+		} else {
 			// ... for a result for a copy
 			function->PushCell((threadReturn->result == CMD_ERROR) ? 0 : 1);
 			function->PushString(threadReturn->copyFrom);
