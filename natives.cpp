@@ -28,6 +28,10 @@
 #include "download.h"
 #include "ftp.h"
 #include "page.h"
+#include "md5.h"
+
+
+
 
 #if defined __unix__ || defined __linux__ || defined __unix
 	#include <sys/utsname.h>
@@ -394,3 +398,47 @@ cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 	return OS_UNKNOWN;
 #endif
 }
+
+
+cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params)
+{
+	FILE *pFile;
+	MD5_CTX context;
+	unsigned char digest[16], temp[1024];
+	unsigned int len, sum = 0;
+
+	char *filename;
+	pContext->LocalToString(params[1], &filename);
+	const char *path = g_pSM->GetGamePath();
+	char filepath[1024];
+	g_pSM->Format(filepath, 1024, "%s/%s", path, filename);
+
+
+	pFile = fopen(filepath, "rb");
+	if (!pFile)
+	{
+		pContext->ThrowNativeError("File \"%s\" can not be open!", filepath);
+		return 0;
+	}
+	// init md5
+	MD5Init(&context);
+
+	while ((len = fread(temp, 1, 1024, pFile)) != 0)
+	{
+		MD5Update(&context, temp, len);
+	}
+	fclose(pFile);
+
+	MD5Final(&context, digest);
+
+	char *buffer;
+	pContext->LocalToString(params[2], &buffer);
+
+	g_pSM->Format(buffer, params[3], "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7], digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
+
+	return 1;
+}
+
+
+
+
