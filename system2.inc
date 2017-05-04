@@ -36,7 +36,7 @@
 #define CMD_MAX_LENGTH 2048
 
 /**
- * Max Size of the command output in CmdCallback.
+ * Max Size of the command or page output in CmdCallback.
  */
 #define CMD_MAX_RETURN 4096
 
@@ -94,7 +94,7 @@ enum CompressLevel
 
 
 /**
- * Called when finished with a command.
+ * Called when finished with a command or when retrieving the content of a page.
  * Maybe called more than once, if output is greater than 4096 bytes.
  * Use status variable to check if it's the last call or not.
  *
