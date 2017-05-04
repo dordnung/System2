@@ -31,6 +31,9 @@ typedef struct {
 	FILE *stream;
 } ftp_info;
 
+// Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+IMutex *ftpMutex;
+
 
 FTPThread::FTPThread(char *remoteFile, char *localFile, char *url, char *user, char *pw, int port, IPluginFunction *callback, Mode mode, int any) : IThread() {
 	strcpy(this->remoteFile, remoteFile);
@@ -84,6 +87,8 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 	}
 
 	if (mode != MODE_UPLOAD || localReadFile != NULL) {
+		ftpMutex->Lock();
+
 		// Init. Curl
 		CURL *curl = curl_easy_init();
 
@@ -126,7 +131,14 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 			}
 
 			// Perform and clean
-			curl_easy_perform(curl);
+			if (curl_easy_perform(curl) == CURLE_OK) {
+				// Clean error buffer if there was no error
+				strcpy(threadReturn->curlError, "");
+			} else if (strlen(threadReturn->curlError) < 2) {
+				// Set readable error if there is no one
+				strcpy(threadReturn->curlError, "Couldn't execute FTP command");
+			}
+
 			curl_easy_cleanup(curl);
 		}
 
@@ -139,6 +151,8 @@ void FTPThread::RunThread(IThreadHandle *pHandle) {
 		if (localReadFile != NULL) {
 			fclose(localReadFile);
 		}
+
+		ftpMutex->Unlock();
 	}
 
 	// Add return status to queue

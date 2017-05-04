@@ -24,6 +24,7 @@
 
 #include "extension.h"
 #include "natives.h"
+#include "ftp.h"
 
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
@@ -35,6 +36,8 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 
 	// Add mutex and init curl
 	mutex = threader->MakeMutex();
+	ftpMutex = threader->MakeMutex();
+
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	smutils->AddGameFrameHook(&OnGameFrameHit);
@@ -45,6 +48,7 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 void System2Extension::SDK_OnUnload() {
 	smutils->RemoveGameFrameHook(&OnGameFrameHit);
 	mutex->DestroyThis();
+	ftpMutex->DestroyThis();
 
 	curl_global_cleanup();
 }

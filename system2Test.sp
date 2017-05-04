@@ -20,17 +20,19 @@ public void OnPluginStart() {
 
 	// Create test structure
 	BuildPath(Path_SM, path, sizeof(path), "data/system2/temp");
-	Format(testDownloadFilePath, sizeof(testDownloadFilePath), "%s/testFile.txt", path);
-	Format(testDownloadFtpFile, sizeof(testDownloadFtpFile), "%s/testFtpFile.zip", path);
-	Format(testFileCopyFromPath, sizeof(testFileCopyFromPath), "%s/testCopyFromFile.txt", path);
-	Format(testFileCopyToPath, sizeof(testFileCopyToPath), "%s/testCopyToFile.txt", path);
-	Format(testFileToCompressPath, sizeof(testFileToCompressPath), "%s/testCompressFile.txt", path);
-	Format(testFileHashes, sizeof(testFileHashes), "%s/testMD5.txt", path);
-	Format(testArchivePath, sizeof(testArchivePath), "%s/testCompressFile.zip", path);
 }
 
 
 public Action OnTest(int args) {
+	// Set new file names
+	Format(testDownloadFilePath, sizeof(testDownloadFilePath), "%s/testFile_%d.txt", path, GetURandomInt());
+	Format(testDownloadFtpFile, sizeof(testDownloadFtpFile), "%s/testFtpFile_%d.zip", path, GetURandomInt());
+	Format(testFileCopyFromPath, sizeof(testFileCopyFromPath), "%s/testCopyFromFile_%d.txt", path, GetURandomInt());
+	Format(testFileCopyToPath, sizeof(testFileCopyToPath), "%s/testCopyToFile_%d.txt", path, GetURandomInt());
+	Format(testFileToCompressPath, sizeof(testFileToCompressPath), "%s/testCompressFile_%d.txt", path, GetURandomInt());
+	Format(testFileHashes, sizeof(testFileHashes), "%s/testMD5_%d.txt", path, GetURandomInt());
+	Format(testArchivePath, sizeof(testArchivePath), "%s/testCompressFile_%d.zip", path, GetURandomInt());
+
 	PrintToServer("");
 	PrintToServer("");
 	PrintToServer("Testing system2...");
@@ -54,34 +56,6 @@ void PerformTests() {
 	// Create test structure
 	if (!DirExists(path)) {
 		CreateDirectory(path, 493);
-	} else {
-		if (FileExists(testDownloadFilePath)) {
-			DeleteFile(testDownloadFilePath);
-		}
-
-		if (FileExists(testDownloadFtpFile)) {
-			DeleteFile(testDownloadFtpFile);
-		}
-
-		if (FileExists(testFileCopyFromPath)) {
-			DeleteFile(testFileCopyFromPath);
-		}
-
-		if (FileExists(testFileCopyToPath)) {
-			DeleteFile(testFileCopyToPath);
-		}
-
-		if (FileExists(testFileToCompressPath)) {
-			DeleteFile(testFileToCompressPath);
-		}
-
-		if (FileExists(testFileHashes)) {
-			DeleteFile(testFileHashes);
-		}
-
-		if (FileExists(testArchivePath)) {
-			DeleteFile(testArchivePath);
-		}
 	}
 
 	File file = OpenFile(testFileCopyFromPath, "w");
@@ -242,22 +216,28 @@ void DownloadFileCallback(bool finished, const char[] error, float dltotal, floa
 
 void DownloadFtpFileCallback(bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data) {
 	assertValueEquals(678, data);
-	assertStringEquals("", error);
 
+	// This division is just for the stacktrace line
 	if (finished) {
+		assertStringEquals("", error);
 		PrintToServer("INFO: Finished downloading a file from FTP, uploading it again");
 
 		assertTrue("Downloading a FTP file should create a new file ;)", FileExists(testDownloadFtpFile));
 		System2_UploadFTPFile(UploadFtpFileCallback, testDownloadFtpFile, "upload/system2.zip", "speedtest.tele2.net", "", "", 21, 555);
+	} else {
+		assertStringEquals("", error);
 	}
 }
 
 void UploadFtpFileCallback(bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data) {
 	assertValueEquals(555, data);
-	assertStringEquals("", error);
 
+	// This division is just for the stacktrace line
 	if (finished) {
+		assertStringEquals("", error);
 		PrintToServer("INFO: Finished uploading a file to FTP");
+	} else {
+		assertStringEquals("", error);
 	}
 }
 

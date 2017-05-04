@@ -27,6 +27,8 @@
 
 #include "extension.h"
 
+ // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+extern IMutex *ftpMutex;
 
 class FTPThread : public IThread {
 private:

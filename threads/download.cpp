@@ -86,7 +86,14 @@ void DownloadThread::RunThread(IThreadHandle *pHandle) {
 		curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
 		// Perform and clean
-		curl_easy_perform(curl);
+		if (curl_easy_perform(curl) == CURLE_OK) {
+			// Clean error buffer if there was no error
+			strcpy(threadReturn->curlError, "");
+		} else if (strlen(threadReturn->curlError) < 2) {
+			// Set readable error if there is no one
+			strcpy(threadReturn->curlError, "Couldn't execute download command");
+		}
+
 		curl_easy_cleanup(curl);
 	}
 
@@ -131,6 +138,7 @@ int progress_updated(void *data, double dltotal, double dlnow, double ultotal, d
 		threadReturn->mode = progress->mode;
 		threadReturn->finished = 0;
 		threadReturn->data = progress->data;
+		strcpy(threadReturn->curlError, "");
 
 		// Update data
 		threadReturn->dlnow = dlnow;
