@@ -150,8 +150,8 @@ typeset CopyCallback
  * Gets the content of a page.
  *
  * @param callback              Callback function when finished. Check callback.status to check if process is finished.
- * @param url                   The URL of the page to load.
- * @param post                  POST parameters (use like this: "name=test&pw=test2").
+ * @param url                   The URL of the page to load. Attach GET parameters here and leave post parameter empty to use GET
+ * @param post                  POST parameters (use like this: "name=test&pw=test2"). Leave empty to use a GET request. 
  * @param userAgent             Useragent to use. Leave empty for default one.
  * @param data                  Additional data to pass to the callback.
  *

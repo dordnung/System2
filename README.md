@@ -45,7 +45,7 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
 - **Build libcurl**
   1. Download curl from `http://curl.haxx.se/download/curl-7.54.0.zip` and unzip
   2. Open the Visual Studio Command Prompt (x86!) at `curl-7.54.0/winbuild`
-  3. Type `nmake /f Makefile.vc mode=static VC=14 MACHINE=x86` and press ENTER
+  3. Type `nmake /f Makefile.vc mode=static RTLIBCFG=static VC=14 MACHINE=x86` and press ENTER
   4. Add a new system variable named `CURL` pointing to the 'curl-7.54.0/builds/libcurl-vc14-x86-release-static-ipv6-sspi-winssl' folder
 
 - **Get Sourcemod and Sourcepawn**
