@@ -191,6 +191,8 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 #else
 		sprintf(command, "\"%s\" x \"%s\" -o\"%s\" -mmt -aoa", zdir, ldir, rdir);
 #endif
+		// Logging command
+		g_pSM->LogMessage(myself, "Extracting archive: %s", command);
 
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
@@ -302,6 +304,8 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 #else
 		sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
 #endif
+		// Logging command
+		g_pSM->LogMessage(myself, "Extracting archive: %s", command);
 
 		// Start the thread that executes the command
 		CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
