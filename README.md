@@ -37,7 +37,7 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
   3. `cp -r sourcepawn-master/* sourcemod-master/sourcepawn/`
 
 - **Build system2**
-  1. `wget https://github.com/popoklopsi/System2/archive/master.zip -O system2.zip && unzip system2.zip`
+  1. `wget https://github.com/dordnung/System2/archive/master.zip -O system2.zip && unzip system2.zip`
   2. `cd System2-master`
   3. `make SMSDK=$BUILD_DIR/sourcemod-master OPENSSL=$BUILD_DIR/openssl-1.1.0f ZLIB=$BUILD_DIR/zlib-1.2.11 CURL=$BUILD_DIR/curl-7.55.1`
 
@@ -54,6 +54,6 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
   2. Add a new system variable named `SOURCEMOD` with the path to sourcemod
 
 - **Build system2**
-  1. Download System2 from `https://github.com/popoklopsi/System2/archive/master.zip` and unzip
+  1. Download System2 from `https://github.com/dordnung/System2/archive/master.zip` and unzip
   2. Open `msvc13/system2.sln` 
   3. Build the project.
