@@ -442,6 +442,6 @@ public Extension __ext_system2 =
 		MarkNativeAsOptional("System2_GetStringMD5");
 		MarkNativeAsOptional("System2_GetFileMD5");
 		MarkNativeAsOptional("System2_GetStringCRC32");
-		MarkNativeAsOptional("System2_GetFileXRX32");
+		MarkNativeAsOptional("System2_GetFileCRC32");
 	}
 #endif
