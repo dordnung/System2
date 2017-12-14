@@ -350,6 +350,28 @@ native void System2_GetStringCRC32(const char[] str, char[] buffer, int maxlengt
 native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength);
 
 
+/**
+ * Converts a plain string to an URL encoded string.
+ * Be aware that the output string may be larger then the input string.
+ *
+ * @param input                 The string to encode.
+ * @param output                The encoded string. May be the same as input.
+ * @param maxlength             The maxlength of the output string.
+ * @return                      True on success, false otherwise.
+ */
+native bool System2_URLEncode(const char[] input, char[] output, int maxlength);
+
+
+/**
+ * Converts an URL encoded string to a plain string.
+ *
+ * @param input                 The string to decode.
+ * @param output                The decoded string. May be the same as input.
+ * @param maxlength             The maxlength of the output string.
+ * @return                      True on success, false otherwise.
+ */
+native bool System2_URLDecode(const char[] input, char[] output, int maxlength);
+
 
 /**
  * Encodes a string for safe url transfer.
@@ -360,52 +382,11 @@ native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength
  * @param safe                  Adding additional safe strings.
  * @param format                Is the string formatted.
  */
-stock void URLEncode(char[] stringToEncode, int maxlength, char[] safe = "/", bool format = false)
-{
-	char sAlwaysSafe[256];
-	Format(sAlwaysSafe, sizeof(sAlwaysSafe), "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-%s", safe);
-	
-	// Need 2 '%' since sp's Format parses one as a parameter to replace
-	// http://wiki.alliedmods.net/Format_Class_Functions_%28SourceMod_Scripting%29
-	if (format)
-	{
-		ReplaceString(stringToEncode, maxlength, "%", "%%25");
-	}
-	else
-	{
-		ReplaceString(stringToEncode, maxlength, "%", "%25");
-	}
-	
-	
-	char sChar[8];
-	char sReplaceChar[8];
-	
-	for (new int i = 1; i < 256; i++)
-	{
-		// Skip the '%' double replace ftw..
-		if (i == 37)
-		{
-			continue;
-		}
-		
-		
-		Format(sChar, sizeof(sChar), "%c", i);
-
-		if (StrContains(sAlwaysSafe, sChar) == -1 && StrContains(stringToEncode, sChar) != -1)
-		{
-			if (format)
-			{
-				Format(sReplaceChar, sizeof(sReplaceChar), "%%%%%02X", i);
-			}
-			else
-			{
-				Format(sReplaceChar, sizeof(sReplaceChar), "%%%02X", i);
-			}
-			
-			ReplaceString(stringToEncode, maxlength, sChar, sReplaceChar);
-		}
-	}
+#pragma deprecated Use System2_URLEncode() instead.
+stock void URLEncode(char[] stringToEncode, int maxlength) {
+	System2_URLEncode(stringToEncode, maxlength);
 }
+
 
 public Extension __ext_system2 =
 {
@@ -443,5 +424,7 @@ public Extension __ext_system2 =
 		MarkNativeAsOptional("System2_GetFileMD5");
 		MarkNativeAsOptional("System2_GetStringCRC32");
 		MarkNativeAsOptional("System2_GetFileCRC32");
+		MarkNativeAsOptional("System2_URLEncode");
+		MarkNativeAsOptional("System2_URLDecode");
 	}
 #endif

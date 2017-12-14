@@ -360,10 +360,10 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 
 
 	if (strlen(resultString) == 0) {
-		pContext->StringToLocal(params[1], params[2], "Empty reading result!");
+		pContext->StringToLocalUTF8(params[1], params[2], "Empty reading result!", NULL);
 		result = CMD_EMPTY;
 	} else {
-		pContext->StringToLocal(params[1], params[2], resultString);
+		pContext->StringToLocalUTF8(params[1], params[2], resultString, NULL);
 	}
 
 	// Close Posix and return the result
@@ -514,4 +514,52 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
 	pContext->StringToLocal(params[2], params[3], crc32);
 
 	return 1;
+}
+
+
+cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
+	// Get the string to encode
+	char *str;
+	pContext->LocalToString(params[1], &str);
+
+	CURL *curl = curl_easy_init();
+	if (curl) {
+		char *output = curl_easy_escape(curl, str, 0);
+		if (output) {
+			pContext->StringToLocalUTF8(params[2], params[3], output, NULL);
+			curl_free(output);
+
+			curl_easy_cleanup(curl);
+			return 1;
+		}
+
+		curl_easy_cleanup(curl);
+		return 0;
+	}
+
+	return 0;
+}
+
+
+cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params) {
+	// Get the string to decode
+	char *str;
+	pContext->LocalToString(params[1], &str);
+
+	CURL *curl = curl_easy_init();
+	if (curl) {
+		char *output = curl_easy_unescape(curl, str, 0, NULL);
+		if (output) {
+			pContext->StringToLocalUTF8(params[2], params[3], output, NULL);
+			curl_free(output);
+
+			curl_easy_cleanup(curl);
+			return 1;
+		}
+
+		curl_easy_cleanup(curl);
+		return 0;
+	}
+
+	return 0;
 }

@@ -44,6 +44,8 @@ cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params);
+cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
+cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
 {
@@ -63,6 +65,8 @@ const sp_nativeinfo_t system2_natives[] =
 	{ "System2_GetFileMD5", NativeGetFileMD5 },
 	{ "System2_GetStringCRC32", NativeGetStringCRC32 },
 	{ "System2_GetFileCRC32", NativeGetFileCRC32 },
+	{ "System2_URLEncode", NativeURLEncode },
+	{ "System2_URLDecode", NativeURLDecode },
 	{ NULL, NULL },
 };
 
