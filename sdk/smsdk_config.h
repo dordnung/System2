@@ -40,7 +40,7 @@
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"System2"
 #define SMEXT_CONF_DESCRIPTION	"System and Internet commands for Sourcemod"
-#define SMEXT_CONF_VERSION		"2.6"
+#define SMEXT_CONF_VERSION		"3.0"
 #define SMEXT_CONF_AUTHOR		"David Ordnung"
 #define SMEXT_CONF_URL			"http://forums.alliedmods.net/showthread.php?t=146019"
 #define SMEXT_CONF_LOGTAG		"System2"
@@ -60,7 +60,7 @@
 
 /** Enable interfaces you want to use here by uncommenting lines */
 #define SMEXT_ENABLE_FORWARDSYS
-//#define SMEXT_ENABLE_HANDLESYS
+#define SMEXT_ENABLE_HANDLESYS
 //#define SMEXT_ENABLE_PLAYERHELPERS
 //#define SMEXT_ENABLE_DBMANAGER
 //#define SMEXT_ENABLE_GAMECONF
@@ -76,4 +76,6 @@
 //#define SMEXT_ENABLE_TEXTPARSERS
 //#define SMEXT_ENABLE_USERMSGS
 //#define SMEXT_ENABLE_TRANSLATOR
+//#define SMEXT_ENABLE_ROOTCONSOLEMENU
+
 #endif // _INCLUDE_SOURCEMOD_EXTENSION_CONFIG_H_
