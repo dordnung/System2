@@ -23,11 +23,10 @@
  */
 
 #if defined _system2_included
-	#endinput
+    #endinput
 #endif
 
 #define _system2_included
-
 
 
 /**
@@ -47,10 +46,10 @@
  */
 enum OS
 {
-	OS_UNKNOWN,                 // OS couldn't be determined
-	OS_WINDOWS,                 // Windows
-	OS_UNIX,                    // Linux / Unix
-	OS_MAC                      // MAC
+    OS_UNKNOWN,                 // OS couldn't be determined
+    OS_WINDOWS,                 // Windows
+    OS_UNIX,                    // Linux / Unix
+    OS_MAC                      // MAC
 }
 
 
@@ -59,10 +58,10 @@ enum OS
  */
 enum CMDReturn
 {
-	CMD_SUCCESS,                // Fully finished
-	CMD_EMPTY,                  // Result is empty (only System2_RunThreadCommand)
-	CMD_ERROR,                  // An error appeared
-	CMD_PROGRESS                // Not finished yet -> Wait for other state
+    CMD_SUCCESS,                // Fully finished
+    CMD_EMPTY,                  // Result is empty (only System2_RunThreadCommand)
+    CMD_ERROR,                  // An error appeared
+    CMD_PROGRESS                // Not finished yet -> Wait for other state
 }
 
 
@@ -71,11 +70,11 @@ enum CMDReturn
  */
 enum CompressArchive
 {
-	ARCHIVE_ZIP,                // zip
-	ARCHIVE_7Z,                 // 7 zip
-	ARCHIVE_GZIP,               // gzip
-	ARCHIVE_BZIP2,              // bzip2
-	ARCHIVE_TAR                 // tar
+    ARCHIVE_ZIP,                // zip
+    ARCHIVE_7Z,                 // 7 zip
+    ARCHIVE_GZIP,               // gzip
+    ARCHIVE_BZIP2,              // bzip2
+    ARCHIVE_TAR                 // tar
 }
 
 
@@ -84,13 +83,12 @@ enum CompressArchive
  */
 enum CompressLevel
 {
-	LEVEL_1,                    // Weekest
-	LEVEL_3,
-	LEVEL_5,
-	LEVEL_7,
-	LEVEL_9                     // Strongest
+    LEVEL_1,                    // Weekest
+    LEVEL_3,
+    LEVEL_5,
+    LEVEL_7,
+    LEVEL_9                     // Strongest
 }
-
 
 
 /**
@@ -106,9 +104,9 @@ enum CompressLevel
  */
 typeset CmdCallback
 {
-	function void (const char[] output, const int size, CMDReturn status, any data, const char[] command);
-	function void (const char[] output, const int size, CMDReturn status, any data);
-	function void (const char[] output, const int size, CMDReturn status);
+    function void (const char[] output, const int size, CMDReturn status, any data, const char[] command);
+    function void (const char[] output, const int size, CMDReturn status, any data);
+    function void (const char[] output, const int size, CMDReturn status);
 };
 
 
@@ -125,8 +123,8 @@ typeset CmdCallback
  */
 typeset TransferUpdated
 {
-	function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data);
-	function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow);
+    function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow, any data);
+    function void (bool finished, const char[] error, float dltotal, float dlnow, float ultotal, float ulnow);
 };
 
 
@@ -140,10 +138,9 @@ typeset TransferUpdated
  */
 typeset CopyCallback 
 {
-	function void (bool success, const char[] from, const char[] to, any data);
-	function void (bool success, const char[] from, const char[] to);
+    function void (bool success, const char[] from, const char[] to, any data);
+    function void (bool success, const char[] from, const char[] to);
 };
-
 
 
 /**
@@ -392,52 +389,52 @@ native bool System2_URLDecode(const char[] input, char[] output, int maxlength);
  */
 #pragma deprecated Use System2_URLEncode() instead.
 stock void URLEncode(char[] stringToEncode, int maxlength) {
-	System2_URLEncode(stringToEncode, maxlength);
+    System2_URLEncode(stringToEncode, maxlength);
 }
 
 
 public Extension __ext_system2 =
 {
-	name = "System2",
-	file = "system2.ext",
+    name = "System2",
+    file = "system2.ext",
 
-	#if defined AUTOLOAD_EXTENSIONS
-		autoload = 1,
-	#else
-		autoload = 0,
-	#endif
+    #if defined AUTOLOAD_EXTENSIONS
+        autoload = 1,
+    #else
+        autoload = 0,
+    #endif
 
-	#if defined REQUIRE_EXTENSIONS
-		required = 1,
-	#else
-		required = 0,
-	#endif
+    #if defined REQUIRE_EXTENSIONS
+        required = 1,
+    #else
+        required = 0,
+    #endif
 };
 
 
 #if !defined REQUIRE_EXTENSIONS
-	public void __ext_system2_SetNTVOptional()
-	{
-		MarkNativeAsOptional("System2_GetPage");
-		MarkNativeAsOptional("System2_CompressFile");
-		MarkNativeAsOptional("System2_Compress");
-		MarkNativeAsOptional("System2_ExtractArchive");
-		MarkNativeAsOptional("System2_Extract");
-		MarkNativeAsOptional("System2_DownloadFile");
-		MarkNativeAsOptional("System2_DownloadFTPFile");
-		MarkNativeAsOptional("System2_UploadFTPFile");
-		MarkNativeAsOptional("System2_RunThreadCommand");
-		MarkNativeAsOptional("System2_RunThreadedCommand");
-		MarkNativeAsOptional("System2_RunThreadCommandWithData");
-		MarkNativeAsOptional("System2_RunThreadedCommandWithData");
-		MarkNativeAsOptional("System2_RunCommand");
-		MarkNativeAsOptional("System2_GetGameDir");
-		MarkNativeAsOptional("System2_GetOS");
-		MarkNativeAsOptional("System2_GetStringMD5");
-		MarkNativeAsOptional("System2_GetFileMD5");
-		MarkNativeAsOptional("System2_GetStringCRC32");
-		MarkNativeAsOptional("System2_GetFileCRC32");
-		MarkNativeAsOptional("System2_URLEncode");
-		MarkNativeAsOptional("System2_URLDecode");
-	}
+    public void __ext_system2_SetNTVOptional()
+    {
+        MarkNativeAsOptional("System2_GetPage");
+        MarkNativeAsOptional("System2_CompressFile");
+        MarkNativeAsOptional("System2_Compress");
+        MarkNativeAsOptional("System2_ExtractArchive");
+        MarkNativeAsOptional("System2_Extract");
+        MarkNativeAsOptional("System2_DownloadFile");
+        MarkNativeAsOptional("System2_DownloadFTPFile");
+        MarkNativeAsOptional("System2_UploadFTPFile");
+        MarkNativeAsOptional("System2_RunThreadCommand");
+        MarkNativeAsOptional("System2_RunThreadedCommand");
+        MarkNativeAsOptional("System2_RunThreadCommandWithData");
+        MarkNativeAsOptional("System2_RunThreadedCommandWithData");
+        MarkNativeAsOptional("System2_RunCommand");
+        MarkNativeAsOptional("System2_GetGameDir");
+        MarkNativeAsOptional("System2_GetOS");
+        MarkNativeAsOptional("System2_GetStringMD5");
+        MarkNativeAsOptional("System2_GetFileMD5");
+        MarkNativeAsOptional("System2_GetStringCRC32");
+        MarkNativeAsOptional("System2_GetFileCRC32");
+        MarkNativeAsOptional("System2_URLEncode");
+        MarkNativeAsOptional("System2_URLDecode");
+    }
 #endif
