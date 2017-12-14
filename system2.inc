@@ -232,6 +232,8 @@ native void System2_CopyFile(CopyCallback callback, const char[] pathToFile, con
  *
  * @noreturn
  */
+native void System2_Compress(CmdCallback callback, const char[] pathToFile, const char[] pathToArchive, CompressArchive archive = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = INVALID_HANDLE);
+#pragma deprecated Use System2_Compress() instead.
 native void System2_CompressFile(CmdCallback callback, const char[] pathToFile, const char[] pathToArchive, CompressArchive archive = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = INVALID_HANDLE);
 
 
@@ -245,6 +247,8 @@ native void System2_CompressFile(CmdCallback callback, const char[] pathToFile, 
  *
  * @noreturn
  */
+native void System2_Extract(CmdCallback callback, const char[] pathToArchive, const char[] pathToExtract, any data = INVALID_HANDLE);
+#pragma deprecated Use System2_Extract() instead.
 native void System2_ExtractArchive(CmdCallback callback, const char[] pathToArchive, const char[] pathToExtract, any data = INVALID_HANDLE);
 
 
@@ -257,6 +261,8 @@ native void System2_ExtractArchive(CmdCallback callback, const char[] pathToArch
  *
  * @noreturn
  */
+native void System2_RunThreadedCommand(CmdCallback callback, const char[] command, any ...);
+#pragma deprecated Use System2_RunThreadedCommand() instead.
 native void System2_RunThreadCommand(CmdCallback callback, const char[] command, any ...);
 
 
@@ -270,6 +276,8 @@ native void System2_RunThreadCommand(CmdCallback callback, const char[] command,
  *
  * @noreturn
  */
+native void System2_RunThreadedCommandWithData(CmdCallback callback, any data, const char[] command, any ...);
+#pragma deprecated Use System2_RunThreadedCommandWithData() instead.
 native void System2_RunThreadCommandWithData(CmdCallback callback, any data, const char[] command, any ...);
 
 
@@ -412,11 +420,16 @@ public Extension __ext_system2 =
 	{
 		MarkNativeAsOptional("System2_GetPage");
 		MarkNativeAsOptional("System2_CompressFile");
+		MarkNativeAsOptional("System2_Compress");
 		MarkNativeAsOptional("System2_ExtractArchive");
+		MarkNativeAsOptional("System2_Extract");
 		MarkNativeAsOptional("System2_DownloadFile");
 		MarkNativeAsOptional("System2_DownloadFTPFile");
 		MarkNativeAsOptional("System2_UploadFTPFile");
 		MarkNativeAsOptional("System2_RunThreadCommand");
+		MarkNativeAsOptional("System2_RunThreadedCommand");
+		MarkNativeAsOptional("System2_RunThreadCommandWithData");
+		MarkNativeAsOptional("System2_RunThreadedCommandWithData");
 		MarkNativeAsOptional("System2_RunCommand");
 		MarkNativeAsOptional("System2_GetGameDir");
 		MarkNativeAsOptional("System2_GetOS");

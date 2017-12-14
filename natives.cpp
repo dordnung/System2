@@ -126,7 +126,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeRunThreadedCommand(IPluginContext *pContext, const cell_t *params) {
 	char command[MAX_COMMAND_LENGTH + 1];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 2);
@@ -139,7 +139,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeRunThreadedCommandWithData(IPluginContext *pContext, const cell_t *params) {
 	char command[MAX_COMMAND_LENGTH + 1];
 
 	smutils->FormatString(command, sizeof(command), pContext, params, 3);
@@ -152,7 +152,7 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
 }
 
 
-cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 	char *file;
 	char *folder;
 
@@ -205,7 +205,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 	char *file;
 	char *folder;
 

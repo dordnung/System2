@@ -29,14 +29,14 @@
 
 
 cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params);
-cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params);
+cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
 cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params);
 cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRunThreadedCommand(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRunThreadedCommandWithData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
@@ -51,13 +51,17 @@ const sp_nativeinfo_t system2_natives[] =
 {
 	{ "System2_GetPage", NativeGetPage },
 	{ "System2_CopyFile", NativeCopyFile },
-	{ "System2_CompressFile", NativeCompressFile },
-	{ "System2_ExtractArchive", NativeExtractArchive },
+	{ "System2_CompressFile", NativeCompress },
+	{ "System2_Compress", NativeCompress },
+	{ "System2_ExtractArchive", NativeExtract },
+	{ "System2_Extract", NativeExtract },
 	{ "System2_DownloadFile", NativeDownloadFileUrl },
 	{ "System2_DownloadFTPFile", NativeDownloadFile },
 	{ "System2_UploadFTPFile", NativeUploadFile },
-	{ "System2_RunThreadCommand", NativeRunThreadCommand },
-	{ "System2_RunThreadCommandWithData", NativeRunThreadCommandWithData },
+	{ "System2_RunThreadCommand", NativeRunThreadedCommand },
+	{ "System2_RunThreadedCommand", NativeRunThreadedCommand },
+	{ "System2_RunThreadCommandWithData", NativeRunThreadedCommandWithData },
+	{ "System2_RunThreadedCommandWithData", NativeRunThreadedCommandWithData },
 	{ "System2_RunCommand", NativeRunCommand },
 	{ "System2_GetGameDir", NativeGetGameDir },
 	{ "System2_GetOS", NativeGetOS },
