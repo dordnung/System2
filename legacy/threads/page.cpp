@@ -69,7 +69,6 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
         if (!this->post.empty()) {
             curl_easy_setopt(curl, CURLOPT_POST, 1L);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->post.c_str());
-            smutils->LogError(myself, "POST: %s", this->post.c_str());
         }
 
         // Set the useragent
