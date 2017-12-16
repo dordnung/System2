@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        download.h
+ * File        page.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,36 +22,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _DOWNLOAD_H_
-#define _DOWNLOAD_H_
+#ifndef _LEGACY_PAGE_H_
+#define _LEGACY_PAGE_H_
 
 #include "extension.h"
+#include "command.h"
 
 
-typedef struct {
-	uint32_t lastFrame;
-	int data;
-	IPluginFunction *function;
-	Mode mode;
-} progress_info;
-
-
-class DownloadThread : public IThread {
+class LegacyPageThread : public IThread {
 private:
-	char url[PLATFORM_MAX_PATH + 1];
-	char localFile[PLATFORM_MAX_PATH + 1];
+    std::string url;
+    std::string post;
+    std::string useragent;
+    int data;
 
-	IPluginFunction *function;
-	int data;
+    IPluginFunction *callback;
 
 public:
-	DownloadThread(char *host, char *file, IPluginFunction *callback, int any);
+    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback);
 
-	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void RunThread(IThreadHandle *pThread);
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+
 };
 
-size_t file_write(void *buffer, size_t size, size_t nmemb, void *stream);
-int progress_updated(void *data, double dltotal, double dlnow, double ultotal, double ulnow);
+size_t page_get(void *buffer, size_t size, size_t nmemb, void *userdata);
 
 #endif

@@ -28,16 +28,12 @@
 #include "extension.h"
 
 
-cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params);
-cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
-cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params);
-cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRunThreadedCommand(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRunThreadedCommandWithData(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params);
+//cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
+//cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
+//cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
+//cell_t NativeExecuteThreadedWithData(IPluginContext *pContext, const cell_t *params);
+//cell_t NativeExecute(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params);
@@ -49,30 +45,24 @@ cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
 {
-	{ "System2_GetPage", NativeGetPage },
-	{ "System2_CopyFile", NativeCopyFile },
-	{ "System2_CompressFile", NativeCompress },
-	{ "System2_Compress", NativeCompress },
-	{ "System2_ExtractArchive", NativeExtract },
-	{ "System2_Extract", NativeExtract },
-	{ "System2_DownloadFile", NativeDownloadFileUrl },
-	{ "System2_DownloadFTPFile", NativeDownloadFile },
-	{ "System2_UploadFTPFile", NativeUploadFile },
-	{ "System2_RunThreadCommand", NativeRunThreadedCommand },
-	{ "System2_RunThreadedCommand", NativeRunThreadedCommand },
-	{ "System2_RunThreadCommandWithData", NativeRunThreadedCommandWithData },
-	{ "System2_RunThreadedCommandWithData", NativeRunThreadedCommandWithData },
-	{ "System2_RunCommand", NativeRunCommand },
-	{ "System2_GetGameDir", NativeGetGameDir },
-	{ "System2_GetOS", NativeGetOS },
-	{ "System2_GetStringMD5", NativeGetStringMD5 },
-	{ "System2_GetFileMD5", NativeGetFileMD5 },
-	{ "System2_GetStringCRC32", NativeGetStringCRC32 },
-	{ "System2_GetFileCRC32", NativeGetFileCRC32 },
-	{ "System2_URLEncode", NativeURLEncode },
-	{ "System2_URLDecode", NativeURLDecode },
-	{ NULL, NULL },
+    { "System2ExecuteOutput.GetOutput", NativeCopyFile },
+    { "System2ExecuteOutput.Size.get", NativeCopyFile },
+    { "System2ExecuteOutput.Empty.get", NativeCopyFile },
+    { "System2_CopyFile", NativeCopyFile },
+    //{ "System2_Compress", NativeCompress },
+    //{ "System2_Extract", NativeExtract },
+    //{ "System2_ExecuteThreaded", NativeExecuteThreaded },
+    //{ "System2_ExecuteThreadedWithData", NativeExecuteThreadedWithData },
+    //{ "System2_Execute", NativeExecute },
+    { "System2_GetGameDir", NativeGetGameDir },
+    { "System2_GetOS", NativeGetOS },
+    { "System2_GetStringMD5", NativeGetStringMD5 },
+    { "System2_GetFileMD5", NativeGetFileMD5 },
+    { "System2_GetStringCRC32", NativeGetStringCRC32 },
+    { "System2_GetFileCRC32", NativeGetFileCRC32 },
+    { "System2_URLEncode", NativeURLEncode },
+    { "System2_URLDecode", NativeURLDecode },
+    { NULL, NULL },
 };
-
 
 #endif

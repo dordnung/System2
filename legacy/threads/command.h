@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        copy.h
+ * File        command.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,40 +22,60 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _COPY_H_
-#define _COPY_H_
+#ifndef _LEGACY_COMMAND_H_
+#define _LEGACY_COMMAND_H_
 
 #include "extension.h"
 
+#define MAX_RESULT_LENGTH 4096
 
-class CopyCallback : public Callback {
+ // Define Posix
+#if defined  _WIN32
+#define PosixOpen _popen
+#define PosixClose _pclose
+
+ //#pragma warning(disable: 4996)
+#else
+#define PosixOpen popen
+#define PosixClose pclose
+#endif
+
+
+enum CommandState {
+    CMD_SUCCESS,
+    CMD_EMPTY,
+    CMD_ERROR,
+    CMD_PROGRESS
+};
+
+
+class LegacyCommandCallback : public Callback {
 private:
-    bool success;
-    std::string from;
-    std::string to;
-    IPluginFunction *callback;
+    std::string output;
+    std::string command;
     int data;
 
+    IPluginFunction *callback;
+    CommandState state;
+
 public:
-    CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data);
+    LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, CommandState state);
 
     virtual void Fire();
 };
 
 
-class CopyThread : public IThread {
+class LegacyCommandThread : public IThread {
 private:
-    std::string from;
-    std::string to;
-	IPluginFunction *callback;
-	int data;
+    std::string command;
+    IPluginFunction *callback;
+    int data;
 
 public:
-	CopyThread(std::string from, std::string to, IPluginFunction *callback, int data);
+    LegacyCommandThread(std::string command, IPluginFunction *callback, int data);
 
-	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void RunThread(IThreadHandle *pThread);
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 };
-
 
 #endif

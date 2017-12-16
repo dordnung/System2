@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        command.h
+ * File        ftp.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,35 +22,37 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _COMMAND_H_
-#define _COMMAND_H_
+#ifndef _LEGACY_FTP_H_
+#define _LEGACY_FTP_H_
 
 #include "extension.h"
 
-
- // Define Posix
-#if defined  _WIN32
-#define PosixOpen _popen
-#define PosixClose _pclose
-
-#pragma warning(disable: 4996)
-#else
-#define PosixOpen popen
-#define PosixClose pclose
-#endif
+ // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+extern IMutex *ftpMutex;
 
 
-class CommandThread : public IThread {
+class LegacyFTPThread : public IThread {
 private:
-	char command[2048];
-	IPluginFunction *function;
+    bool download;
+
+	std::string remoteFile;
+    std::string localFile;
+    std::string host;
+    std::string username;
+    std::string password;
+
+	int port;
 	int data;
 
+	IPluginFunction *callback;
+
 public:
-	CommandThread(char *command, IPluginFunction *callback, int any);
+    LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback);
 
 	void RunThread(IThreadHandle *pThread);
 	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
 };
+
+size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *userdata);
 
 #endif

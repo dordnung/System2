@@ -26,73 +26,25 @@
 #define _EXTENSION_H_
 
 #include "smsdk_ext.h"
+#include "callback.h"
 
 #include <stdio.h>
 #include <string.h>
-#include <fstream>
-
+#include <string>
+#include <memory>
 #include <queue>
+
 #include <curl/curl.h>
-
-#define MAX_RESULT_LENGTH 4096
-#define MAX_COMMAND_LENGTH 2048
-
-
-enum OS {
-	OS_UNKNOWN,
-	OS_WIN,
-	OS_UNIX,
-	OS_MAC
-};
-
-enum Mode {
-	MODE_COMMAND,
-	MODE_DOWNLOAD,
-	MODE_UPLOAD,
-	MODE_COPY,
-	MODE_GET
-};
-
-enum ReturnState {
-	CMD_SUCCESS,
-	CMD_EMPTY,
-	CMD_ERROR,
-	CMD_PROGRESS
-};
-
-
-typedef struct {
-	char command[MAX_COMMAND_LENGTH + 1];
-
-	char resultString[MAX_RESULT_LENGTH + 1];
-	char curlError[CURL_ERROR_SIZE + 1];
-
-	char copyFrom[PLATFORM_MAX_PATH + 1];
-	char copyTo[PLATFORM_MAX_PATH + 1];
-
-	int finished;
-	int data;
-
-	double dltotal;
-	double dlnow;
-	double ultotal;
-	double ulnow;
-
-	Mode mode;
-
-	IPluginFunction *function;
-	cell_t result;
-} ThreadReturn;
 
 
 class System2Extension : public SDKExtension {
 private:
 	IMutex *mutex;
-	std::queue<ThreadReturn *> forwardQueue;
+	std::queue<std::shared_ptr<Callback>> callbackQueue;
 	uint32_t frames;
 
 public:
-	void addToQueue(ThreadReturn *threadReturn);
+	void AppendCallback(std::shared_ptr<Callback> callback);
 
 	void GameFrameHit();
 	uint32_t GetFrames() {

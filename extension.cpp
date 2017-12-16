@@ -24,107 +24,83 @@
 
 #include "extension.h"
 #include "natives.h"
-#include "ftp.h"
+#include "legacy/natives.h"
+#include "legacy/threads/ftp.h"
 
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
-	this->frames = 0;
+    this->frames = 0;
 
-	// Add natives and register extension
-	sharesys->AddNatives(myself, system2_natives);
-	sharesys->RegisterLibrary(myself, "system2");
+    // Add natives and register extension
+    sharesys->AddNatives(myself, system2_natives);
+    sharesys->AddNatives(myself, system2_legacy_natives);
+    sharesys->RegisterLibrary(myself, "system2");
 
-	// Add mutex and init curl
-	mutex = threader->MakeMutex();
-	ftpMutex = threader->MakeMutex();
+    // Create needed mutex
+    mutex = threader->MakeMutex();
+    ftpMutex = threader->MakeMutex();
 
-	curl_global_init(CURL_GLOBAL_ALL);
+    smutils->AddGameFrameHook(&OnGameFrameHit);
 
-	smutils->AddGameFrameHook(&OnGameFrameHit);
+    // CURL needs to be initialized
+    curl_global_init(CURL_GLOBAL_ALL);
 
-	return true;
+    return true;
 }
 
 void System2Extension::SDK_OnUnload() {
-	smutils->RemoveGameFrameHook(&OnGameFrameHit);
-	mutex->DestroyThis();
-	ftpMutex->DestroyThis();
+    // Remove created mutex
+    mutex->DestroyThis();
+    ftpMutex->DestroyThis();
 
-	curl_global_cleanup();
+    smutils->RemoveGameFrameHook(&OnGameFrameHit);
+
+    curl_global_cleanup();
 }
 
-void System2Extension::addToQueue(ThreadReturn *threadReturn) {
-	// Lock mutex to gain thread safety
-	while (!this->mutex->TryLock()) {
+void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
+    // Lock mutex to gain thread safety
+    while (!this->mutex->TryLock()) {
 #ifdef _WIN32
-		Sleep(50);
+        Sleep(50);
 #else
-		usleep(50000);
+        usleep(50000);
 #endif
-	}
+    }
 
-	// Add the thread return to the front of the queue
-	this->forwardQueue.push(threadReturn);
-	this->mutex->Unlock();
+    // Add the callback to the queue and unlock mutex again
+    this->callbackQueue.push(callback);
+    this->mutex->Unlock();
 }
 
 void System2Extension::GameFrameHit() {
-	// Increase frame number which will be needed for progress update
-	this->frames++;
+    // Increase number of frames
+    this->frames++;
 
-	// Lock the mutex to gain thread safety
-	if (!this->mutex->TryLock()) {
-		// Couldn't lock
-		return;
-	}
+    // Lock the mutex to gain thread safety
+    if (!this->mutex->TryLock()) {
+        // Couldn't lock -> do not wait
+        return;
+    }
 
-	// Are there outstandig forwards?
-	if (!this->forwardQueue.empty()) {
-		// Get the last forward if so
-		ThreadReturn *threadReturn = this->forwardQueue.front();
-		IPluginFunction *function = threadReturn->function;
+    // Are there outstandig callbacks?
+    if (!this->callbackQueue.empty()) {
+        // Fire the next callback
+        this->callbackQueue.front()->Fire();
 
-		// Set function params
-		if (threadReturn->mode == MODE_COMMAND || threadReturn->mode == MODE_GET) {
-			// ... for a command callback
-			function->PushString(threadReturn->resultString);
-			function->PushCell(strlen(threadReturn->resultString) + 1);
-			function->PushCell(threadReturn->result);
-			function->PushCell(threadReturn->data);
-			function->PushString(threadReturn->command);
-		} else if (threadReturn->mode != MODE_COPY) {
-			// ... for a progress callback
-			function->PushCell(threadReturn->finished);
-			function->PushString(threadReturn->curlError);
+        // Remove the callback from the queue
+        callbackQueue.pop();
+    }
 
-			function->PushFloat((float)threadReturn->dltotal);
-			function->PushFloat((float)threadReturn->dlnow);
-			function->PushFloat((float)threadReturn->ultotal);
-			function->PushFloat((float)threadReturn->ulnow);
-			function->PushCell(threadReturn->data);
-		} else {
-			// ... for a result for a copy
-			function->PushCell((threadReturn->result == CMD_ERROR) ? 0 : 1);
-			function->PushString(threadReturn->copyFrom);
-			function->PushString(threadReturn->copyTo);
-			function->PushCell(threadReturn->data);
-		}
-
-		// Finally execute the forward
-		function->Execute(NULL);
-
-		// Delete it and remove it from the queue
-		delete threadReturn;
-		forwardQueue.pop();
-	}
-
-	// Unlock mutex
-	this->mutex->Unlock();
+    // Unlock mutex
+    this->mutex->Unlock();
 }
 
 
 void OnGameFrameHit(bool simulating) {
-	system2Extension.GameFrameHit();
+    if (!simulating) {
+        system2Extension.GameFrameHit();
+    }
 }
 
 

@@ -22,6 +22,18 @@
     <Filter Include="Source Files\hash">
       <UniqueIdentifier>{6259f88e-ae7c-473e-ae0a-041471c10152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\legacy">
+      <UniqueIdentifier>{c842e8ef-abb3-4293-aa60-1c1d58e80c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy">
+      <UniqueIdentifier>{c97a9616-be1c-4020-8420-e7aef26a0c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\legacy\threads">
+      <UniqueIdentifier>{62647c78-ce6f-47c5-b3f9-f483254251ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy\threads">
+      <UniqueIdentifier>{87aa63e8-b211-4f76-b134-eb240b06d72d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -33,19 +45,7 @@
     <ClCompile Include="..\natives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\threads\copy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\threads\download.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\threads\ftp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\threads\page.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\hash\md5.cpp">
@@ -53,6 +53,21 @@
     </ClCompile>
     <ClCompile Include="..\hash\crc32.cpp">
       <Filter>Source Files\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\natives.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\ftp.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\page.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\command.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\download.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,19 +83,7 @@
     <ClInclude Include="..\natives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\ftp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\threads\page.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\threads\command.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\threads\copy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\threads\download.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\hash\md5.h">
@@ -88,6 +91,24 @@
     </ClInclude>
     <ClInclude Include="..\hash\crc.h">
       <Filter>Header Files\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\natives.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\callback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\page.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\command.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\download.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\ftp.h">
+      <Filter>Header Files\legacy\threads</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

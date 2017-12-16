@@ -47,6 +47,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/MP /D SE_EPISODEONE=1 /D SE_DARKMESSIAH=2 /D SE_ORANGEBOX=3 /D SE_BLOODYGOODTIME=4 /D SE_EYE=5 /D SE_CSS=6 /D SE_ORANGEBOXVALVE=7 /D SE_LEFT4DEAD=8 /D SE_LEFT4DEAD2=9 /D SE_ALIENSWARM=10 /D SE_PORTAL2=11 /D SE_CSGO=12</AdditionalOptions>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <IgnoreSpecificDefaultLibraries>
@@ -67,26 +68,29 @@
     <ClCompile Include="..\extension.cpp" />
     <ClCompile Include="..\hash\crc32.cpp" />
     <ClCompile Include="..\hash\md5.cpp" />
+    <ClCompile Include="..\legacy\natives.cpp" />
+    <ClCompile Include="..\legacy\threads\command.cpp" />
+    <ClCompile Include="..\legacy\threads\download.cpp" />
+    <ClCompile Include="..\legacy\threads\ftp.cpp" />
+    <ClCompile Include="..\legacy\threads\page.cpp" />
     <ClCompile Include="..\natives.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
-    <ClCompile Include="..\threads\command.cpp" />
     <ClCompile Include="..\threads\copy.cpp" />
-    <ClCompile Include="..\threads\download.cpp" />
-    <ClCompile Include="..\threads\ftp.cpp" />
-    <ClCompile Include="..\threads\page.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\callback.h" />
     <ClInclude Include="..\extension.h" />
     <ClInclude Include="..\hash\crc.h" />
     <ClInclude Include="..\hash\md5.h" />
+    <ClInclude Include="..\legacy\natives.h" />
+    <ClInclude Include="..\legacy\threads\command.h" />
+    <ClInclude Include="..\legacy\threads\download.h" />
+    <ClInclude Include="..\legacy\threads\ftp.h" />
+    <ClInclude Include="..\legacy\threads\page.h" />
     <ClInclude Include="..\natives.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
-    <ClInclude Include="..\threads\command.h" />
     <ClInclude Include="..\threads\copy.h" />
-    <ClInclude Include="..\threads\download.h" />
-    <ClInclude Include="..\threads\ftp.h" />
-    <ClInclude Include="..\threads\page.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

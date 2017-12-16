@@ -23,57 +23,64 @@
  */
 
 #include "copy.h"
+#include <fstream>
 
 
-CopyThread::CopyThread(char *localFile, char *destinationPath, IPluginFunction *callback, int any) : IThread() {
-	strcpy(this->file, localFile);
-	strcpy(this->copyPath, destinationPath);
+CopyCallback::CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data) {
+    this->success = success;
+    this->from = from;
+    this->to = to;
+    this->callback = callback;
+    this->data = data;
+}
 
-	this->function = callback;
-	this->data = any;
+void CopyCallback::Fire() {
+    this->callback->PushCell(this->success);
+    this->callback->PushString(this->from.c_str());
+    this->callback->PushString(this->to.c_str());
+    this->callback->PushCell(this->data);
+    this->callback->Execute(NULL);
+}
+
+
+CopyThread::CopyThread(std::string from, std::string to, IPluginFunction *callback, int data) : IThread() {
+    this->from = from;
+    this->to = to;
+    this->callback = callback;
+    this->data = data;
 }
 
 void CopyThread::RunThread(IThreadHandle *pHandle) {
-	char fullFilePath[PLATFORM_MAX_PATH + 1];
-	char fullCopyPath[PLATFORM_MAX_PATH + 1];
+    char filePath[PLATFORM_MAX_PATH + 1];
+    char copyPath[PLATFORM_MAX_PATH + 1];
 
-	// Create a thread return struct
-	ThreadReturn *threadReturn = new ThreadReturn;
+    // Get the full paths to the files
+    g_pSM->BuildPath(Path_Game, filePath, sizeof(filePath), this->from.c_str());
+    g_pSM->BuildPath(Path_Game, copyPath, sizeof(copyPath), this->to.c_str());
 
-	threadReturn->function = function;
-	threadReturn->mode = MODE_COPY;
-	threadReturn->finished = 1;
-	threadReturn->data = data;
+    // Open both files
+    std::ifstream file1(filePath, std::ifstream::in | std::ifstream::binary);
+    std::ofstream file2(copyPath, std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
 
-	strcpy(threadReturn->copyFrom, this->file);
-	strcpy(threadReturn->copyTo, this->copyPath);
+    bool success;
+    if (file1.bad() || file2.bad() || !file1.is_open() || !file2.is_open()) {
+        // Couldn't open a file
+        success = false;
+    } else {
+        // Copy the file
+        file2 << file1.rdbuf();
+        success = true;
+    }
 
-	// Get the full paths to the files
-	g_pSM->BuildPath(Path_Game, fullFilePath, sizeof(fullFilePath), file);
-	g_pSM->BuildPath(Path_Game, fullCopyPath, sizeof(fullCopyPath), copyPath);
+    // Close the files
+    if (file1.is_open()) {
+        file1.close();
+    }
 
-	// Open both files
-	std::ifstream file1(fullFilePath, std::ifstream::binary);
-	std::ofstream file2(fullCopyPath, std::ofstream::trunc | std::ofstream::binary);
+    if (file2.is_open()) {
+        file2.close();
+    }
 
-	if (file1.bad() || file2.bad() || !file1.is_open() || !file2.is_open()) {
-		// Couldn't open a file
-		threadReturn->result = CMD_ERROR;
-	} else {
-		// Copy the file
-		file2 << file1.rdbuf();
-		threadReturn->result = CMD_SUCCESS;
-	}
-
-	// Close the files
-	if (file1.good() || file1.is_open()) {
-		file1.close();
-	}
-
-	if (file2.good() || file2.is_open()) {
-		file2.close();
-	}
-
-	// Add return status to queue
-	system2Extension.addToQueue(threadReturn);
+    // Add callback to queue
+    system2Extension.AppendCallback(std::make_shared<CopyCallback>(success, this->from, this->to, this->callback, this->data));
 }
