@@ -19,7 +19,7 @@ PROJECT = system2
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp threads/command.cpp threads/copy.cpp threads/download.cpp threads/ftp.cpp threads/page.cpp natives.cpp extension.cpp hash/md5.cpp hash/crc32.cpp
+OBJECTS = sdk/smsdk_ext.cpp threads/copy.cpp legacy/threads/command.cpp legacy/threads/download.cpp legacy/threads/ftp.cpp legacy/threads/page.cpp legacy/natives.cpp hash/md5.cpp hash/crc32.cpp natives.cpp extension.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
@@ -114,6 +114,8 @@ all: check
 	mkdir -p $(BIN_DIR)/sdk
 	mkdir -p $(BIN_DIR)/threads
 	mkdir -p $(BIN_DIR)/hash
+	mkdir -p $(BIN_DIR)/legacy
+	mkdir -p $(BIN_DIR)/legacy/threads
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -131,5 +133,7 @@ clean: check
 	rm -rf $(BIN_DIR)/sdk/*.o
 	rm -rf $(BIN_DIR)/threads/*.o
 	rm -rf $(BIN_DIR)/hash/*.o
+	rm -rf $(BIN_DIR)/legacy/*.o
+	rm -rf $(BIN_DIR)/legacy/threads/*.o
 	rm -rf $(BIN_DIR)/$(BINARY)
 
