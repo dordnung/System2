@@ -75,7 +75,9 @@ public:
     LegacyCommandThread(std::string command, IPluginFunction *callback, int data);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {
+        delete this;
+    }
 };
 
 #endif

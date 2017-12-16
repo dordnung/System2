@@ -65,7 +65,9 @@ public:
     LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {
+        delete this;
+    }
 };
 
 size_t file_write(void *buffer, size_t size, size_t nmemb, void *userdata);

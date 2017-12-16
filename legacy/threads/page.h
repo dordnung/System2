@@ -42,7 +42,9 @@ public:
     LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {
+        delete this;
+    }
 
 };
 

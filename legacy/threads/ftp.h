@@ -35,22 +35,24 @@ class LegacyFTPThread : public IThread {
 private:
     bool download;
 
-	std::string remoteFile;
+    std::string remoteFile;
     std::string localFile;
     std::string host;
     std::string username;
     std::string password;
 
-	int port;
-	int data;
+    int port;
+    int data;
 
-	IPluginFunction *callback;
+    IPluginFunction *callback;
 
 public:
     LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback);
 
-	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void RunThread(IThreadHandle *pThread);
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {
+        delete this;
+    }
 };
 
 size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *userdata);

@@ -38,7 +38,6 @@ private:
 
 public:
     CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data);
-
     virtual void Fire();
 };
 
@@ -52,9 +51,10 @@ private:
 
 public:
 	CopyThread(std::string from, std::string to, IPluginFunction *callback, int data);
-
 	void RunThread(IThreadHandle *pThread);
-	void OnTerminate(IThreadHandle *pThread, bool cancel) {}
+    void OnTerminate(IThreadHandle *pThread, bool cancel) {
+        delete this;
+    }
 };
 
 
