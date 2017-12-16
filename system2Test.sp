@@ -13,6 +13,7 @@ char testFileHashes[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
+int finishedCallbacks = 0;
 
 public void OnPluginStart() {
 	RegServerCmd("test_system2", OnTest);
@@ -147,16 +148,40 @@ void PerformTests() {
 	assertTrue("Getting the CRC32 hash of a file should be successful", System2_GetFileCRC32(testFileHashes, filecCRC32, sizeof(filecCRC32)));
 	assertStringEquals("c627da91", filecCRC32);
 
+	// Wait max. 20 seconds for all callbacks
+	CreateTimer(1.0, OnCheckCallbacks, 0, TIMER_REPEAT);
+
 	StopProfiling(profiler);
 
 	// Successfull
 	PrintToServer(" ");
-	PrintToServer("Executed system2 tests successfully in %.2f ms!",  GetProfilerTime(profiler) * 1000.0);
+	PrintToServer("Executed system2 non threaded tests successfully in %.2f ms!",  GetProfilerTime(profiler) * 1000.0);
+	PrintToServer(" ");
+	PrintToServer("Still testing callbacks...");
 	profiler.Close();
 }
 
+
+int timesTimerCalled = 0;
+public Action OnCheckCallbacks(Handle timer) {
+	// Wait max. 20 seconds for all callbacks
+	if (finishedCallbacks < 10 && timesTimerCalled >= 20) {
+		KillTimer(timer);
+		assertValueEquals(10, finishedCallbacks);
+		return Plugin_Stop;
+	} else if (finishedCallbacks == 10) {
+		PrintToServer("INFO: All callbacks were called");
+		return Plugin_Stop;
+	}
+
+	timesTimerCalled++;
+	return Plugin_Continue;
+}
+
+
 void GetPageCallbackUserAgent(const char[] output, const int size, CMDReturn status, any data, const char[] command) {
 	PrintToServer("INFO: Got a page with set user agent");
+	finishedCallbacks++;
 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(strlen(output) + 1, size);
@@ -167,6 +192,7 @@ void GetPageCallbackUserAgent(const char[] output, const int size, CMDReturn sta
 
 void GetPageCallbackPost(const char[] output, const int size, CMDReturn status) {
 	PrintToServer("INFO: Got a page by POST");
+	finishedCallbacks++;
 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(strlen(output) + 1, size);
@@ -182,6 +208,8 @@ void GetPageLongCallback(const char[] output, const int size, CMDReturn status) 
 		assertValueEquals(view_as<int>(CMDReturn:CMD_PROGRESS), view_as<int>(status));
 		assertValueEquals(strlen(output) + 1, size);
 	} else {
+		finishedCallbacks++;
+
 		assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 		assertValueEquals(strlen(output) + 1, size);
 		assertValueEquals(4238, strlen(longPage));
@@ -200,6 +228,7 @@ void DownloadFileCallback(bool finished, const char[] error, float dltotal, floa
 
 	if (finished) {
 		PrintToServer("INFO: Finished downloading a file");
+		finishedCallbacks++;
 
 		char fileData[256];
 
@@ -216,6 +245,8 @@ void DownloadFtpFileCallback(bool finished, const char[] error, float dltotal, f
 
 	// This division is just for the stacktrace line
 	if (finished) {
+		finishedCallbacks++;
+
 		assertStringEquals("", error);
 		PrintToServer("INFO: Finished downloading a file from FTP, uploading it again");
 
@@ -231,8 +262,10 @@ void UploadFtpFileCallback(bool finished, const char[] error, float dltotal, flo
 
 	// This division is just for the stacktrace line
 	if (finished) {
-		assertStringEquals("", error);
 		PrintToServer("INFO: Finished uploading a file to FTP");
+		finishedCallbacks++;
+
+		assertStringEquals("", error);
 	} else {
 		assertStringEquals("", error);
 	}
@@ -240,6 +273,7 @@ void UploadFtpFileCallback(bool finished, const char[] error, float dltotal, flo
 
 void CopyFileCallback(bool success, const char[] from, const char[] to, any data) {
 	PrintToServer("INFO: Copied a file");
+	finishedCallbacks++;
 
 	assertValueEquals(10, data);
 	assertValueEquals(true, success);
@@ -259,6 +293,7 @@ void CopyFileCallback(bool success, const char[] from, const char[] to, any data
 
 void CompressFileCallback(const char[] output, const int size, CMDReturn status, any data, const char[] command) {
 	PrintToServer("INFO: Compressed a file, now extract it again");
+	finishedCallbacks++;
 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(35, data);
@@ -272,6 +307,7 @@ void CompressFileCallback(const char[] output, const int size, CMDReturn status,
 
 void ExtractArchiveCallback(const char[] output, const int size, CMDReturn status, any data) {
 	PrintToServer("INFO: Extracted a file");
+	finishedCallbacks++;
 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(43, data);
@@ -289,6 +325,7 @@ void ExtractArchiveCallback(const char[] output, const int size, CMDReturn statu
 
 void CommandCallback(const char[] output, const int size, CMDReturn status, any data, const char[] command) {
 	PrintToServer("INFO: Called the threaded command %s", command);
+	finishedCallbacks++;
 
 	assertValueEquals(view_as<int>(CMDReturn:CMD_SUCCESS), view_as<int>(status));
 	assertValueEquals(86, data);
