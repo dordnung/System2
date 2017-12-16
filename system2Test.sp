@@ -13,11 +13,10 @@ char testFileHashes[PLATFORM_MAX_PATH + 1];
 char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
-bool gotLongPage;
 
 public void OnPluginStart() {
 	RegServerCmd("test_system2", OnTest);
-
+	
 	// Create test structure
 	BuildPath(Path_SM, path, sizeof(path), "data/system2/temp");
 }
@@ -80,19 +79,18 @@ void PerformTests() {
 
 	// Assert GetPage works, also test user agent, post data and the any parameter
 	PrintToServer("INFO: Getting a simple test page with set user agent");
-	System2_GetPage(GetPageCallbackUserAgent, "http://dordnung.de/system2/testPage.php", "", "testUseragent", 5);
+	System2_GetPage(GetPageCallbackUserAgent, "http://dordnung.de/sourcemod/system2/testPage.php", "", "testUseragent", 5);
 
 	PrintToServer("INFO: Getting a simple test page by POST");
-	System2_GetPage(GetPageCallbackPost, "http://dordnung.de/system2/testPage.php", "test=testData");
+	System2_GetPage(GetPageCallbackPost, "http://dordnung.de/sourcemod/system2/testPage.php", "test=testData");
 
 	PrintToServer("INFO: Getting a long test page");
-	gotLongPage = false
 	strcopy(longPage, sizeof(longPage), "");
-	System2_GetPage(GetPageLongCallback, "http://dordnung.de/system2/testPage.php?test");
+	System2_GetPage(GetPageLongCallback, "http://dordnung.de/sourcemod/system2/testPage.php?test");
 
 	// Test download file is successful
 	PrintToServer("INFO: Downloading a file");
-	System2_DownloadFile(DownloadFileCallback, "http://dordnung.de/system2/testFile.txt", testDownloadFilePath, 8);
+	System2_DownloadFile(DownloadFileCallback, "http://dordnung.de/sourcemod/system2/testFile.txt", testDownloadFilePath, 8);
 
 	// Test downloading a FTP File
 	PrintToServer("INFO: Downloading a file from FTP");
@@ -176,12 +174,11 @@ void GetPageCallbackPost(const char[] output, const int size, CMDReturn status) 
 }
 
 void GetPageLongCallback(const char[] output, const int size, CMDReturn status) {
-	PrintToServer("INFO: Got a long page");
+	PrintToServer("INFO: Got a long page with size %d (%d)", size, strlen(longPage));
 
 	StrCat(longPage, sizeof(longPage), output);
 
-	if (!gotLongPage) {
-		gotLongPage = true;
+	if (strlen(longPage) < 4238) {
 		assertValueEquals(view_as<int>(CMDReturn:CMD_PROGRESS), view_as<int>(status));
 		assertValueEquals(strlen(output) + 1, size);
 	} else {
@@ -189,7 +186,7 @@ void GetPageLongCallback(const char[] output, const int size, CMDReturn status) 
 		assertValueEquals(strlen(output) + 1, size);
 		assertValueEquals(4238, strlen(longPage));
 
-		for (int i = 0; i < 4238 / 26; i++) {
+		for (int i = 0; i < 4238; i++) {
 			asserCharEquals((i % 26) + 97, longPage[i]);
 		}
 	}
