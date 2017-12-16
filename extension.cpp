@@ -98,9 +98,7 @@ void System2Extension::GameFrameHit() {
 
 
 void OnGameFrameHit(bool simulating) {
-    if (!simulating) {
-        system2Extension.GameFrameHit();
-    }
+    system2Extension.GameFrameHit();
 }
 
 
