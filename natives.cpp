@@ -22,6 +22,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
+#include "handles.h"
 #include "natives.h"
 #include "command.h"
 #include "copy.h"
@@ -178,7 +179,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
-        CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
+        CommandThread *commandThread = new CommandThread(command, params[6], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to compress %s", binDir, fullPath);
@@ -231,7 +232,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
-        CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
+        CommandThread *commandThread = new CommandThread(command, params[4], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to extract %s", binDir, fullArchivePath);
@@ -246,7 +247,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[3], &command);
 
     // Start the thread that executes the command
-    CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[2]);
+    CommandThread *commandThread = new CommandThread(command, params[2], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
     threader->MakeThread(commandThread);
 
     return 1;
@@ -258,10 +259,54 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
     // Start the thread that executes the command - with data
-    CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[2]);
+    CommandThread *commandThread = new CommandThread(command, params[2], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
     threader->MakeThread(commandThread);
 
     return 1;
+}
+
+
+cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params) {
+    // Get the handle to the command callback
+    Handle_t hndl = static_cast<Handle_t>(params[1]);
+    HandleError err;
+    HandleSecurity sec = { pContext->GetIdentity(), myself->GetIdentity() };
+
+    CommandCallback *callback;
+    if ((err = handlesys->ReadHandle(hndl, commandOutputHandleType, &sec, (void **)&callback)) != HandleError_None) {
+        pContext->ReportError("Invalid command output handle %x (error %d)", hndl, err);
+        return 0;
+    }
+
+    // Get offset and check range
+    int offset = params[4];
+    if (offset < 0) {
+        offset = 0;
+    }
+    if (offset > (int)callback->GetOutput().length()) {
+        offset = callback->GetOutput().length();
+    }
+
+    // Copy the output beginning from offset
+    pContext->StringToLocalUTF8(params[2], params[3], callback->GetOutput().substr(offset).c_str(), NULL);
+    return 1;
+}
+
+
+cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params) {
+    // Get the handle to the command callback
+    Handle_t hndl = static_cast<Handle_t>(params[1]);
+    HandleError err;
+    HandleSecurity sec = { pContext->GetIdentity(), myself->GetIdentity() };
+
+    CommandCallback *callback;
+    if ((err = handlesys->ReadHandle(hndl, commandOutputHandleType, &sec, (void **)&callback)) != HandleError_None) {
+        pContext->ReportError("Invalid command output handle %x (error %d)", hndl, err);
+        return 0;
+    }
+
+    // Just return the length
+    return callback->GetOutput().length();
 }
 
 
@@ -301,10 +346,11 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
         output += buffer;
     }
 
-    pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
-
-    // Close Posix and return the result
+    // Close Posix 
     PosixClose(commandFile);
+
+    // Set the result output
+    pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
     return true;
 }
 
@@ -388,7 +434,7 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), NULL);
 
     return 1;
-    }
+}
 
 
 cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {

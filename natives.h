@@ -29,40 +29,53 @@
 
 
 cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params);
+cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params);
+cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeExecute(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params);
+
 cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
 {
-    { "System2ExecuteOutput.GetOutput", NativeCopyFile },
-    { "System2ExecuteOutput.Size.get", NativeCopyFile },
-    { "System2ExecuteOutput.Empty.get", NativeCopyFile },
     { "System2_CopyFile", NativeCopyFile },
+
     { "System2_Compress", NativeCompress },
     { "System2_Extract", NativeExtract },
+
     { "System2_ExecuteThreaded", NativeExecuteThreaded },
     { "System2_ExecuteFormattedThreaded", NativeExecuteFormattedThreaded },
+    { "System2ExecuteOutput.GetOutput", NativeExecuteOutput_GetOutput },
+    { "System2ExecuteOutput.Size.get", NativeExecuteOutput_GetSize },
+
     { "System2_Execute", NativeExecute },
     { "System2_ExecuteFormatted", NativeExecuteFormatted },
+
     { "System2_GetGameDir", NativeGetGameDir },
     { "System2_GetOS", NativeGetOS },
+
     { "System2_GetStringMD5", NativeGetStringMD5 },
     { "System2_GetFileMD5", NativeGetFileMD5 },
     { "System2_GetStringCRC32", NativeGetStringCRC32 },
     { "System2_GetFileCRC32", NativeGetFileCRC32 },
+
     { "System2_URLEncode", NativeURLEncode },
     { "System2_URLDecode", NativeURLDecode },
     { NULL, NULL },

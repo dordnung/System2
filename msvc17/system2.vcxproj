@@ -66,6 +66,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp" />
+    <ClCompile Include="..\handles.cpp" />
     <ClCompile Include="..\hash\crc32.cpp" />
     <ClCompile Include="..\hash\md5.cpp" />
     <ClCompile Include="..\legacy\natives.cpp" />
@@ -75,11 +76,13 @@
     <ClCompile Include="..\legacy\threads\page.cpp" />
     <ClCompile Include="..\natives.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
+    <ClCompile Include="..\threads\command.cpp" />
     <ClCompile Include="..\threads\copy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\callback.h" />
     <ClInclude Include="..\extension.h" />
+    <ClInclude Include="..\handles.h" />
     <ClInclude Include="..\hash\crc.h" />
     <ClInclude Include="..\hash\md5.h" />
     <ClInclude Include="..\legacy\natives.h" />
@@ -90,6 +93,7 @@
     <ClInclude Include="..\natives.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
+    <ClInclude Include="..\threads\command.h" />
     <ClInclude Include="..\threads\copy.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

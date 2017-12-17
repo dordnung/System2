@@ -34,6 +34,12 @@
     <Filter Include="Source Files\legacy\threads">
       <UniqueIdentifier>{87aa63e8-b211-4f76-b134-eb240b06d72d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\threads">
+      <UniqueIdentifier>{6263b2d3-fbdd-42dc-b37d-7d5c822fae9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\threads">
+      <UniqueIdentifier>{2cf009ca-5f75-4f3b-b677-313eab58c5ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -43,9 +49,6 @@
       <Filter>SourceMod SDK</Filter>
     </ClCompile>
     <ClCompile Include="..\natives.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\threads\copy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\hash\md5.cpp">
@@ -69,6 +72,15 @@
     <ClCompile Include="..\legacy\threads\download.cpp">
       <Filter>Source Files\legacy\threads</Filter>
     </ClCompile>
+    <ClCompile Include="..\threads\command.cpp">
+      <Filter>Source Files\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\copy.cpp">
+      <Filter>Source Files\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">
@@ -81,9 +93,6 @@
       <Filter>SourceMod SDK</Filter>
     </ClInclude>
     <ClInclude Include="..\natives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\threads\copy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\hash\md5.h">
@@ -109,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="..\legacy\threads\ftp.h">
       <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\command.h">
+      <Filter>Header Files\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\copy.h">
+      <Filter>Header Files\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handles.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
