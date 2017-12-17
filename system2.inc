@@ -34,23 +34,310 @@
  */
 #define CMD_MAX_LENGTH 2048
 
+
+/**
+ * A list of possible operating systems for System2_GetOS.
+ */
+enum OS
+{
+    OS_UNKNOWN,         // OS couldn't be determined
+    OS_WINDOWS,         // Windows
+    OS_UNIX,            // Linux / Unix
+    OS_MAC              // MAC
+}
+
+
+/**
+ * A list of possible archive formats for compression for System2_Compress.
+ */
+enum CompressArchive
+{
+    ARCHIVE_ZIP,
+    ARCHIVE_7Z,
+    ARCHIVE_GZIP,
+    ARCHIVE_BZIP2,
+    ARCHIVE_TAR
+}
+
+
+/**
+ * A list of possible compression levels for System2_Compress.
+ */
+enum CompressLevel
+{
+    LEVEL_1,            // Weekest
+    LEVEL_3,
+    LEVEL_5,
+    LEVEL_7,
+    LEVEL_9             // Strongest
+}
+
+
+/**
+ * Called when finished with System2_CopyFile.
+ *
+ * @param success       Whether copying was successful (will fail if couldn't open 'from' or 'to' file).
+ * @param from          Path to file that was copied.
+ * @param to            Path to the new copied file.
+ * @param data          Data passed to copy method.
+ *
+ * @noreturn
+ */
+typeset System2CopyCallback
+{
+    function void (bool success, const char[] from, const char[] to, any data);
+    function void (bool success, const char[] from, const char[] to);
+};
+
+
+/**
+ * Called when finished with System2_ExecuteThreaded or System2_ExecuteFormattedThreaded.
+ * The output will only be valid in the callback and will be destroyed afterwards.
+ *
+ * @param success       Whether the execution was successful or not.
+ *                      This not means that the command itself was successful!
+ * @param output        Output of the execution. Will be null if success is false!
+ * @param command       The executed command.
+ * @param data          Data passed to the execution.
+ *
+ * @noreturn
+ */
+typeset System2ExecuteCallback
+{
+    function void (bool success, System2ExecuteOutput output, const char[] command, any data);
+    function void (bool success, System2ExecuteOutput output, const char[] command);
+};
+
+
+/**
+ * Methodmap for the execution output.
+ */
+methodmap System2ExecuteOutput < Handle {
+    /**
+     * Retrieves the output of execution.
+     *
+     * @param output    Buffer to store the output in.
+     * @param maxlength Maxlength of the output buffer.
+     * @param start     Start byte to start reading from.
+     *                  You can use this to retrieve the output step by step. 
+     * 
+     * @noreturn
+     * @error           Invalid Handle.
+     */
+    public native void GetOutput(char[] output, int maxlength, int start = 0);
+
+    property int Size {
+        /**
+         * Returns the size of the output.
+         *
+         * @return Size of the output.
+         * @error  Invalid Handle.
+         */
+        public native get();
+    }
+}
+
+/**
+ * Copies a file to another location.
+ *
+ * @param callback      Callback function when finished with copy.
+ * @param from          Path to the file to copy.
+ * @param to            Path to the file to copy to (including filename). File will be replaced if it exists.
+ * @param data          Additional data to pass to the callback.
+ *
+ * @noreturn
+ */
+native void System2_CopyFile(System2CopyCallback callback, const char[] from, const char[] to, any data = 0);
+
+
+/**
+ * Compresses a file or folder to an archive.
+ *
+ * @param callback      Callback function when finished with compressing.
+ * @param path          Path to the file / folder to compress.
+ * @param archive       Path to the archive file to compress to (including filename).
+ * @param archiveType   Archive type to use.
+ * @param level         Compress level to use.
+ * @param data          Additional data to pass to the callback.
+ *
+ * @noreturn
+ */
+native void System2_Compress(System2ExecuteCallback callback, const char[] path, const char[] archive, CompressArchive archiveType = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = 0);
+
+
+/**
+ * Extracts a lot of archive types with 7zip.
+ *
+ * @param callback      Callback function when finished with extracting.
+ * @param archive       Path to the archive file to extract.
+ * @param extractDir    Path to the directory to extract to.
+ * @param data          Additional data to pass to the callback.
+ *
+ * @noreturn
+ */
+native void System2_Extract(System2ExecuteCallback callback, const char[] archive, const char[] extractDir, any data = 0);
+
+
+/**
+ * Executes a threaded system command.
+ * Hint: Append 2>&1 to retrieve also output to stderr.
+ *
+ * @param callback  Callback function when command was executed.
+ * @param data      Data to pass to the callback.
+ * @param command   Command to execute.
+ *
+ * @noreturn
+ */
+native void System2_ExecuteThreaded(System2ExecuteCallback callback, any data, const char[] command);
+
+
+/**
+ * Executes a threaded system command with support for a formatted command.
+ * Note that the maxlength of the command is CMD_MAX_LENGTH, use System2_ExecuteThreaded if you need more.
+ * Hint: Append 2>&1 to retrieve also output to stderr.
+ *
+ * @param callback  Callback function when command was executed.
+ * @param data      Data to pass to the callback.
+ * @param command   Command string format.
+ * @param ...       Command string arguments.
+ *
+ * @noreturn
+ */
+native void System2_ExecuteFormattedThreaded(System2ExecuteCallback callback, any data, const char[] command, any ...);
+
+
+/**
+ * Executes a non threaded system command.
+ * Hint: Append 2>&1 to retrieve also output to stderr.
+ *
+ * @param output    Buffer to store the output in.
+ * @param maxlength Maxlength of the output buffer.
+ * @param command   Command to execute.
+ *
+ * @return          True on success, otherwise false.
+ */
+native bool System2_Execute(char[] output, int maxlength, const char[] command);
+
+
+/**
+ * Executes a non threaded system command with support for a formatted command.
+ * Note that the maxlength of the command is CMD_MAX_LENGTH, use System2_Execute if you need more.
+ * Hint: Append 2>&1 to retrieve also output to stderr.
+ *
+ * @param output    Buffer to store the output in.
+ * @param maxlength Maxlength of the output buffer.
+ * @param command   Command string format.
+ * @param ...       Command string arguments.
+ *
+ * @return          True on success, otherwise false.
+ */
+native bool System2_ExecuteFormatted(char[] output, int maxlength, const char[] command, any ...);
+
+
+/**
+ * Retrieves the absolute path to the gamedir of the current running game (e.g. /home/.../.../cstrike).
+ * You may need this when running system commands.
+ *
+ * @param gamedir       Buffer to store gamedir in.
+ * @param maxlength     Maxlength of the buffer.
+ *
+ * @noreturn
+ */
+native void System2_GetGameDir(char[] gamedir, int maxlength);
+
+
+/**
+ * Returns the server's operating system.
+ *
+ * @return              OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC.
+ */
+native OS System2_GetOS();
+
+
+/**
+ * Retrieves the MD5 hex hash of a string.
+ *
+ * @param string        String to create the MD5 hash of.
+ * @param buffer        Buffer to store MD5 hash in.
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 33 (32 MD5 + 1 terminator).
+ *
+ * @noreturn
+ */
+native void System2_GetStringMD5(const char[] str, char[] buffer, int maxlength);
+
+
+/**
+ * Retrieves the MD5 hex hash of a files content.
+ *
+ * @param file          The path to the file.
+ * @param buffer        Buffer to store MD5 hash in.
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 33 (32 MD5 + 1 terminator).
+ *
+ * @return              True on success, false when file couldn't be opened.
+ */
+native bool System2_GetFileMD5(const char[] file, char[] buffer, int maxlength);
+
+
+/**
+ * Retrieves the CRC32 hex hash of a string.
+ *
+ * @param string        The string to create the CRC32 hash of.
+ * @param buffer        Buffer to store CRC32 hash in.
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (9 CRC32 + 1 terminator).
+ *
+ * @noreturn
+ */
+native void System2_GetStringCRC32(const char[] str, char[] buffer, int maxlength);
+
+
+/**
+ * Retrieves the CRC32 hex hash of a files content.
+ *
+ * @param file          The path to the file.
+ * @param buffer        Buffer to store CRC32 hash in.
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (9 CRC32 + 1 terminator).
+ *
+ * @return              True on success, false when file couldn't be opened.
+ */
+native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength);
+
+
+/**
+ * Converts a plain string to an URL encoded string.
+ * Be aware that the output string may be larger then the input string.
+ *
+ * @param input         String to encode.
+ * @param output        Buffer to store encoded string in. May point to the input string (will replace input string).
+ * @param maxlength     Maxlength of the output buffer.
+ *
+ * @return              True on success, false otherwise.
+ */
+native bool System2_URLEncode(const char[] input, char[] output, int maxlength);
+
+
+/**
+ * Converts an URL encoded string to a plain string.
+ *
+ * @param input         String to decode.
+ * @param output        Buffer to store decoded string in. May point to the input string (will replace input string).
+ * @param maxlength     Maxlength of the output buffer.
+ *
+ * @return              True on success, false otherwise.
+ */
+native bool System2_URLDecode(const char[] input, char[] output, int maxlength);
+
+
+
+/**
+ *
+ * DEPRECATED v2 STUFF, do not use anymore!
+ *
+ */
+
 /**
  * Max Size of the command or page output in CmdCallback.
  */
 #define CMD_MAX_RETURN 4096
-
-
-
-/**
- * A list of operating systems.
- */
-enum OS
-{
-    OS_UNKNOWN,                 // OS couldn't be determined
-    OS_WINDOWS,                 // Windows
-    OS_UNIX,                    // Linux / Unix
-    OS_MAC                      // MAC
-}
 
 
 /**
@@ -62,32 +349,6 @@ enum CMDReturn
     CMD_EMPTY,                  // Result is empty (only System2_RunThreadCommand)
     CMD_ERROR,                  // An error appeared
     CMD_PROGRESS                // Not finished yet -> Wait for other state
-}
-
-
-/**
- * A list of possible archives
- */
-enum CompressArchive
-{
-    ARCHIVE_ZIP,                // zip
-    ARCHIVE_7Z,                 // 7 zip
-    ARCHIVE_GZIP,               // gzip
-    ARCHIVE_BZIP2,              // bzip2
-    ARCHIVE_TAR                 // tar
-}
-
-
-/**
- * A list of possible compress levels
- */
-enum CompressLevel
-{
-    LEVEL_1,                    // Weekest
-    LEVEL_3,
-    LEVEL_5,
-    LEVEL_7,
-    LEVEL_9                     // Strongest
 }
 
 
@@ -129,21 +390,6 @@ typeset TransferUpdated
 
 
 /**
- * Called when finished with System2_CopyFile.
- *
- * @param success               Was copying successfull? (Or couldn't open current or new file).
- * @param from                  File which was copied.
- * @param to                    New file.
- * @param data                  Data passed.
- */
-typeset CopyCallback 
-{
-    function void (bool success, const char[] from, const char[] to, any data);
-    function void (bool success, const char[] from, const char[] to);
-};
-
-
-/**
  * Gets the content of a page.
  *
  * @param callback              Callback function when finished. Check callback.status to check if process is finished.
@@ -154,6 +400,7 @@ typeset CopyCallback
  *
  * @noreturn
  */
+#pragma deprecated Use System2HTTPRequest instead.
 native void System2_GetPage(CmdCallback callback, const char[] url, const char[] post = "", const char[] userAgent = "", any data = INVALID_HANDLE);
 
 
@@ -167,6 +414,7 @@ native void System2_GetPage(CmdCallback callback, const char[] url, const char[]
  *
  * @noreturn
  */
+#pragma deprecated Use System2HTTPRequest instead.
 native void System2_DownloadFile(TransferUpdated updateFunction, const char[] url, const char[] localFile, any data = INVALID_HANDLE);
 
 
@@ -184,6 +432,7 @@ native void System2_DownloadFile(TransferUpdated updateFunction, const char[] ur
  *
  * @noreturn
  */
+#pragma deprecated Use System2FTPRequest instead.
 native void System2_DownloadFTPFile(TransferUpdated updateFunction, const char[] remoteFile, const char[] localFile, const char[] host, const char[] user = "", const char[] pass = "", int port = 21, any data = INVALID_HANDLE);
 
 
@@ -201,20 +450,8 @@ native void System2_DownloadFTPFile(TransferUpdated updateFunction, const char[]
  *
  * @noreturn
  */
+#pragma deprecated Use System2FTPRequest instead.
 native void System2_UploadFTPFile(TransferUpdated updateFunction, const char[] localFile, const char[] remoteFile, const char[] host, const char[] user = "", const char[] pass = "", int port = 21, any data = INVALID_HANDLE);
-
-
-/**
- * Copies a file to another location.
- *
- * @param callback              Callback function when finished with copy. Check callback.success to check if copying was successful.
- * @param pathToFile            Path to the file.
- * @param pathToCopy            Path to copy to (including filename).
- * @param data                  Additional data to pass to the callback.
- *
- * @noreturn
- */
-native void System2_CopyFile(CopyCallback callback, const char[] pathToFile, const char[] pathToCopy, any data = INVALID_HANDLE);
 
 
 /**
@@ -229,8 +466,7 @@ native void System2_CopyFile(CopyCallback callback, const char[] pathToFile, con
  *
  * @noreturn
  */
-native void System2_Compress(CmdCallback callback, const char[] pathToFile, const char[] pathToArchive, CompressArchive archive = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = INVALID_HANDLE);
-#pragma deprecated Use System2_Compress() instead.
+#pragma deprecated Use System2_Compress instead.
 native void System2_CompressFile(CmdCallback callback, const char[] pathToFile, const char[] pathToArchive, CompressArchive archive = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = INVALID_HANDLE);
 
 
@@ -244,8 +480,7 @@ native void System2_CompressFile(CmdCallback callback, const char[] pathToFile, 
  *
  * @noreturn
  */
-native void System2_Extract(CmdCallback callback, const char[] pathToArchive, const char[] pathToExtract, any data = INVALID_HANDLE);
-#pragma deprecated Use System2_Extract() instead.
+#pragma deprecated Use System2_Extract instead.
 native void System2_ExtractArchive(CmdCallback callback, const char[] pathToArchive, const char[] pathToExtract, any data = INVALID_HANDLE);
 
 
@@ -258,8 +493,7 @@ native void System2_ExtractArchive(CmdCallback callback, const char[] pathToArch
  *
  * @noreturn
  */
-native void System2_RunThreadedCommand(CmdCallback callback, const char[] command, any ...);
-#pragma deprecated Use System2_RunThreadedCommand() instead.
+#pragma deprecated Use System2_ExecuteThreaded instead.
 native void System2_RunThreadCommand(CmdCallback callback, const char[] command, any ...);
 
 
@@ -273,8 +507,7 @@ native void System2_RunThreadCommand(CmdCallback callback, const char[] command,
  *
  * @noreturn
  */
-native void System2_RunThreadedCommandWithData(CmdCallback callback, any data, const char[] command, any ...);
-#pragma deprecated Use System2_RunThreadedCommandWithData() instead.
+#pragma deprecated Use System2_ExecuteThreaded instead.
 native void System2_RunThreadCommandWithData(CmdCallback callback, any data, const char[] command, any ...);
 
 
@@ -288,94 +521,8 @@ native void System2_RunThreadCommandWithData(CmdCallback callback, any data, con
  *
  * @return                      CMDReturn status.
  */
+#pragma deprecated Use System2_Execute instead.
 native CMDReturn System2_RunCommand(char[] output, int size, const char[] command, any ...);
-
-
-/**
- * Gets the absolute gamedir of the current running game (e.g. /home/.../.../cstrike).
- * You may need this when running system commands.
- *
- * @param gamedir               String to save gamedir in.
- * @param maxlength             Size of the string.
- *
- * @noreturn
- */
-native void System2_GetGameDir(char[] gamedir, int maxlength);
-
-
-/**
- * Gets the servers operating system.
- *
- * @return                      OS_UNKNOWN, OS_WINDOWS, OS_UNIX, OS_MAC.
- */
-native OS System2_GetOS();
-
-
-/**
- * Gets the MD5 hex hash of a string.
- *
- * @param string                The string to create the MD5 hash of.
- * @param buffer                The string the MD5 hash will be recorded in.
- * @param maxlength             Max length of the buffer. Should be greather or equal to 33 (32 MD5 + 1 terminator)
- * @noreturn
- */
-native void System2_GetStringMD5(const char[] str, char[] buffer, int maxlength);
-
-
-/**
- * Gets the MD5 hex hash of a files content.
- *
- * @param file                  The path to the file.
- * @param buffer                The string the MD5 hash will be recorded in.
- * @param maxlength             Max length of the buffer. Should be greather or equal to 33 (32 MD5 + 1 terminator)
- * @return                      True on success, false when file couldn't be opened.
- */
-native bool System2_GetFileMD5(const char[] file, char[] buffer, int maxlength);
-
-
-/**
- * Gets the CRC32 hex hash of a string.
- *
- * @param string                The string to create the CRC32 hash of.
- * @param buffer                The string the CRC32 hash will be recorded in.
- * @param maxlength             Max length of the buffer. Should be greather or equal to 9 (9 CRC32 + 1 terminator)
- * @noreturn
- */
-native void System2_GetStringCRC32(const char[] str, char[] buffer, int maxlength);
-
-
-/**
- * Gets the CRC32 hex hash of a files content.
- *
- * @param file                  The path to the file.
- * @param buffer                The string the CRC32 hash will be recorded in.
- * @param maxlength             Max length of the buffer. Should be greather or equal to 9 (9 CRC32 + 1 terminator)
- * @return                      True on success, false when file couldn't be opened.
- */
-native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength);
-
-
-/**
- * Converts a plain string to an URL encoded string.
- * Be aware that the output string may be larger then the input string.
- *
- * @param input                 The string to encode.
- * @param output                The encoded string. May be the same as input.
- * @param maxlength             The maxlength of the output string.
- * @return                      True on success, false otherwise.
- */
-native bool System2_URLEncode(const char[] input, char[] output, int maxlength);
-
-
-/**
- * Converts an URL encoded string to a plain string.
- *
- * @param input                 The string to decode.
- * @param output                The decoded string. May be the same as input.
- * @param maxlength             The maxlength of the output string.
- * @return                      True on success, false otherwise.
- */
-native bool System2_URLDecode(const char[] input, char[] output, int maxlength);
 
 
 /**
@@ -387,9 +534,52 @@ native bool System2_URLDecode(const char[] input, char[] output, int maxlength);
  * @param safe                  Adding additional safe strings.
  * @param format                Is the string formatted.
  */
-#pragma deprecated Use System2_URLEncode() instead.
-stock void URLEncode(char[] stringToEncode, int maxlength) {
-    System2_URLEncode(stringToEncode, maxlength);
+#pragma deprecated Use System2_URLEncode instead.
+stock void URLEncode(char[] stringToEncode, int maxlength, char[] safe = "/", bool format = false)
+{
+    char sAlwaysSafe[256];
+    Format(sAlwaysSafe, sizeof(sAlwaysSafe), "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-%s", safe);
+    
+    // Need 2 '%' since sp's Format parses one as a parameter to replace
+    // http://wiki.alliedmods.net/Format_Class_Functions_%28SourceMod_Scripting%29
+    if (format)
+    {
+        ReplaceString(stringToEncode, maxlength, "%", "%%25");
+    }
+    else
+    {
+        ReplaceString(stringToEncode, maxlength, "%", "%25");
+    }
+    
+    
+    char sChar[8];
+    char sReplaceChar[8];
+    
+    for (new int i = 1; i < 256; i++)
+    {
+        // Skip the '%' double replace ftw..
+        if (i == 37)
+        {
+            continue;
+        }
+        
+        
+        Format(sChar, sizeof(sChar), "%c", i);
+
+        if (StrContains(sAlwaysSafe, sChar) == -1 && StrContains(stringToEncode, sChar) != -1)
+        {
+            if (format)
+            {
+                Format(sReplaceChar, sizeof(sReplaceChar), "%%%%%02X", i);
+            }
+            else
+            {
+                Format(sReplaceChar, sizeof(sReplaceChar), "%%%02X", i);
+            }
+            
+            ReplaceString(stringToEncode, maxlength, sChar, sReplaceChar);
+        }
+    }
 }
 
 
@@ -415,26 +605,40 @@ public Extension __ext_system2 =
 #if !defined REQUIRE_EXTENSIONS
     public void __ext_system2_SetNTVOptional()
     {
-        MarkNativeAsOptional("System2_GetPage");
-        MarkNativeAsOptional("System2_CompressFile");
+        MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
+        MarkNativeAsOptional("System2ExecuteOutput.Size.get");
+        MarkNativeAsOptional("System2ExecuteOutput.Empty.get");
+
+        MarkNativeAsOptional("System2_CopyFile");
+
         MarkNativeAsOptional("System2_Compress");
-        MarkNativeAsOptional("System2_ExtractArchive");
         MarkNativeAsOptional("System2_Extract");
-        MarkNativeAsOptional("System2_DownloadFile");
-        MarkNativeAsOptional("System2_DownloadFTPFile");
-        MarkNativeAsOptional("System2_UploadFTPFile");
-        MarkNativeAsOptional("System2_RunThreadCommand");
-        MarkNativeAsOptional("System2_RunThreadedCommand");
-        MarkNativeAsOptional("System2_RunThreadCommandWithData");
-        MarkNativeAsOptional("System2_RunThreadedCommandWithData");
-        MarkNativeAsOptional("System2_RunCommand");
+
+        MarkNativeAsOptional("System2_ExecuteThreaded");
+        MarkNativeAsOptional("System2_ExecuteFormattedThreaded");
+        MarkNativeAsOptional("System2_Execute");
+        MarkNativeAsOptional("System2_ExecuteFormatted");
+
         MarkNativeAsOptional("System2_GetGameDir");
         MarkNativeAsOptional("System2_GetOS");
+
         MarkNativeAsOptional("System2_GetStringMD5");
         MarkNativeAsOptional("System2_GetFileMD5");
         MarkNativeAsOptional("System2_GetStringCRC32");
         MarkNativeAsOptional("System2_GetFileCRC32");
+
         MarkNativeAsOptional("System2_URLEncode");
         MarkNativeAsOptional("System2_URLDecode");
+
+        // Deprecated v2 stuff
+        MarkNativeAsOptional("System2_GetPage");
+        MarkNativeAsOptional("System2_DownloadFile");
+        MarkNativeAsOptional("System2_DownloadFTPFile");
+        MarkNativeAsOptional("System2_UploadFTPFile");
+        MarkNativeAsOptional("System2_CompressFile");
+        MarkNativeAsOptional("System2_ExtractArchive");
+        MarkNativeAsOptional("System2_RunThreadCommand");
+        MarkNativeAsOptional("System2_RunThreadCommandWithData");
+        MarkNativeAsOptional("System2_RunCommand");
     }
 #endif
