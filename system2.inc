@@ -30,25 +30,13 @@
 
 
 /**
- * Max Size of a command.
+ * Max size of a command when using formatted natives.
  */
 #define CMD_MAX_LENGTH 2048
 
 
 /**
- * A list of possible operating systems for System2_GetOS.
- */
-enum OS
-{
-    OS_UNKNOWN,         // OS couldn't be determined
-    OS_WINDOWS,         // Windows
-    OS_UNIX,            // Linux / Unix
-    OS_MAC              // MAC
-}
-
-
-/**
- * A list of possible archive formats for compression for System2_Compress.
+ * A list of possible archive formats for the System2_Compress native.
  */
 enum CompressArchive
 {
@@ -61,7 +49,7 @@ enum CompressArchive
 
 
 /**
- * A list of possible compression levels for System2_Compress.
+ * A list of possible compression levels for the System2_Compress native.
  */
 enum CompressLevel
 {
@@ -74,12 +62,63 @@ enum CompressLevel
 
 
 /**
- * Called when finished with System2_CopyFile.
+ * A list of possible operating systems for the System2_GetOS native.
+ */
+enum OS
+{
+    OS_UNKNOWN,         // OS couldn't be determined
+    OS_WINDOWS,         // Windows
+    OS_UNIX,            // Linux / Unix
+    OS_MAC              // MAC
+}
+
+
+
+/**
+ * Called when a HTTP or FTP request was finished.
+ * The response will only be valid in the callback and will be destroyed afterwards.
+ * The request will also be deleted after the callback, if auto cleanup is enabled in the request.
+ *
+ * @param success       Whether the request could made.
+ *                      This not means that the request itself was successful!
+ * @param request       The original made HTTP/FTP request.
+ * @param response      HTTP/FTP response of the request. Will be null if success is false!
+ *
+ * @noreturn
+ */
+typeset System2ReponseCallback
+{
+    function void (bool success, System2HTTPRequest request, System2HTTPResponse response);
+    function void (bool success, System2FTPRequest request, System2FTPResponse response);
+};
+
+
+/**
+ * Called on a frequent interval while data of a HTTP/FTP request is being transferred.
+ *
+ * @param request       The original made HTTP/FTP request.
+ * @param dlTotal       Total expected download size in bytes.
+ * @param dlNow         Downloaded bytes so far.
+ * @param ulTotal       Total expected upload size in bytes.
+ * @param ulNow         Uploaded bytes so far.
+ *
+ * @noreturn
+ */
+typeset System2ProgressCallback
+{
+    function void (System2HTTPRequest request, float dlTotal, float dlNow, float ulTotal, float ulNow);
+    function void (System2FTPRequest request, float dlTotal, float dlNow, float ulTotal, float ulNow);
+};
+
+
+
+/**
+ * Called when finished with the System2_CopyFile native.
  *
  * @param success       Whether copying was successful (will fail if couldn't open 'from' or 'to' file).
  * @param from          Path to file that was copied.
  * @param to            Path to the new copied file.
- * @param data          Data passed to copy method.
+ * @param data          Data passed to the copy native.
  *
  * @noreturn
  */
@@ -90,8 +129,9 @@ typeset System2CopyCallback
 };
 
 
+
 /**
- * Called when finished with System2_ExecuteThreaded or System2_ExecuteFormattedThreaded.
+ * Called when finished with System2_ExecuteThreaded or System2_ExecuteFormattedThreaded native.
  * The output will only be valid in the callback and will be destroyed afterwards.
  *
  * @param success       Whether the execution was successful or not.
@@ -109,12 +149,523 @@ typeset System2ExecuteCallback
 };
 
 
+
 /**
- * Methodmap for the execution output.
+ * Basic methodmap for a request.
+ * Use System2HTTPRequest or System2FTPRequest to create a request.
+ */
+methodmap System2Request < Handle {
+    /**
+     * Sets the response callback for when the request is finished.
+     *
+     * @param callback  Response callback to call when the request is finished.
+     *
+     * @noreturn
+     */
+    public native void SetResponseCallback(System2ReponseCallback callback);
+
+    /**
+     * Sets the progress callback for the transfer of the request.
+     *
+     * @param callback  Progress callback to call for the transfer.
+     *
+     * @noreturn
+     */
+    public native void SetProgressCallback(System2ProgressCallback callback);
+
+
+    /**
+     * Sets the URL of the request.
+     * Query parameters have to be given directly in the URL.
+     *
+     * @param url       URL to use for the request.
+     *
+     * @noreturn
+     */
+    public native void SetURL(const char[] url);
+
+    /**
+     * Retrieves the URL of the request.
+     *
+     * @param url       Buffer to store URL in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native void GetURL(char[] url, int maxlength);
+
+    /**
+     * Sets the port of the request.
+     *
+     * @param port       Port to use for the request.
+     *
+     * @noreturn
+     */
+    public native void SetPort(int port);
+
+    /**
+     * Returns the port of the request.
+     *
+     * @return The port of the request.
+     */
+    public native int GetPort();
+
+
+    /**
+     * When enabling auto cleanup, then the request will be automatically deleted after the response callback.
+     *
+     * @param cleanup   Whether to enable auto clean up.
+     *
+     * @noreturn
+     */
+    public native void SetAutoCleanup(bool cleanup);
+
+    /**
+     * Returns whether auto clean up is enabled.
+     *
+     * @return True if auto cleanup is enabled, otherwise false.
+     */
+    public native bool GetAutoCleanup();
+
+
+    /**
+     * Set the timeout for the request.
+     *
+     * @param millis    The timeout for the request in milliseconds.
+     *
+     * @noreturn
+     */
+    public native void SetTimeout(int millis);
+
+
+    /**
+     * Sets the body data to send with the request.
+     *
+     * @param data      Body data to send with the request.
+     *
+     * @noreturn
+     */
+    public native void SetData(const char[] data);
+
+    /**
+     * Retrieves the body data of the request.
+     *
+     * @param url       Buffer to store data in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native void GetData(char[] data, int maxlength);
+
+
+    /**
+     * Sets the file to send as body data with the request.
+     * When using a file only the contents of the file will be send, not the data set with SetData.
+     *
+     * @param file      File to send as body data with the request.
+     *
+     * @noreturn
+     */
+    public native void SetDataFile(const char[] file);
+
+    /**
+     * Retrieves the file to send as body data with the request.
+     *
+     * @param file      Buffer to store file in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native void GetDataFile(char[] file, int maxlength);
+
+
+    /**
+     * Sets the file to write the output of the request to.
+     *
+     * @param file      File to write the output to.
+     *
+     * @noreturn
+     */
+    public native void SetOutputFile(const char[] file);
+
+    /**
+     * Retrieves the file to write the output of the request to.
+     *
+     * @param file      Buffer to store file in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native void GetOutputFile(char[] file, int maxlength);
+
+
+    /**
+     * Sets any data to bind to the request.
+     *
+     * @param data      Any data.
+     *
+     * @noreturn
+     */
+    public native void SetAnyData(any data);
+
+    /**
+     * Returns the any data that was bound to this request.
+     *
+     * @return The any data that was bound.
+     */
+    public native any GetAnyData();
+}
+
+
+/**
+ * Methodmap to create a HTTP request.
+ */
+methodmap System2HTTPRequest < System2Request {
+    /**
+     * Creates a new HTTP Request.
+     *
+     * @param url       URL to use for the request.
+     * @param callback  Response callback to call when the request is finished.
+     *
+     * @noreturn
+     */
+    public native System2HTTPRequest(const char[] url, System2ReponseCallback callback);
+
+
+    /**
+     * Sets a HTTP request header.
+     *
+     * @param name      Name of the header.
+     * @param value     Value to set the header to.
+     *
+     * @noreturn
+     */
+    public native void SetHeader(const char[] header, const char[] value);
+
+    /**
+     * Retrieves a HTTP request header
+     *
+     * @param name      Name of the header to retrieve.
+     * @param value     Buffer to store value in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native void GetHeader(const char[] header, char[] value, int maxlength);
+
+    /**
+     * Retrieves all set header names of the request.
+     *
+     * @param names     Array of char arrays to store the names of the headers in.
+     * @param maxNames  Max numbers to retrieve (first dimension of the names array).
+     * @param maxName   Maxlength of a single name (second dimension of the names array).
+     *
+     * @noreturn
+     */
+    public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
+
+    /**
+     * Returns the number of set headers.
+     *
+     * @return The number of set headers.
+     */
+    public native int GetHeadersCount();
+
+    /**
+     * Returns all header names of the request as ArrayList.
+     * Attention: ArrayList has to be deleted after use!
+     *
+     * @return ArrayList with all request header names.
+     */
+    public ArrayList GetHeaders() {
+        int numHeaders = this.GetHeadersCount();
+        char[][] headersArray = new char[numHeaders][128];
+
+        ArrayList headers = new ArrayList();
+        for (int i=0; i < numHeaders; i++) {
+            headers.PushString(headersArray[i]);
+        }
+
+        return headers;
+    }
+
+
+    /**
+     * Sets the referer for the request.
+     *
+     * @param referer   Referer to use.
+     *
+     * @noreturn
+     */
+    public native void SetReferer(const char[] referer);
+
+    /**
+     * Sets the user agent for the request.
+     *
+     * @param userAgent User agent to use.
+     *
+     * @noreturn
+     */
+    public native void SetUserAgent(const char[] userAgent);
+
+    /**
+     * Sets basic authentication for the request.
+     *
+     * @param username  Username to use for basic authentication.
+     * @param password  Password to use for basic authentication.
+     *
+     * @noreturn
+     */
+    public native void SetBasicAuthentication(const char[] username, const char[] password);
+
+    /**
+     * Sets whether to follow redirects or not.
+     * Default is follow redirects.
+     *
+     * @param follow    True to follow redirects, otherwise false.
+     *
+     * @noreturn
+     */
+    public native void SetFollowRedirects(bool follow);
+
+
+    /**
+     * Sends the request with the GET method.
+     *
+     * @noreturn
+     */
+    public native void GET();
+
+    /**
+     * Sends the request with the POST method.
+     *
+     * @noreturn
+     */
+    public native void POST();
+    
+    /**
+     * Sends the request with the PUT method.
+     *
+     * @noreturn
+     */
+    public native void PUT();
+    
+    /**
+     * Sends the request with the PATCH method.
+     *
+     * @noreturn
+     */
+    public native void PATCH();
+    
+    /**
+     * Sends the request with the DELETE method.
+     *
+     * @noreturn
+     */
+    public native void DELETE();
+    
+    /**
+     * Sends the request with the HEAD method.
+     *
+     * @noreturn
+     */
+    public native void HEAD();
+}
+
+
+/**
+ * Methodmap to create a FTP request.
+ */
+methodmap System2FTPRequest < System2Request {
+    /**
+     * Creates a new FTP Request.
+     *
+     * @param url       URL to use for the request.
+     * @param callback  Response callback to call when the request is finished.
+     *
+     * @noreturn
+     */
+    public native System2FTPRequest(const char[] url, System2ReponseCallback responseCallback);
+
+
+    /**
+     * Sets authentication for the request.
+     *
+     * @param username  Username to use for authentication.
+     * @param password  Password to use for authentication.
+     *
+     * @noreturn
+     */
+    public native void SetAuthentication(const char[] username, const char[] password);
+
+
+    /**
+     * Sets whether to append to the FTP file or to replace it when uploading a file. 
+     *
+     * @param append    True to append to file, otherwise false to replace it.
+     *
+     * @noreturn
+     */
+    public native void SetAppendToFile(bool append);
+
+    /**
+     * Sets whether to create missing dirs when uploading a file.
+     *
+     * @param create    True to create missing dirs, otherwise false.
+     *
+     * @noreturn
+     */
+    public native void SetCreateMissingDirs(bool create);
+
+
+    /**
+     * Sends the request in order to download a file.
+     *
+     * @noreturn
+     */
+    public native void Download();
+
+    /**
+     * Sends the request in order to upload content to a file.
+     *
+     * @noreturn
+     */
+    public native void Upload();
+}
+
+
+
+/**
+ * Basic methodmap for a response.
+ */
+methodmap System2Response < Handle {
+    /**
+     * Returns the status code of the response.
+     *
+     * @return The status code.
+     */
+    public native int GetCode();
+
+
+    /**
+     * Retrieves the last URL in the response.
+     * This may differ from the request URL, if a redirect was followed.
+     *
+     * @param url       Buffer to store last URL in.
+     * @param maxlength Maxlength of the URL buffer.
+     *
+     * @noreturn
+     */
+    public native void GetLastUrl(char[] url, int maxlength);
+
+
+    /**
+     * Retrieves the content of the response.
+     *
+     * @param content   Buffer to store the content in.
+     * @param maxlength Maxlength of the content buffer.
+     * @param start     Start byte to start reading from.
+     *                  You can use this to retrieve the content step by step.
+     *
+     * @noreturn
+     */
+    public native void GetContent(char[] content, int maxlength, int start = 0);
+
+    /**
+     * Returns the size of the complete content.
+     *
+     * @return Size of the content.
+     * @error  Invalid Handle.
+     */
+    public native int GetContentLength();
+
+
+    /**
+     * Returns the file time of the retrieved file.
+     * Returns 0 if no file time is available.
+     *
+     * @return The file time.
+     */
+    public native int GetFileTime();
+
+
+    /**
+     * Returns the total time from the request until the response.
+     *
+     * @return Total time from the request until the response.
+     */
+    public native int GetTotalTime();
+}
+
+
+/**
+ * Methodmap for a response of a HTTP request.
+ */
+methodmap System2HTTPResponse < System2Response {
+    /**
+     * Retrieves a HTTP response header
+     *
+     * @param name      Name of the header to retrieve.
+     * @param value     Buffer to store value in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     */
+    public native bool GetHeader(const char[] name, char[] value, int maxlength);
+
+    /**
+     * Retrieves all header names of the response.
+     *
+     * @param names     Array of char arrays to store the names of the headers in.
+     * @param maxNames  Max numbers to retrieve (first dimension of the names array).
+     * @param maxName   Maxlength of a single name (second dimension of the names array).
+     *
+     * @noreturn
+     */
+    public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
+
+    /**
+     * Returns the number of set headers.
+     *
+     * @return The number of set headers.
+     */
+    public native int GetHeadersCount();
+
+    /**
+     * Returns all header names of the response as ArrayList.
+     * Attention: ArrayList has to be deleted after use!
+     *
+     * @return ArrayList with all response header names.
+     */
+    public ArrayList GetHeaders() {
+        int numHeaders = this.GetHeadersCount();
+        char[][] headersArray = new char[numHeaders][128];
+
+        ArrayList headers = new ArrayList();
+        for (int i=0; i < numHeaders; i++) {
+            headers.PushString(headersArray[i]);
+        }
+
+        return headers;
+    }
+}
+
+
+/**
+ * Methodmap for a response of a FTP request.
+ * Currently there are no special methods.
+ */
+methodmap System2FTPResponse < System2Response {
+}
+
+
+
+/**
+ * Methodmap for the output of an execution.
  */
 methodmap System2ExecuteOutput < Handle {
     /**
-     * Retrieves the output of execution.
+     * Retrieves the output of the command execution.
      *
      * @param output    Buffer to store the output in.
      * @param maxlength Maxlength of the output buffer.
@@ -128,7 +679,7 @@ methodmap System2ExecuteOutput < Handle {
 
     property int Size {
         /**
-         * Returns the size of the output.
+         * Returns the size of the complete output.
          *
          * @return Size of the output.
          * @error  Invalid Handle.
@@ -136,6 +687,8 @@ methodmap System2ExecuteOutput < Handle {
         public native get();
     }
 }
+
+
 
 /**
  * Copies a file to another location.
@@ -183,12 +736,12 @@ native void System2_Extract(System2ExecuteCallback callback, const char[] archiv
  * Hint: Append 2>&1 to retrieve also output to stderr.
  *
  * @param callback  Callback function when command was executed.
- * @param data      Data to pass to the callback.
  * @param command   Command to execute.
+ * @param data      Data to pass to the callback.
  *
  * @noreturn
  */
-native void System2_ExecuteThreaded(System2ExecuteCallback callback, any data, const char[] command);
+native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[] command, any data);
 
 
 /**
@@ -605,9 +1158,60 @@ public Extension __ext_system2 =
 #if !defined REQUIRE_EXTENSIONS
     public void __ext_system2_SetNTVOptional()
     {
+        MarkNativeAsOptional("System2Request.SetResponseCallback");
+        MarkNativeAsOptional("System2Request.SetProgressCallback");
+        MarkNativeAsOptional("System2Request.SetURL");
+        MarkNativeAsOptional("System2Request.GetURL");
+        MarkNativeAsOptional("System2Request.SetPort");
+        MarkNativeAsOptional("System2Request.GetPort");
+        MarkNativeAsOptional("System2Request.SetAutoCleanup");
+        MarkNativeAsOptional("System2Request.GetAutoCleanup");
+        MarkNativeAsOptional("System2Request.SetTimeout");
+        MarkNativeAsOptional("System2Request.SetData");
+        MarkNativeAsOptional("System2Request.GetData");
+        MarkNativeAsOptional("System2Request.SetDataFile");
+        MarkNativeAsOptional("System2Request.GetDataFile");
+        MarkNativeAsOptional("System2Request.SetOutputFile");
+        MarkNativeAsOptional("System2Request.GetOutputFile");
+        MarkNativeAsOptional("System2Request.SetAnyData");
+        MarkNativeAsOptional("System2Request.GetAnyData");
+        
+        MarkNativeAsOptional("System2HTTPRequest.System2HTTPRequest");
+        MarkNativeAsOptional("System2HTTPRequest.SetHeader");
+        MarkNativeAsOptional("System2HTTPRequest.GetHeader");
+        MarkNativeAsOptional("System2HTTPRequest.GetHeadersArray");
+        MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
+        MarkNativeAsOptional("System2HTTPRequest.SetReferer");
+        MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
+        MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
+        MarkNativeAsOptional("System2HTTPRequest.SetFollowRedirects");
+        MarkNativeAsOptional("System2HTTPRequest.GET");
+        MarkNativeAsOptional("System2HTTPRequest.POST");
+        MarkNativeAsOptional("System2HTTPRequest.PUT");
+        MarkNativeAsOptional("System2HTTPRequest.PATCH");
+        MarkNativeAsOptional("System2HTTPRequest.DELETE");
+        MarkNativeAsOptional("System2HTTPRequest.HEAD");
+        
+        MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
+        MarkNativeAsOptional("System2FTPRequest.SetAuthentication");
+        MarkNativeAsOptional("System2FTPRequest.SetAppendToFile");
+        MarkNativeAsOptional("System2FTPRequest.SetCreateMissingDirs");
+        MarkNativeAsOptional("System2FTPRequest.Download");
+        MarkNativeAsOptional("System2FTPRequest.Upload");
+        
+        MarkNativeAsOptional("System2Response.GetCode");
+        MarkNativeAsOptional("System2Response.GetLastUrl");
+        MarkNativeAsOptional("System2Response.GetContent");
+        MarkNativeAsOptional("System2Response.GetContentLength");
+        MarkNativeAsOptional("System2Response.GetFileTime");
+        MarkNativeAsOptional("System2Response.GetTotalTime");
+        
+        MarkNativeAsOptional("System2HTTPResponse.GetHeader");
+        MarkNativeAsOptional("System2HTTPResponse.GetHeadersArray");
+        MarkNativeAsOptional("System2HTTPResponse.GetHeadersCount");
+        
         MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
         MarkNativeAsOptional("System2ExecuteOutput.Size.get");
-        MarkNativeAsOptional("System2ExecuteOutput.Empty.get");
 
         MarkNativeAsOptional("System2_CopyFile");
 

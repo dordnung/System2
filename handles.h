@@ -37,7 +37,7 @@ public:
     static void Shutdown();
 
     void OnHandleDestroy(HandleType_t type, void *object) {
-        // Nothing to do, as handle will be deleted always automatically
+        // Nothing to do, as handle will be deleted always automatically after callback
     }
 };
 
