@@ -24,6 +24,7 @@
 
 #include "extension.h"
 #include "natives.h"
+#include "handles.h"
 #include "legacy/natives.h"
 #include "legacy/threads/ftp.h"
 
@@ -40,6 +41,9 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     mutex = threader->MakeMutex();
     ftpMutex = threader->MakeMutex();
 
+    // Creates handles
+    CommandOutputHandler::Initialize();
+
     smutils->AddGameFrameHook(&OnGameFrameHit);
 
     // CURL needs to be initialized
@@ -52,6 +56,9 @@ void System2Extension::SDK_OnUnload() {
     // Remove created mutex
     mutex->DestroyThis();
     ftpMutex->DestroyThis();
+
+    // Remove handles
+    CommandOutputHandler::Shutdown();
 
     smutils->RemoveGameFrameHook(&OnGameFrameHit);
 

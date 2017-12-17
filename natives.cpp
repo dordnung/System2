@@ -175,8 +175,6 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 #else
         command = "\"" + std::string(binDir) + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + " 2>&1";
 #endif
-        // Logging command
-        g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
         CommandThread *commandThread = new CommandThread(command, params[6], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
@@ -228,8 +226,6 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 #else
         command = "\"" + std::string(binDir) + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa 2>&1";
 #endif
-        // Logging command
-        g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
         CommandThread *commandThread = new CommandThread(command, params[4], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
@@ -244,10 +240,10 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     char *command;
-    pContext->LocalToString(params[3], &command);
+    pContext->LocalToString(params[2], &command);
 
     // Start the thread that executes the command
-    CommandThread *commandThread = new CommandThread(command, params[2], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
+    CommandThread *commandThread = new CommandThread(command, params[3], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
     threader->MakeThread(commandThread);
 
     return 1;
