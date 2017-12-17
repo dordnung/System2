@@ -40,6 +40,12 @@
     <Filter Include="Header Files\threads">
       <UniqueIdentifier>{2cf009ca-5f75-4f3b-b677-313eab58c5ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\natives">
+      <UniqueIdentifier>{5dbb95e6-3bee-43a5-b3af-3d41759cb7d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\natives">
+      <UniqueIdentifier>{e803c7fd-c256-4e3f-96ac-ac7e6637ce9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -47,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="..\sdk\smsdk_ext.cpp">
       <Filter>SourceMod SDK</Filter>
-    </ClCompile>
-    <ClCompile Include="..\natives.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\hash\md5.cpp">
       <Filter>Source Files\hash</Filter>
@@ -81,6 +84,9 @@
     <ClCompile Include="..\handles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\natives\common_natives.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">
@@ -91,9 +97,6 @@
     </ClInclude>
     <ClInclude Include="..\sdk\smsdk_ext.h">
       <Filter>SourceMod SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\natives.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\hash\md5.h">
       <Filter>Header Files\hash</Filter>
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="..\handles.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\natives\natives.h">
+      <Filter>Header Files\natives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -74,7 +74,7 @@
     <ClCompile Include="..\legacy\threads\download.cpp" />
     <ClCompile Include="..\legacy\threads\ftp.cpp" />
     <ClCompile Include="..\legacy\threads\page.cpp" />
-    <ClCompile Include="..\natives.cpp" />
+    <ClCompile Include="..\natives\common_natives.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
     <ClCompile Include="..\threads\command.cpp" />
     <ClCompile Include="..\threads\copy.cpp" />
@@ -90,7 +90,7 @@
     <ClInclude Include="..\legacy\threads\download.h" />
     <ClInclude Include="..\legacy\threads\ftp.h" />
     <ClInclude Include="..\legacy\threads\page.h" />
-    <ClInclude Include="..\natives.h" />
+    <ClInclude Include="..\natives\natives.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
     <ClInclude Include="..\threads\command.h" />
