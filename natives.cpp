@@ -23,6 +23,7 @@
  */
 
 #include "natives.h"
+#include "command.h"
 #include "copy.h"
 #include "md5.h"
 #include "crc.h"
@@ -33,11 +34,29 @@
 #include <sys/utsname.h>
 #endif
 
+#define MAX_COMMAND_LENGTH 2048
+
 enum OS {
     OS_UNKNOWN,
     OS_WIN,
     OS_UNIX,
     OS_MAC
+};
+
+enum CompressArchive {
+    ARCHIVE_ZIP,
+    ARCHIVE_7Z,
+    ARCHIVE_GZIP,
+    ARCHIVE_BZIP2,
+    ARCHIVE_TAR
+};
+
+enum CompressLevel {
+    LEVEL_1,
+    LEVEL_3,
+    LEVEL_5,
+    LEVEL_7,
+    LEVEL_9
 };
 
 
@@ -55,114 +74,114 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-/*
+
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
-    char *file;
-    char *folder;
+    char *path;
+    char *archive;
 
-    char zdir[PLATFORM_MAX_PATH + 1];
-    char ldir[PLATFORM_MAX_PATH + 1];
-    char rdir[PLATFORM_MAX_PATH + 1];
+    char binDir[PLATFORM_MAX_PATH + 1];
+    char fullPath[PLATFORM_MAX_PATH + 1];
+    char fullArchivePath[PLATFORM_MAX_PATH + 1];
 
-    pContext->LocalToString(params[2], &file);
-    pContext->LocalToString(params[3], &folder);
+    pContext->LocalToString(params[2], &path);
+    pContext->LocalToString(params[3], &archive);
 
-    // Build the path to the files and folders
+    // Build the path to the executable, to the path to compress and the archive
 #if defined _WIN32 || defined _WIN64
-    g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/win/7z.exe");
+    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
 #else
     struct utsname unameData;
     uname(&unameData);
 
     if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
-        g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
-        g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
     }
 #endif
-    g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
-    g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
+    g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), path);
+    g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), archive);
 
     // Get the compress level
-    char level[6];
+    std::string level;
     switch (params[5]) {
-        case 0:
+        case LEVEL_1:
         {
-            strcpy(level, "-mx1");
+            level = "-mx1";
             break;
         }
-        case 1:
+        case LEVEL_3:
         {
-            strcpy(level, "-mx3");
+            level = "-mx3";
             break;
         }
-        case 2:
+        case LEVEL_5:
         {
-            strcpy(level, "-mx5");
+            level = "-mx5";
             break;
         }
-        case 3:
+        case LEVEL_7:
         {
-            strcpy(level, "-mx7");
+            level = "-mx7";
             break;
         }
         default:
         {
-            strcpy(level, "-mx9");
+            level = "-mx9";
             break;
         }
     }
 
     // Get the archive to use
-    char archive[12];
+    std::string archiveType;
     switch (params[4]) {
-        case 0:
+        case ARCHIVE_ZIP:
         {
-            strcpy(archive, "-tzip");
+            archiveType = "-tzip";
             break;
         }
-        case 1:
+        case ARCHIVE_7Z:
         {
-            strcpy(archive, "-t7z");
+            archiveType = "-t7z";
             break;
         }
-        case 2:
+        case ARCHIVE_GZIP:
         {
-            strcpy(archive, "-tgzip");
+            archiveType = "-tgzip";
             break;
         }
-        case 3:
+        case ARCHIVE_BZIP2:
         {
-            strcpy(archive, "-tbzip2");
+            archiveType = "-tbzip2";
             break;
         }
         default:
         {
-            strcpy(archive, "-ttar");
+            archiveType = "-ttar";
             break;
         }
     }
 
     // 7z exists?
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != NULL) {
+    if ((testExist = fopen(binDir, "rb")) != NULL) {
         fclose(testExist);
 
         // Create the compress command
-        char command[MAX_COMMAND_LENGTH + 1];
+        std::string command;
 #if defined _WIN32 || defined _WIN64
-        sprintf(command, "\"\"%s\" a %s \"%s\" \"%s\" -mmt %s\"", zdir, archive, rdir, ldir, level);
+        command = "\"\"" + std::string(binDir) + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + "\"";
 #else
-        sprintf(command, "\"%s\" a %s \"%s\" \"%s\" -mmt %s", zdir, archive, rdir, ldir, level);
+        command = "\"" + std::string(binDir) + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + " 2>&1";
 #endif
         // Logging command
-        g_pSM->LogMessage(myself, "Extracting archive: %s", command);
+        g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
         CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to compress %s", zdir, ldir);
+        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to compress %s", binDir, fullPath);
     }
 
     return 1;
@@ -170,52 +189,52 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
-    char *file;
-    char *folder;
+    char *path;
+    char *archive;
 
-    char zdir[PLATFORM_MAX_PATH + 1];
-    char ldir[PLATFORM_MAX_PATH + 1];
-    char rdir[PLATFORM_MAX_PATH + 1];
+    char binDir[PLATFORM_MAX_PATH + 1];
+    char fullArchivePath[PLATFORM_MAX_PATH + 1];
+    char fullPath[PLATFORM_MAX_PATH + 1];
 
-    pContext->LocalToString(params[2], &file);
-    pContext->LocalToString(params[3], &folder);
+    pContext->LocalToString(params[2], &path);
+    pContext->LocalToString(params[3], &archive);
 
-    // Build the path to the files and folders
+    // Build the path to the executable, to the path to extract to and the archive
 #if defined _WIN32 || defined _WIN64
-    g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/win/7z.exe");
+    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
 #else
     struct utsname unameData;
     uname(&unameData);
 
     if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
-        g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/amd64/7z");
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
-        g_pSM->BuildPath(Path_SM, zdir, sizeof(zdir), "data/system2/linux/i386/7z");
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
     }
 #endif
-    g_pSM->BuildPath(Path_Game, ldir, sizeof(ldir), "%s", file);
-    g_pSM->BuildPath(Path_Game, rdir, sizeof(rdir), "%s", folder);
+    g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), path);
+    g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), archive);
 
     // Test if the local file exists
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != NULL) {
+    if ((testExist = fopen(binDir, "rb")) != NULL) {
         fclose(testExist);
 
         // Create the extract command
-        char command[MAX_COMMAND_LENGTH + 1];
+        std::string command;
 #if defined _WIN32
-        sprintf(command, "\"\"%s\" x \"%s\" -o\"%s\" -mmt -aoa\"", zdir, ldir, rdir);
+        command = "\"\"" + std::string(binDir) + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa\"";
 #else
-        sprintf(command, "\"%s\" x \"%s\" -o\"%s\" -mmt -aoa", zdir, ldir, rdir);
+        command = "\"" + std::string(binDir) + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa 2>&1";
 #endif
         // Logging command
-        g_pSM->LogMessage(myself, "Extracting archive: %s", command);
+        g_pSM->LogMessage(myself, "Extracting archive: %s", command.c_str());
 
         // Start the thread that executes the command
         CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to extract %s", zdir, ldir);
+        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to extract %s", binDir, fullArchivePath);
     }
 
     return 1;
@@ -223,22 +242,8 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
-    char command[MAX_COMMAND_LENGTH + 1];
-
-    smutils->FormatString(command, sizeof(command), pContext, params, 2);
-
-    // Start the thread that executes the command
-    CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), 0);
-    threader->MakeThread(commandThread);
-
-    return 1;
-}
-
-
-cell_t NativeExecuteThreadedWithData(IPluginContext *pContext, const cell_t *params) {
-    char command[MAX_COMMAND_LENGTH + 1];
-
-    smutils->FormatString(command, sizeof(command), pContext, params, 3);
+    char *command;
+    pContext->LocalToString(params[3], &command);
 
     // Start the thread that executes the command
     CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[2]);
@@ -248,58 +253,60 @@ cell_t NativeExecuteThreadedWithData(IPluginContext *pContext, const cell_t *par
 }
 
 
+cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params) {
+    char command[MAX_COMMAND_LENGTH + 1];
+    smutils->FormatString(command, sizeof(command), pContext, params, 3);
+
+    // Start the thread that executes the command - with data
+    CommandThread *commandThread = new CommandThread(command, pContext->GetFunctionById(params[1]), params[2]);
+    threader->MakeThread(commandThread);
+
+    return 1;
+}
+
+
 cell_t NativeExecute(IPluginContext *pContext, const cell_t *params) {
-    char cmdString[MAX_COMMAND_LENGTH + 1];
-    char buffer[MAX_RESULT_LENGTH + 1];
-    char resultString[MAX_RESULT_LENGTH + 1];
+    char *command;
+    pContext->LocalToString(params[3], &command);
 
+    return NativeExecuteCommand(command, pContext, params);
+}
+
+
+cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params) {
     // Format the command string
-    smutils->FormatString(cmdString, sizeof(cmdString), pContext, params, 3);
+    char command[MAX_COMMAND_LENGTH + 1];
+    smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
-    // Prevent output to console
-    if (strstr(cmdString, "2>&1") == NULL) {
-        strcat(cmdString, " 2>&1");
-    }
+    return NativeExecuteCommand(command, pContext, params);
+}
 
+
+cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const cell_t *params) {
     // Execute the command
-    FILE *command = PosixOpen(cmdString, "r");
-    cell_t result = CMD_SUCCESS;
+    FILE *commandFile = PosixOpen(command.c_str(), "r");
 
     // Was there an error?
-    if (!command) {
-        // Return the error
-        pContext->StringToLocal(params[1], params[2], "ERROR: Couldn't execute the command!");
-        return CMD_ERROR;
+    if (!commandFile) {
+        pContext->StringToLocal(params[1], params[2], "");
+        return false;
     }
 
     // Read the result
-    strcpy(buffer, "");
-    strcpy(resultString, "");
-    while (fgets(buffer, sizeof(buffer), command) != NULL) {
-        // More than MAX_RESULT_LENGTH?
-        if (strlen(resultString) + strlen(buffer) >= size_t(params[2] - 1)) {
-            // Only make the result full!
-            strncat(resultString, buffer, (params[2] - strlen(resultString)) - 1);
-            pContext->StringToLocal(params[1], params[2], resultString);
+    std::string output;
 
-            break;
-        }
-
-        strcat(resultString, buffer);
+    char buffer[1024];
+    while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
+        // Add buffer to the output
+        output += buffer;
     }
 
-
-    if (strlen(resultString) == 0) {
-        pContext->StringToLocalUTF8(params[1], params[2], "Empty reading result!", NULL);
-        result = CMD_EMPTY;
-    } else {
-        pContext->StringToLocalUTF8(params[1], params[2], resultString, NULL);
-    }
+    pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
 
     // Close Posix and return the result
-    PosixClose(command);
-    return result;
-}*/
+    PosixClose(commandFile);
+    return true;
+}
 
 
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
@@ -381,7 +388,7 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), NULL);
 
     return 1;
-}
+    }
 
 
 cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {
