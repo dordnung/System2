@@ -1,6 +1,6 @@
 /**
 * -----------------------------------------------------
-* File        callback.h
+* File        Callback.h
 * Authors     David Ordnung
 * License     GPLv3
 * Web         http://dordnung.de
@@ -22,8 +22,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef _CALLBACK_H_
-#define _CALLBACK_H_
+#ifndef _SYSTEM2_CALLBACK_H_
+#define _SYSTEM2_CALLBACK_H_
 
 class Callback {
 public:
