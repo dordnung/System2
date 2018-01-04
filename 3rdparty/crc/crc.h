@@ -1,7 +1,6 @@
 #ifndef _CRC_H
 #define _CRC_H
 
-#include "extension.h"
 #include <sstream>
 
 uint32_t updateCRC32(unsigned char ch, uint32_t crc);
