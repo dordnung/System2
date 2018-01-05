@@ -81,6 +81,7 @@ enum OS
  *
  * @param success       Whether the request could made.
  *                      This not means that the request itself was successful!
+ * @param error         If success is false this will contain the error message.
  * @param request       The original made HTTP/FTP request.
  * @param response      HTTP/FTP response of the request. Will be null if success is false!
  *
@@ -88,8 +89,8 @@ enum OS
  */
 typeset System2ReponseCallback
 {
-    function void (bool success, System2HTTPRequest request, System2HTTPResponse response);
-    function void (bool success, System2FTPRequest request, System2FTPResponse response);
+    function void (bool success, char[] error, System2HTTPRequest request, System2HTTPResponse response);
+    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response);
 };
 
 
@@ -212,78 +213,10 @@ methodmap System2Request < Handle {
     /**
      * Returns the port of the request.
      *
-     * @return The port of the request.
+     * @return The port of the request or 0 if none set.
      * @error Invalid Handle.
      */
     public native int GetPort();
-
-
-    /**
-     * Sets the body data to send with the request.
-     * Use System2_URLEncode to encode the data.
-     *
-     * @param data      Body data to send with the request.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetData(const char[] data);
-
-    /**
-     * Retrieves the body data of the request.
-     *
-     * @param url       Buffer to store data in.
-     * @param maxlength Maxlength of the buffer.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void GetData(char[] data, int maxlength);
-
-
-    /**
-     * Sets the file to send as body data with the request.
-     * When using a file only the contents of the file will be send, not the data set with SetData.
-     *
-     * @param file      File to send as body data with the request.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetDataFile(const char[] file);
-
-    /**
-     * Retrieves the file to send as body data with the request.
-     *
-     * @param file      Buffer to store file in.
-     * @param maxlength Maxlength of the buffer.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void GetDataFile(char[] file, int maxlength);
-
-
-    /**
-     * Sets the file to write the output of the request to.
-     *
-     * @param file      File to write the output to.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetOutputFile(const char[] file);
-
-    /**
-     * Retrieves the file to write the output of the request to.
-     *
-     * @param file      Buffer to store file in.
-     * @param maxlength Maxlength of the buffer.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void GetOutputFile(char[] file, int maxlength);
 
 
     /**
@@ -316,7 +249,7 @@ methodmap System2Request < Handle {
         /**
          * Returns the timeout for the request.
          *
-         * @return The timeout of the request in milliseconds.
+         * @return The timeout of the request in milliseconds or 0 if none set.
          * @error Invalid Handle.
          */
         public native get();
@@ -339,7 +272,7 @@ methodmap System2Request < Handle {
         /**
          * Returns the any data that was bound to this request.
          *
-         * @return The any data that was bound.
+         * @return The any data that was bound or 0 if none set.
          * @error Invalid Handle.
          */
         public native get();
@@ -374,6 +307,51 @@ methodmap System2HTTPRequest < System2Request {
 
 
     /**
+     * Sets the body data to send with the request.
+     * Use System2_URLEncode to encode the data.
+     *
+     * @param data      Body data to send with the request.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetData(const char[] data);
+
+    /**
+     * Retrieves the body data of the request.
+     *
+     * @param url       Buffer to store data in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void GetData(char[] data, int maxlength);
+
+
+    /**
+     * Sets the file to write the output of the request to.
+     *
+     * @param file      File to write the output to.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetOutputFile(const char[] file);
+
+    /**
+     * Retrieves the file to write the output of the request to.
+     *
+     * @param file      Buffer to store file in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void GetOutputFile(char[] file, int maxlength);
+
+
+    /**
      * Sets a HTTP request header.
      * Use System2_URLEncode to encode the header.
      *
@@ -392,10 +370,10 @@ methodmap System2HTTPRequest < System2Request {
      * @param value     Buffer to store value in.
      * @param maxlength Maxlength of the buffer.
      *
-     * @noreturn
+     * @return True if header was set, otherwise false.
      * @error Invalid Handle.
      */
-    public native void GetHeader(const char[] header, char[] value, int maxlength);
+    public native bool GetHeader(const char[] header, char[] value, int maxlength);
 
     /**
      * Returns the number of set headers.
@@ -540,6 +518,31 @@ methodmap System2HTTPRequest < System2Request {
          */
         public native set(bool follow);
     }
+
+    /**
+     * The auto referer property.
+     */
+    property bool AutoReferer {
+        /**
+         * Returns whether to automatically append refereres on redirect.
+         *
+         * @return True if referers will automatically append, otherwise false.
+         * @error Invalid Handle.
+         */
+        public native get();
+
+        /**
+         * Sets whether to automatically append refereres on redirect.
+         * This will only work when the FollowRedirects property is enabled.
+         * Default is not to automatically append refereres.
+         *
+         * @param auto    True to automatically append refereres, otherwise false.
+         *
+         * @noreturn
+         * @error Invalid Handle.
+         */
+        public native set(bool auto);
+    }
 }
 
 
@@ -573,23 +576,28 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * Sends the request in order to download a file.
+
+     * @param file      File to write downloaded content to.
      *
      * @noreturn
      * @error Invalid Handle.
      */
-    public native void Download();
+    public native void Download(const char[] file);
 
     /**
      * Sends the request in order to upload content to a file.
      *
+     * @param file      File to upload.
+
      * @noreturn
      * @error Invalid Handle.
      */
-    public native void Upload();
+    public native void Upload(const char[] file);
 
 
     /**
      * The append to file property.
+     * Default the file will be replaced.
      */
     property bool AppendToFile {
         /**
@@ -613,6 +621,7 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * The create missing dirs property.
+     * Default missing dirs will be created.
      */
     property bool CreateMissingDirs {
         /**
@@ -656,6 +665,7 @@ methodmap System2Response < Handle {
 
     /**
      * Retrieves the content of the response.
+     * This shouldn't be used when retrieved binary stuff.
      *
      * @param content   Buffer to store the content in.
      * @param maxlength Maxlength of the content buffer.
@@ -668,16 +678,6 @@ methodmap System2Response < Handle {
     public native void GetContent(char[] content, int maxlength, int start = 0);
 
 
-    property int StatusCode {
-        /**
-         * Returns the status code of the response.
-         *
-         * @return The status code.
-         * @error Invalid Handle.
-         */
-        public native get();
-    }
-
     property int ContentSize {
         /**
          * Returns the size of the complete content.
@@ -688,18 +688,17 @@ methodmap System2Response < Handle {
         public native get();
     }
 
-    property int FileTime {
+    property int StatusCode {
         /**
-         * Returns the file time of the retrieved file.
-         * Returns 0 if no file time is available.
+         * Returns the status code of the response.
          *
-         * @return The file time.
+         * @return The status code.
          * @error Invalid Handle.
          */
         public native get();
     }
 
-    property int TotalTime {
+    property float TotalTime {
         /**
          * Returns the total time from the request until the response.
          *
@@ -722,7 +721,7 @@ methodmap System2HTTPResponse < System2Response {
      * @param value     Buffer to store value in.
      * @param maxlength Maxlength of the buffer.
      *
-     * @noreturn
+     * @return True if header was set, otherwise false.
      * @error Invalid Handle.
      */
     public native bool GetHeader(const char[] name, char[] value, int maxlength);
@@ -1285,12 +1284,6 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Request.GetURL");
         MarkNativeAsOptional("System2Request.SetPort");
         MarkNativeAsOptional("System2Request.GetPort");
-        MarkNativeAsOptional("System2Request.SetData");
-        MarkNativeAsOptional("System2Request.GetData");
-        MarkNativeAsOptional("System2Request.SetDataFile");
-        MarkNativeAsOptional("System2Request.GetDataFile");
-        MarkNativeAsOptional("System2Request.SetOutputFile");
-        MarkNativeAsOptional("System2Request.GetOutputFile");
         MarkNativeAsOptional("System2Request.AutoClean.get");
         MarkNativeAsOptional("System2Request.AutoClean.set");
         MarkNativeAsOptional("System2Request.Timeout.get");
@@ -1299,13 +1292,14 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Request.Any.set");
         
         MarkNativeAsOptional("System2HTTPRequest.System2HTTPRequest");
+        MarkNativeAsOptional("System2HTTPRequest.SetData");
+        MarkNativeAsOptional("System2HTTPRequest.GetData");
+        MarkNativeAsOptional("System2HTTPRequest.SetOutputFile");
+        MarkNativeAsOptional("System2HTTPRequest.GetOutputFile");
         MarkNativeAsOptional("System2HTTPRequest.SetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersArray");
-        MarkNativeAsOptional("System2HTTPRequest.SetReferer");
-        MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
-        MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
         MarkNativeAsOptional("System2HTTPRequest.GET");
         MarkNativeAsOptional("System2HTTPRequest.POST");
         MarkNativeAsOptional("System2HTTPRequest.PUT");
@@ -1314,6 +1308,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.HEAD");
         MarkNativeAsOptional("System2HTTPRequest.FollowRedirects.get");
         MarkNativeAsOptional("System2HTTPRequest.FollowRedirects.set");
+        MarkNativeAsOptional("System2HTTPRequest.AutoReferer.get");
+        MarkNativeAsOptional("System2HTTPRequest.AutoReferer.set");
         
         MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
         MarkNativeAsOptional("System2FTPRequest.SetAuthentication");
@@ -1328,7 +1324,6 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Response.GetContent");
         MarkNativeAsOptional("System2Response.StatusCode.get");
         MarkNativeAsOptional("System2Response.ContentSize.get");
-        MarkNativeAsOptional("System2Response.FileTime.get");
         MarkNativeAsOptional("System2Response.TotalTime.get");
         
         MarkNativeAsOptional("System2HTTPResponse.GetHeader");
