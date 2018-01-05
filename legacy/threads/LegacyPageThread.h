@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        ftp.h
+ * File        LegacyPageThread.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,39 +22,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _LEGACY_FTP_H_
-#define _LEGACY_FTP_H_
+#ifndef _SYSTEM2_LEGACY_PAGE_THREAD_H_
+#define _SYSTEM2_LEGACY_PAGE_THREAD_H_
 
 #include "extension.h"
 
- // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-extern IMutex *ftpMutex;
 
-
-class LegacyFTPThread : public IThread {
+class LegacyPageThread : public IThread {
 private:
-    bool download;
-
-    std::string remoteFile;
-    std::string localFile;
-    std::string host;
-    std::string username;
-    std::string password;
-
-    int port;
+    std::string url;
+    std::string post;
+    std::string useragent;
     int data;
 
     IPluginFunction *callback;
 
 public:
-    LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback);
+    typedef struct {
+        std::string result;
+        int data;
+        IPluginFunction *callback;
+    } PageInfo;
+
+    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
-};
+    void OnTerminate(IThreadHandle *pThread, bool cancel);
 
-size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *userdata);
+    static size_t GetPage(void *buffer, size_t size, size_t nmemb, void *userdata);
+
+};
 
 #endif

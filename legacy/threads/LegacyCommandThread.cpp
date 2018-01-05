@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        command.cpp
+ * File        LegacyCommandThread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,26 +22,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "command.h"
-
-
-LegacyCommandCallback::LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, CommandState state) {
-    this->output = output;
-    this->command = command;
-    this->data = data;
-
-    this->callback = callback;
-    this->state = state;
-}
-
-void LegacyCommandCallback::Fire() {
-    this->callback->PushString(this->output.c_str());
-    this->callback->PushCell(this->output.length() + 1);
-    this->callback->PushCell(this->state);
-    this->callback->PushCell(this->data);
-    this->callback->PushString(this->command.c_str());
-    this->callback->Execute(NULL);
-}
+#include "LegacyCommandThread.h"
+#include "LegacyCommandCallback.h"
+#include "LegacyCommandState.h"
 
 
 LegacyCommandThread::LegacyCommandThread(std::string command, IPluginFunction *callback, int data) : IThread() {
@@ -49,6 +32,7 @@ LegacyCommandThread::LegacyCommandThread(std::string command, IPluginFunction *c
     this->callback = callback;
     this->data = data;
 }
+
 
 void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
     // Redirect everything to output
@@ -61,7 +45,7 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
     // Execute the command
     FILE *commandFile = PosixOpen(realCommand.c_str(), "r");
 
-    CommandState state = CMD_SUCCESS;
+    LegacyCommandState state = CMD_SUCCESS;
     std::string output;
 
     // Was there an error?
@@ -99,4 +83,9 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(output, this->command, this->data, this->callback, state));
+}
+
+
+void LegacyCommandThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    delete this;
 }

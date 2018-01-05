@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        command.h
+ * File        LegacyCommandCallback.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,31 +22,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _LEGACY_COMMAND_H_
-#define _LEGACY_COMMAND_H_
+#ifndef _SYSTEM2_LEGACY_COMMAND_CLLBACK_H_
+#define _SYSTEM2_LEGACY_COMMAND_CLLBACK_H_
 
 #include "extension.h"
-
-#define MAX_RESULT_LENGTH 4096
-
- // Define Posix
-#if defined  _WIN32
-#define PosixOpen _popen
-#define PosixClose _pclose
-
- //#pragma warning(disable: 4996)
-#else
-#define PosixOpen popen
-#define PosixClose pclose
-#endif
-
-
-enum CommandState {
-    CMD_SUCCESS,
-    CMD_EMPTY,
-    CMD_ERROR,
-    CMD_PROGRESS
-};
+#include "LegacyCommandState.h"
+#include "Callback.h"
 
 
 class LegacyCommandCallback : public Callback {
@@ -56,28 +37,12 @@ private:
     int data;
 
     IPluginFunction *callback;
-    CommandState state;
+    LegacyCommandState state;
 
 public:
-    LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, CommandState state);
+    LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, LegacyCommandState state);
 
     virtual void Fire();
-};
-
-
-class LegacyCommandThread : public IThread {
-private:
-    std::string command;
-    IPluginFunction *callback;
-    int data;
-
-public:
-    LegacyCommandThread(std::string command, IPluginFunction *callback, int data);
-
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
 };
 
 #endif

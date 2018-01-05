@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        download.h
+ * File        LegacyDownloadThread.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,35 +22,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _LEGACY_DOWNLOAD_H_
-#define _LEGACY_DOWNLOAD_H_
+#ifndef _SYSTEM2_LEGACY_DOWNLOAD_THREAD_H_
+#define _SYSTEM2_LEGACY_DOWNLOAD_THREAD_H_
 
 #include "extension.h"
-
-typedef struct {
-    uint32_t lastFrame;
-    int data;
-    IPluginFunction *callback;
-} progress_info;
-
-
-class LegacyDownloadCallback : public Callback {
-private:
-    bool finished;
-    std::string curlError;
-    float dlTotal;
-    float dlNow;
-    float ulTotal;
-    float ulNow;
-    int data;
-    IPluginFunction *callback;
-
-public:
-    LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback);
-    LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback);
-
-    virtual void Fire();
-};
 
 
 class LegacyDownloadThread : public IThread {
@@ -62,15 +37,19 @@ private:
     IPluginFunction *callback;
 
 public:
+    typedef struct {
+        uint32_t lastFrame;
+        int data;
+        IPluginFunction *callback;
+    } ProgressInfo;
+
     LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
-};
+    void OnTerminate(IThreadHandle *pThread, bool cancel);
 
-size_t file_write(void *buffer, size_t size, size_t nmemb, void *userdata);
-int progress_updated(void *data, double dltotal, double dlnow, double ultotal, double ulnow);
+    static size_t WriteFile(void *buffer, size_t size, size_t nmemb, void *userdata);
+    static int ProgressUpdated(void *data, double dltotal, double dlnow, double ultotal, double ulnow);
+};
 
 #endif

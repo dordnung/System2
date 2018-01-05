@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        page.h
+ * File        LegacyCommandState.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,32 +22,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _LEGACY_PAGE_H_
-#define _LEGACY_PAGE_H_
-
-#include "extension.h"
-#include "command.h"
+#ifndef _SYSTEM2_LEGACY_COMMAND_STATE_H_
+#define _SYSTEM2_LEGACY_COMMAND_STATE_H_
 
 
-class LegacyPageThread : public IThread {
-private:
-    std::string url;
-    std::string post;
-    std::string useragent;
-    int data;
-
-    IPluginFunction *callback;
-
-public:
-    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback);
-
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
-
+enum LegacyCommandState {
+    CMD_SUCCESS,
+    CMD_EMPTY,
+    CMD_ERROR,
+    CMD_PROGRESS
 };
-
-size_t page_get(void *buffer, size_t size, size_t nmemb, void *userdata);
 
 #endif

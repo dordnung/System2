@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        download.cpp
+ * File        LegacyDownloadThread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,42 +22,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "download.h"
-
-
-LegacyDownloadCallback::LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback) {
-    this->finished = true;
-    this->curlError = curlError;
-    this->dlTotal = 0.0f;
-    this->dlNow = 0.0f;
-    this->ulTotal = 0.0f;
-    this->ulNow = 0.0f;
-    this->data = data;
-    this->callback = callback;
-}
-
-LegacyDownloadCallback::LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback) {
-    this->finished = finished;
-    this->curlError = curlError;
-    this->dlTotal = dlTotal;
-    this->dlNow = dlNow;
-    this->ulTotal = ulTotal;
-    this->ulNow = ulNow;
-    this->data = data;
-    this->callback = callback;
-}
-
-void LegacyDownloadCallback::Fire() {
-    this->callback->PushCell(this->finished);
-    this->callback->PushString(this->curlError.c_str());
-    this->callback->PushFloat(this->dlTotal);
-    this->callback->PushFloat(this->dlNow);
-    this->callback->PushFloat(this->ulTotal);
-    this->callback->PushFloat(this->ulNow);
-    this->callback->PushCell(this->data);
-    this->callback->Execute(NULL);
-}
-
+#include "LegacyDownloadThread.h"
+#include "LegacyDownloadCallback.h"
 
 
 LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback) : IThread() {
@@ -66,6 +32,7 @@ LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFil
     this->data = data;
     this->callback = callback;
 }
+
 
 void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
     // Get full path to the local file and open it
@@ -86,7 +53,7 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
 
         // Get progress info
-        progress_info progress =
+        ProgressInfo progress =
         {
             0,
             this->data,
@@ -98,11 +65,11 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 20);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteFile);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, stream);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_updated);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressUpdated);
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
         // Perform and clean
@@ -128,14 +95,19 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
 }
 
 
-size_t file_write(void *buffer, size_t size, size_t nmemb, void *userdata) {
+void LegacyDownloadThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    delete this;
+}
+
+
+size_t LegacyDownloadThread::WriteFile(void *buffer, size_t size, size_t nmemb, void *userdata) {
     // Write to the file
     return fwrite(buffer, size, nmemb, (FILE *)userdata);
 }
 
 
-int progress_updated(void *data, double dltotal, double dlnow, double ultotal, double ulnow) {
-    progress_info *progress = (progress_info *)data;
+int LegacyDownloadThread::ProgressUpdated(void *data, double dltotal, double dlnow, double ultotal, double ulnow) {
+    ProgressInfo *progress = (ProgressInfo *)data;
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != progress->lastFrame)) {
         // Add return status to queue

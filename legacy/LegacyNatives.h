@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        natives.h
+ * File        LegacyNatives.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,8 +22,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _NATIVES_LEGACY_H_
-#define _NATIVES_LEGACY_H_
+#ifndef _SYSTEM2_LEGACY_NATIVES_H_
+#define _SYSTEM2_LEGACY_NATIVES_H_
 
 #include "extension.h"
 
@@ -38,18 +38,19 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params);
 
+
 const sp_nativeinfo_t system2_legacy_natives[] =
 {
-	{ "System2_GetPage", NativeGetPage },
-	{ "System2_DownloadFile", NativeDownloadFileUrl },
-	{ "System2_DownloadFTPFile", NativeDownloadFile },
-	{ "System2_UploadFTPFile", NativeUploadFile },
-	{ "System2_CompressFile", NativeCompressFile },
-	{ "System2_ExtractArchive", NativeExtractArchive },
-	{ "System2_RunThreadCommand", NativeRunThreadCommand },
-	{ "System2_RunThreadCommandWithData", NativeRunThreadCommandWithData },
-	{ "System2_RunCommand", NativeRunCommand },
-	{ NULL, NULL },
+    { "System2_GetPage", NativeGetPage },
+    { "System2_DownloadFile", NativeDownloadFileUrl },
+    { "System2_DownloadFTPFile", NativeDownloadFile },
+    { "System2_UploadFTPFile", NativeUploadFile },
+    { "System2_CompressFile", NativeCompressFile },
+    { "System2_ExtractArchive", NativeExtractArchive },
+    { "System2_RunThreadCommand", NativeRunThreadCommand },
+    { "System2_RunThreadCommandWithData", NativeRunThreadCommandWithData },
+    { "System2_RunCommand", NativeRunCommand },
+    { NULL, NULL },
 };
 
 #endif

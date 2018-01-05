@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        ftp.cpp
+ * File        LegacyFTPThread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,12 +22,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "ftp.h"
-#include "download.h"
+#include "LegacyFTPThread.h"
+#include "LegacyDownloadCallback.h"
+#include "LegacyDownloadThread.h"
+
 
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
 IMutex *ftpMutex;
-
 
 LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback) : IThread() {
     this->download = download;
@@ -61,7 +62,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
 
     // Check if local file could be open
     if (!localFile) {
-        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>("Couldn't open locala file", this->data, this->callback));
+        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>("Couldn't open locale file", this->data, this->callback));
         return;
     }
 
@@ -75,7 +76,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
 
         // Get progress info
-        progress_info progress =
+        LegacyDownloadThread::ProgressInfo progress =
         {
             0,
             this->data,
@@ -91,7 +92,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_updated);
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, LegacyDownloadThread::ProgressUpdated);
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
         // Login?
@@ -107,13 +108,13 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
             curl_off_t fsize = (curl_off_t)ftell(localFile);
             fseek(localFile, 0L, SEEK_SET);
 
-            curl_easy_setopt(curl, CURLOPT_READFUNCTION, ftp_upload);
+            curl_easy_setopt(curl, CURLOPT_READFUNCTION, UploadFTP);
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
             curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
             curl_easy_setopt(curl, CURLOPT_READDATA, localFile);
             curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
         } else {
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, LegacyDownloadThread::WriteFile);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, localFile);
         }
 
@@ -142,7 +143,12 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
 }
 
 
-size_t ftp_upload(void *buffer, size_t size, size_t nmemb, void *userdata) {
+void LegacyFTPThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    delete this;
+}
+
+
+size_t LegacyFTPThread::UploadFTP(void *buffer, size_t size, size_t nmemb, void *userdata) {
     // Read file and return size
     return fread(buffer, size, nmemb, (FILE *)userdata);
 }

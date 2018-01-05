@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        page.cpp
+ * File        LegacyPageThread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,13 +22,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "page.h"
-
-typedef struct {
-    std::string result;
-    int data;
-    IPluginFunction *callback;
-} page_info;
+#include "LegacyPageThread.h"
+#include "LegacyCommandState.h"
+#include "LegacyCommandCallback.h"
+#include "LegacyCommandThread.h"
 
 
 LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback) : IThread() {
@@ -40,11 +37,12 @@ LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::strin
     this->callback = callback;
 }
 
+
 void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
-    CommandState state = CMD_SUCCESS;
+    LegacyCommandState state = CMD_SUCCESS;
 
     // Create a page info for the write function
-    page_info page =
+    PageInfo page =
     {
         std::string(),
         this->data,
@@ -61,7 +59,7 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, page_get);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, GetPage);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &page);
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
         curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, MAX_RESULT_LENGTH);
@@ -95,12 +93,17 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
 }
 
 
+void LegacyPageThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    delete this;
+}
+
+
 // Got something of the page
-size_t page_get(void *buffer, size_t size, size_t nmemb, void *userdata) {
+size_t LegacyPageThread::GetPage(void *buffer, size_t size, size_t nmemb, void *userdata) {
     size_t realsize = size * nmemb;
 
     // Get the page info
-    page_info *page = (page_info *)userdata;
+    PageInfo *page = (PageInfo *)userdata;
 
     // We only can push a string with a length of MAX_RESULT_LENGTH
     if (page->result.length() + realsize >= MAX_RESULT_LENGTH) {

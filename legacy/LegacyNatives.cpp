@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        natives.cpp
+ * File        LegacyNatives.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,7 +22,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "natives.h"
+#include "LegacyNatives.h"
 #include "threads/command.h"
 #include "threads/download.h"
 #include "threads/ftp.h"
