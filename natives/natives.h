@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        natives.h
+ * File        Natives.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,11 +22,66 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _NATIVES_H_
-#define _NATIVES_H_
+#ifndef _SYSTEM2_NATIVES_H_
+#define _SYSTEM2_NATIVES_H_
 
 #include "extension.h"
 
+cell_t NativeRequest_SetResponseCallback(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetAutoClean(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetAutoClean(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params);
+
+cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *params);
+
+cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_Download(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
+
+cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
+
+cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetHeadersArray(IPluginContext *pContext, const cell_t *params);
+
+cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
+cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
 
@@ -50,11 +105,64 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params);
 cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params);
 
-cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
-cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
-
 const sp_nativeinfo_t system2_natives[] =
 {
+    { "System2Request.SetResponseCallback", NativeRequest_SetResponseCallback },
+    { "System2Request.SetProgressCallback", NativeRequest_SetProgressCallback },
+    { "System2Request.SetURL", NativeRequest_SetURL },
+    { "System2Request.GetURL", NativeRequest_GetURL },
+    { "System2Request.SetPort", NativeRequest_SetPort },
+    { "System2Request.GetPort", NativeRequest_GetPort },
+    { "System2Request.AutoClean.get", NativeRequest_GetAutoClean },
+    { "System2Request.AutoClean.set", NativeRequest_SetAutoClean },
+    { "System2Request.Timeout.get", NativeRequest_GetTimeout },
+    { "System2Request.Timeout.set", NativeRequest_SetTimeout },
+    { "System2Request.Any.get", NativeRequest_GetAnyData },
+    { "System2Request.Any.set", NativeRequest_SetAnyData },
+
+    { "System2HTTPRequest.System2HTTPRequest", NativeHTTPRequest_HTTPRequest },
+    { "System2HTTPRequest.SetData", NativeHTTPRequest_SetData },
+    { "System2HTTPRequest.GetData", NativeHTTPRequest_GetData },
+    { "System2HTTPRequest.SetOutputFile", NativeHTTPRequest_SetOutputFile },
+    { "System2HTTPRequest.GetOutputFile", NativeHTTPRequest_GetOutputFile },
+    { "System2HTTPRequest.SetHeader", NativeHTTPRequest_SetHeader },
+    { "System2HTTPRequest.GetHeader", NativeHTTPRequest_GetHeader },
+    { "System2HTTPRequest.GetHeadersCount", NativeHTTPRequest_GetHeadersCount },
+    { "System2HTTPRequest.GetHeadersArray", NativeHTTPRequest_GetHeadersArray },
+    { "System2HTTPRequest.SetBasicAuthentication", NativeHTTPRequest_SetBasicAuthentication },
+    { "System2HTTPRequest.GET", NativeHTTPRequest_GET },
+    { "System2HTTPRequest.POST", NativeHTTPRequest_POST },
+    { "System2HTTPRequest.PUT", NativeHTTPRequest_PUT },
+    { "System2HTTPRequest.PATCH", NativeHTTPRequest_PATCH },
+    { "System2HTTPRequest.DELETE", NativeHTTPRequest_DELETE },
+    { "System2HTTPRequest.HEAD", NativeHTTPRequest_HEAD },
+    { "System2HTTPRequest.FollowRedirects.get", NativeHTTPRequest_GetFollowRedirects },
+    { "System2HTTPRequest.FollowRedirects.set", NativeHTTPRequest_SetFollowRedirects },
+    { "System2HTTPRequest.AutoReferer.get", NativeHTTPRequest_GetAutoReferer },
+    { "System2HTTPRequest.AutoReferer.set", NativeHTTPRequest_SetAutoReferer },
+
+    { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
+    { "System2FTPRequest.SetAuthentication", NativeFTPRequest_SetAuthentication },
+    { "System2FTPRequest.Download", NativeFTPRequest_Download },
+    { "System2FTPRequest.Upload", NativeFTPRequest_Upload },
+    { "System2FTPRequest.AppendToFile.get", NativeFTPRequest_GetAppendToFile },
+    { "System2FTPRequest.AppendToFile.set", NativeFTPRequest_SetAppendToFile },
+    { "System2FTPRequest.CreateMissingDirs.get", NativeFTPRequest_GetCreateMissingDirs },
+    { "System2FTPRequest.CreateMissingDirs.set", NativeFTPRequest_SetCreateMissingDirs },
+
+    { "System2Response.GetLastUrl", NativeResponse_GetLastUrl },
+    { "System2Response.GetContent", NativeResponse_GetContent },
+    { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
+    { "System2Response.ContentSize.get", NativeResponse_GetContentSize },
+    { "System2Response.TotalTime.get", NativeResponse_GetTotalTime },
+
+    { "System2HTTPResponse.GetHeader", NativeHTTPResponse_GetHeader },
+    { "System2HTTPResponse.GetHeadersCount", NativeHTTPResponse_GetHeadersCount },
+    { "System2HTTPResponse.GetHeadersArray", NativeHTTPResponse_GetHeadersArray },
+
+    { "System2_URLEncode", NativeURLEncode },
+    { "System2_URLDecode", NativeURLDecode },
+
     { "System2_CopyFile", NativeCopyFile },
 
     { "System2_Compress", NativeCompress },
@@ -75,9 +183,6 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2_GetFileMD5", NativeGetFileMD5 },
     { "System2_GetStringCRC32", NativeGetStringCRC32 },
     { "System2_GetFileCRC32", NativeGetFileCRC32 },
-
-    { "System2_URLEncode", NativeURLEncode },
-    { "System2_URLDecode", NativeURLDecode },
     { NULL, NULL },
 };
 
