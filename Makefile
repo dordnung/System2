@@ -19,7 +19,16 @@ PROJECT = system2
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp threads/copy.cpp legacy/threads/command.cpp legacy/threads/download.cpp legacy/threads/ftp.cpp legacy/threads/page.cpp legacy/natives.cpp hash/md5.cpp hash/crc32.cpp natives.cpp extension.cpp
+OBJECTS = 3rdparty/crc/crc.cpp 3rdparty/md5/md5.cpp
+OBJECTS += handler/CommandOutputHandler.cpp handler/RequestHandler.cpp handler/CommandOutputHandler.cpp handler/ResponseHandler.cpp
+OBJECTS += legacy/LegacyNatives.cpp
+OBJECTS += legacy/threads/LegacyCommandThread.cpp legacy/threads/LegacyDownloadThread.cpp legacy/threads/LegacyFTPThread.cpp legacy/threads/LegacyPageThread.cpp
+OBJECTS += legacy/threads/callbacks/LegacyCommandCallback.cpp legacy/threads/callbacks/LegacyDownloadCallback.cpp
+OBJECTS += natives/CommonNatives.cpp natives/ExecuteNatives.cpp natives/FTPRequest.cpp natives/HTTPRequest.cpp natives/Request.cpp natives/RequestNatives.cpp natives/ResponseNatives.cpp
+OBJECTS += sdk/smsdk_ext.cpp
+OBJECTS += threads/CopyThread.cpp threads/ExecuteThread.cpp threads/FTPRequestThread.cpp threads/HTTPRequestThread.cpp threads/RequestThread.cpp
+OBJECTS += threads/callbacks/CopyCallback.cpp threads/callbacks/ExecuteCallback.cpp threads/callbacks/HTTPResponseCallback.cpp threads/callbacks/ProgressCallback.cpp threads/callbacks/ResponseCallback.cpp
+OBJECTS += extension.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
