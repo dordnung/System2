@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        handles.h
+ * File        RequestHandler.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,27 +22,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _HANDLES_H_
-#define _HANDLES_H_
-
-#include "extension.h"
-
- // Define handle types
-extern HandleType_t commandOutputHandleType;
+#include "RequestHandler.h"
 
 
-class CommandOutputHandler : public IHandleTypeDispatch {
-public:
-    static void Initialize();
-    static void Shutdown();
+HandleType_t requestHandleType = 0;
+RequestHandler requestHandler;
 
-    void OnHandleDestroy(HandleType_t type, void *object) {
-        // Nothing to do, as handle will be deleted always automatically after callback
-    }
-};
+void RequestHandler::Initialize() {
+    requestHandleType =
+        handlesys->CreateType("System2Request",
+                              this,
+                              0,
+                              NULL,
+                              NULL,
+                              myself->GetIdentity(),
+                              NULL);
+}
 
+void RequestHandler::Shutdown() {
+    handlesys->RemoveType(requestHandleType, myself->GetIdentity());
+}
 
-// Create handlers
-extern CommandOutputHandler commandOutputHandler;
-
-#endif
+void RequestHandler::OnHandleDestroy(HandleType_t type, void *object) {
+    delete object;
+}
