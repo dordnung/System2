@@ -24,9 +24,10 @@
 
 #include "Natives.h"
 #include "CopyThread.h"
+#include "OS.h"
+
 #include "md5/md5.h"
 #include "crc/crc.h"
-#include "OS.h"
 
 #include <fstream>
 

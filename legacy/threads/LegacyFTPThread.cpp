@@ -28,9 +28,10 @@
 
 
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-IMutex *ftpMutex;
+IMutex *legacyFTPMutex;
 
-LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback) : IThread() {
+LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, 
+                                 std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback) : IThread() {
     this->download = download;
 
     this->remoteFile = remoteFile;
@@ -67,7 +68,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Only one process can be connect to FTP
-    ftpMutex->Lock();
+    legacyFTPMutex->Lock();
 
     // Init. Curl
     std::string error;
@@ -136,7 +137,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     fclose(localFile);
 
     // We are finished
-    ftpMutex->Unlock();
+    legacyFTPMutex->Unlock();
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(error, this->data, this->callback));

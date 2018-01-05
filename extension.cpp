@@ -41,7 +41,7 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 
     // Create needed mutex
     mutex = threader->MakeMutex();
-    ftpMutex = threader->MakeMutex();
+    legacyFTPMutex = threader->MakeMutex();
 
     // Creates handles
     commandOutputHandler.Initialize();
@@ -59,7 +59,7 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 void System2Extension::SDK_OnUnload() {
     // Remove created mutex
     mutex->DestroyThis();
-    ftpMutex->DestroyThis();
+    legacyFTPMutex->DestroyThis();
 
     // Remove handles
     commandOutputHandler.Shutdown();

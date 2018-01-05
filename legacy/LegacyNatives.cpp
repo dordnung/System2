@@ -23,10 +23,11 @@
  */
 
 #include "LegacyNatives.h"
-#include "threads/command.h"
-#include "threads/download.h"
-#include "threads/ftp.h"
-#include "threads/page.h"
+#include "LegacyCommandThread.h"
+#include "LegacyDownloadThread.h"
+#include "LegacyFTPThread.h"
+#include "LegacyPageThread.h"
+#include "LegacyCommandState.h"
 
 #if defined __unix__ || defined __linux__ || defined __unix
 #include <sys/utsname.h>
@@ -320,7 +321,7 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
     }
 
     // Read the result
-    CommandState state = CMD_SUCCESS;
+    LegacyCommandState state = CMD_SUCCESS;
     std::string output;
 
     char buffer[MAX_RESULT_LENGTH + 1];

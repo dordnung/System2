@@ -22,8 +22,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "CommandOutputHandler.h"
 #include "Natives.h"
+#include "CommandOutputHandler.h"
 #include "ExecuteThread.h"
 #include "ExecuteCallback.h"
 #include "CompressLevel.h"

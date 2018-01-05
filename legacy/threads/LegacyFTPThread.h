@@ -29,7 +29,7 @@
 
 
  // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-extern IMutex *ftpMutex;
+extern IMutex *legacyFTPMutex;
 
 class LegacyFTPThread : public IThread {
 private:

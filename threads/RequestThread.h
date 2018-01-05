@@ -29,15 +29,6 @@
 #include "Request.h"
 #include <map>
 
- // Define Posix
-#if defined  _WIN32
-#define PosixOpen _popen
-#define PosixClose _pclose
-#else
-#define PosixOpen popen
-#define PosixClose pclose
-#endif
-
 
 class RequestThread : public IThread {
 private:

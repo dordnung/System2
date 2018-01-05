@@ -49,9 +49,7 @@ public:
     ExecuteThread(std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner);
 
     void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
+    void OnTerminate(IThreadHandle *pThread, bool cancel);
 };
 
 #endif
