@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        copy.cpp
+ * File        CopyThread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,25 +22,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "copy.h"
+#include "CopyThread.h"
+#include "CopyCallback.h"
+
 #include <fstream>
-
-
-CopyCallback::CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data) {
-    this->success = success;
-    this->from = from;
-    this->to = to;
-    this->callback = callback;
-    this->data = data;
-}
-
-void CopyCallback::Fire() {
-    this->callback->PushCell(this->success);
-    this->callback->PushString(this->from.c_str());
-    this->callback->PushString(this->to.c_str());
-    this->callback->PushCell(this->data);
-    this->callback->Execute(NULL);
-}
 
 
 CopyThread::CopyThread(std::string from, std::string to, IPluginFunction *callback, int data) : IThread() {
@@ -49,6 +34,7 @@ CopyThread::CopyThread(std::string from, std::string to, IPluginFunction *callba
     this->callback = callback;
     this->data = data;
 }
+
 
 void CopyThread::RunThread(IThreadHandle *pHandle) {
     char filePath[PLATFORM_MAX_PATH + 1];
@@ -83,4 +69,9 @@ void CopyThread::RunThread(IThreadHandle *pHandle) {
 
     // Add callback to queue
     system2Extension.AppendCallback(std::make_shared<CopyCallback>(success, this->from, this->to, this->callback, this->data));
+}
+
+
+void CopyThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    delete this;
 }

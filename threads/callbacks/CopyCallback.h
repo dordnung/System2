@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        copy.h
+ * File        CopyCallback.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,8 +22,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _COPY_H_
-#define _COPY_H_
+#ifndef _SYSTEM2_COPY_CALLBACK_H_
+#define _SYSTEM2_COPY_CALLBACK_H_
 
 #include "extension.h"
 
@@ -40,22 +40,5 @@ public:
     CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data);
     virtual void Fire();
 };
-
-
-class CopyThread : public IThread {
-private:
-    std::string from;
-    std::string to;
-	IPluginFunction *callback;
-	int data;
-
-public:
-	CopyThread(std::string from, std::string to, IPluginFunction *callback, int data);
-	void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel) {
-        delete this;
-    }
-};
-
 
 #endif

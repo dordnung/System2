@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        command.cpp
+ * File        ExecuteCallback.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,11 +22,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#include "command.h"
-#include "handles.h"
+#include "ExecuteCallback.h"
+#include "CommandOutputHandler.h"
 
 
-CommandCallback::CommandCallback(bool success, std::string output, std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner) {
+ExecuteCallback::ExecuteCallback(bool success, std::string output, std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner) {
     this->success = success;
     this->output = output;
     this->command = command;
@@ -36,7 +36,13 @@ CommandCallback::CommandCallback(bool success, std::string output, std::string c
     this->owner = owner;
 }
 
-void CommandCallback::Fire() {
+
+std::string &ExecuteCallback::GetOutput() {
+    return this->output;
+}
+
+
+void ExecuteCallback::Fire() {
     // Create the output handle
     Handle_t hndl = BAD_HANDLE;
     if (this->success) {
@@ -58,36 +64,4 @@ void CommandCallback::Fire() {
         HandleSecurity sec = { this->owner, myself->GetIdentity() };
         handlesys->FreeHandle(hndl, &sec);
     }
-}
-
-
-CommandThread::CommandThread(std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner) : IThread() {
-    this->command = command;
-    this->data = data;
-
-    this->callback = callback;
-    this->owner = owner;
-}
-
-void CommandThread::RunThread(IThreadHandle *pHandle) {
-    bool success = true;
-    std::string output;
-
-    // Execute the command
-    FILE *commandFile = PosixOpen(this->command.c_str(), "r");
-    if (commandFile != NULL) {
-        char buffer[1024];
-        while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
-            // Add buffer to the output
-            output += buffer;
-        }
-
-        // Close
-        PosixClose(commandFile);
-    } else {
-        success = false;
-    }
-
-    // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<CommandCallback>(success, output, this->command, this->data, this->callback, this->owner));
 }
