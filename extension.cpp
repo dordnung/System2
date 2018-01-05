@@ -23,10 +23,12 @@
  */
 
 #include "extension.h"
-#include "natives.h"
-#include "handles.h"
-#include "legacy/natives.h"
-#include "legacy/threads/ftp.h"
+#include "Natives.h"
+#include "CommandOutputHandler.h"
+#include "RequestHandler.h"
+#include "ResponseHandler.h"
+#include "LegacyNatives.h"
+#include "LegacyFTPThread.h"
 
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
@@ -42,7 +44,9 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     ftpMutex = threader->MakeMutex();
 
     // Creates handles
-    CommandOutputHandler::Initialize();
+    commandOutputHandler.Initialize();
+    requestHandler.Initialize();
+    responseHandler.Initialize();
 
     smutils->AddGameFrameHook(&OnGameFrameHit);
 
@@ -58,7 +62,9 @@ void System2Extension::SDK_OnUnload() {
     ftpMutex->DestroyThis();
 
     // Remove handles
-    CommandOutputHandler::Shutdown();
+    commandOutputHandler.Shutdown();
+    requestHandler.Shutdown();
+    responseHandler.Shutdown();
 
     smutils->RemoveGameFrameHook(&OnGameFrameHit);
 

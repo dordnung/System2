@@ -22,11 +22,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _EXTENSION_H_
-#define _EXTENSION_H_
+#ifndef _SYSTEM2_EXTENSION_H_
+#define _SYSTEM2_EXTENSION_H_
 
 #include "smsdk_ext.h"
-#include "callback.h"
+#include "Callback.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -39,20 +39,20 @@
 
 class System2Extension : public SDKExtension {
 private:
-	IMutex *mutex;
-	std::queue<std::shared_ptr<Callback>> callbackQueue;
-	uint32_t frames;
+    IMutex * mutex;
+    std::queue<std::shared_ptr<Callback>> callbackQueue;
+    uint32_t frames;
 
 public:
-	void AppendCallback(std::shared_ptr<Callback> callback);
+    void AppendCallback(std::shared_ptr<Callback> callback);
 
-	void GameFrameHit();
-	uint32_t GetFrames() {
-		return this->frames;
-	}
+    void GameFrameHit();
+    uint32_t GetFrames() {
+        return this->frames;
+    }
 
-	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
-	virtual void SDK_OnUnload();
+    virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
+    virtual void SDK_OnUnload();
 };
 
 
