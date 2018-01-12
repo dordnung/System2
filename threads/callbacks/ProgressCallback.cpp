@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,27 @@
  */
 
 #include "ProgressCallback.h"
+#include "RequestHandler.h"
 
 
-ProgressCallback::ProgressCallback(Handle_t request, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback)
-    : request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data), callback(callback) {};
+ProgressCallback::ProgressCallback(Request *request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data)
+    : request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {};
 
 
 void ProgressCallback::Fire() {
-    this->callback->PushCell(this->request);
-    this->callback->PushFloat(this->dlTotal);
-    this->callback->PushFloat(this->dlNow);
-    this->callback->PushFloat(this->ulTotal);
-    this->callback->PushFloat(this->ulNow);
-    this->callback->Execute(NULL);
+    // Create a temporary request handle, so in the callback the correct request will be used
+    IdentityToken_t *owner = request->responseCallback->GetParentContext()->GetIdentity();
+    Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
+
+    request->progressCallback->PushCell(requestHandle);
+    request->progressCallback->PushCell(this->dlTotal);
+    request->progressCallback->PushCell(this->dlNow);
+    request->progressCallback->PushCell(this->ulTotal);
+    request->progressCallback->PushCell(this->ulNow);
+    request->progressCallback->Execute(NULL);
+
+    // Delete the request handle when finished
+    if (requestHandle != BAD_HANDLE) {
+        requestHandler.FreeHandle(requestHandle, owner);
+    }
 }
