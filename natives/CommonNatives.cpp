@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[3], &to);
 
     // Start the thread that copys a file
-    CopyThread *copyThread = new CopyThread(from, to, pContext->GetFunctionById(params[1]), params[4]);
+    CopyThread *copyThread = new CopyThread(pContext->GetFunctionById(params[1]), from, to, params[4]);
     threader->MakeThread(copyThread);
 
     return 1;

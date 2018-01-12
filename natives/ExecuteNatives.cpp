@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  */
 
 #include "Natives.h"
-#include "CommandOutputHandler.h"
+#include "ExecuteCallbackHandler.h"
 #include "ExecuteThread.h"
 #include "ExecuteCallback.h"
 #include "CompressLevel.h"
@@ -137,7 +137,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[6], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
+        ExecuteThread *commandThread = new ExecuteThread(command, params[6], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to compress %s", binDir, fullPath);
@@ -188,7 +188,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[4], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
+        ExecuteThread *commandThread = new ExecuteThread(command, params[4], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to extract %s", binDir, fullArchivePath);
@@ -203,7 +203,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &command);
 
     // Start the thread that executes the command
-    ExecuteThread *commandThread = new ExecuteThread(command, params[3], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
+    ExecuteThread *commandThread = new ExecuteThread(command, params[3], pContext->GetFunctionById(params[1]));
     threader->MakeThread(commandThread);
 
     return 1;
@@ -215,7 +215,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
     // Start the thread that executes the command - with data
-    ExecuteThread *commandThread = new ExecuteThread(command, params[2], pContext->GetFunctionById(params[1]), pContext->GetIdentity());
+    ExecuteThread *commandThread = new ExecuteThread(command, params[2], pContext->GetFunctionById(params[1]));
     threader->MakeThread(commandThread);
 
     return 1;
@@ -226,11 +226,10 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     // Get the handle to the command callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
     HandleError err;
-    HandleSecurity sec = { pContext->GetIdentity(), myself->GetIdentity() };
 
     ExecuteCallback *callback;
-    if ((err = handlesys->ReadHandle(hndl, commandOutputHandleType, &sec, (void **)&callback)) != HandleError_None) {
-        pContext->ReportError("Invalid command output handle %x (error %d)", hndl, err);
+    if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &callback)) != HandleError_None) {
+        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
         return 0;
     }
 
@@ -253,11 +252,10 @@ cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *param
     // Get the handle to the command callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
     HandleError err;
-    HandleSecurity sec = { pContext->GetIdentity(), myself->GetIdentity() };
 
     ExecuteCallback *callback;
-    if ((err = handlesys->ReadHandle(hndl, commandOutputHandleType, &sec, (void **)&callback)) != HandleError_None) {
-        pContext->ReportError("Invalid command output handle %x (error %d)", hndl, err);
+    if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &callback)) != HandleError_None) {
+        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
         return 0;
     }
 
@@ -302,7 +300,7 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
         output += buffer;
     }
 
-    // Close Posix 
+    // Close Posix
     PosixClose(commandFile);
 
     // Set the result output

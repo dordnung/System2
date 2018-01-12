@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,29 +26,29 @@
 #define _SYSTEM2_REQUEST_H_
 
 #include "extension.h"
+#include "RequestHandler.h"
 
 
 class Request {
 public:
     std::string url;
     int port;
-    bool autoClean;
     int timeout;
-    int any;
+    int data;
 
     IPluginFunction *responseCallback;
     IPluginFunction *progressCallback;
 
     Request(std::string url, IPluginFunction *responseCallback);
+    Request(const Request &request);
     virtual ~Request() = 0;
 
     template<class RequestClass>
     static RequestClass *convertRequest(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
-        HandleSecurity sec = { pContext->GetIdentity(), myself->GetIdentity() };
 
         RequestClass *request;
-        if ((err = handlesys->ReadHandle(hndl, requestHandleType, &sec, (void **)&request)) != HandleError_None) {
+        if ((err = requestHandler.ReadHandle<RequestClass>(hndl, pContext->GetIdentity(), &request)) != HandleError_None) {
             pContext->ReportError("Invalid request handle %x (error %d)", hndl, err);
             return NULL;
         }

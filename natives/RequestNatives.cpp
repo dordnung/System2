@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,26 +27,6 @@
 #include "FTPRequest.h"
 #include "RequestHandler.h"
 
-
-cell_t NativeRequest_SetResponseCallback(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    request->responseCallback = pContext->GetFunctionById(params[2]);
-    return 1;
-}
-
-cell_t NativeRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    request->progressCallback = pContext->GetFunctionById(params[2]);
-    return 1;
-}
 
 cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::convertRequest<Request>(params[1], pContext);
@@ -90,25 +70,6 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
     return request->port;
 }
 
-cell_t NativeRequest_GetAutoClean(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    return request->autoClean;
-}
-
-cell_t NativeRequest_SetAutoClean(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    request->autoClean = params[2];
-    return 1;
-}
-
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::convertRequest<Request>(params[1], pContext);
     if (request == NULL) {
@@ -134,7 +95,7 @@ cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
-    return request->any;
+    return request->data;
 }
 
 cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) {
@@ -143,7 +104,7 @@ cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
-    request->any = params[2];
+    request->data = params[2];
     return 1;
 }
 
@@ -157,11 +118,17 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
         return BAD_HANDLE;
     }
 
-    return handlesys->CreateHandle(requestHandleType,
-                                   request,
-                                   pContext->GetIdentity(),
-                                   myself->GetIdentity(),
-                                   NULL);
+    return requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
+}
+
+cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
+    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    request->progressCallback = pContext->GetFunctionById(params[2]);
+    return 1;
 }
 
 cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params) {
@@ -235,7 +202,7 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
     pContext->LocalToString(params[2], &header);
 
     if (request->headers.find(header) == request->headers.end()) {
-        return false;
+        return 0;
     }
 
     pContext->StringToLocalUTF8(params[3], params[4], request->headers[header].c_str(), NULL);
@@ -270,6 +237,19 @@ cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t 
     return 1;
 }
 
+cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params) {
+    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *userAgent;
+    pContext->LocalToString(params[2], &userAgent);
+
+    request->userAgent = userAgent;
+    return 1;
+}
+
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
@@ -292,7 +272,7 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Get(params[1], pContext->GetIdentity());
+    request->Get();
     return 1;
 }
 
@@ -302,7 +282,7 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Post(params[1], pContext->GetIdentity());
+    request->Post();
     return 1;
 }
 
@@ -312,7 +292,7 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Put(params[1], pContext->GetIdentity());
+    request->Put();
     return 1;
 }
 
@@ -322,7 +302,7 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Patch(params[1], pContext->GetIdentity());
+    request->Patch();
     return 1;
 }
 
@@ -332,7 +312,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
-    request->Delete(params[1], pContext->GetIdentity());
+    request->Delete();
     return 1;
 }
 
@@ -342,7 +322,7 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Head(params[1], pContext->GetIdentity());
+    request->Head();
     return 1;
 }
 
@@ -394,11 +374,17 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
         return BAD_HANDLE;
     }
 
-    return handlesys->CreateHandle(requestHandleType,
-                                   request,
-                                   pContext->GetIdentity(),
-                                   myself->GetIdentity(),
-                                   NULL);
+    return requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
+}
+
+cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
+    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    request->progressCallback = pContext->GetFunctionById(params[2]);
+    return 1;
 }
 
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params) {
@@ -427,7 +413,7 @@ cell_t NativeFTPRequest_Download(IPluginContext *pContext, const cell_t *params)
     pContext->LocalToString(params[2], &outputFile);
 
     request->file = outputFile;
-    request->Download(params[1], pContext->GetIdentity());
+    request->Download();
     return 1;
 }
 
@@ -441,7 +427,8 @@ cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &inputFile);
 
     request->file = inputFile;
-    request->Upload(params[1], pContext->GetIdentity());
+    request->Upload();
+
     return 1;
 }
 

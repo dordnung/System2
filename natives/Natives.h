@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,20 +27,17 @@
 
 #include "extension.h"
 
-cell_t NativeRequest_SetResponseCallback(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetAutoClean(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetAutoClean(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params);
@@ -49,6 +46,7 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params);
@@ -62,6 +60,7 @@ cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *
 cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_Download(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params);
@@ -72,8 +71,8 @@ cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cel
 
 cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
@@ -107,20 +106,17 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params);
 
 const sp_nativeinfo_t system2_natives[] =
 {
-    { "System2Request.SetResponseCallback", NativeRequest_SetResponseCallback },
-    { "System2Request.SetProgressCallback", NativeRequest_SetProgressCallback },
     { "System2Request.SetURL", NativeRequest_SetURL },
     { "System2Request.GetURL", NativeRequest_GetURL },
     { "System2Request.SetPort", NativeRequest_SetPort },
     { "System2Request.GetPort", NativeRequest_GetPort },
-    { "System2Request.AutoClean.get", NativeRequest_GetAutoClean },
-    { "System2Request.AutoClean.set", NativeRequest_SetAutoClean },
     { "System2Request.Timeout.get", NativeRequest_GetTimeout },
     { "System2Request.Timeout.set", NativeRequest_SetTimeout },
     { "System2Request.Any.get", NativeRequest_GetAnyData },
     { "System2Request.Any.set", NativeRequest_SetAnyData },
 
     { "System2HTTPRequest.System2HTTPRequest", NativeHTTPRequest_HTTPRequest },
+    { "System2HTTPRequest.SetProgressCallback", NativeHTTPRequest_SetProgressCallback },
     { "System2HTTPRequest.SetData", NativeHTTPRequest_SetData },
     { "System2HTTPRequest.GetData", NativeHTTPRequest_GetData },
     { "System2HTTPRequest.SetOutputFile", NativeHTTPRequest_SetOutputFile },
@@ -129,6 +125,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.GetHeader", NativeHTTPRequest_GetHeader },
     { "System2HTTPRequest.GetHeadersCount", NativeHTTPRequest_GetHeadersCount },
     { "System2HTTPRequest.GetHeadersArray", NativeHTTPRequest_GetHeadersArray },
+    { "System2HTTPRequest.SetUserAgent", NativeHTTPRequest_SetUserAgent },
     { "System2HTTPRequest.SetBasicAuthentication", NativeHTTPRequest_SetBasicAuthentication },
     { "System2HTTPRequest.GET", NativeHTTPRequest_GET },
     { "System2HTTPRequest.POST", NativeHTTPRequest_POST },
@@ -142,6 +139,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.AutoReferer.set", NativeHTTPRequest_SetAutoReferer },
 
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
+    { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },
     { "System2FTPRequest.SetAuthentication", NativeFTPRequest_SetAuthentication },
     { "System2FTPRequest.Download", NativeFTPRequest_Download },
     { "System2FTPRequest.Upload", NativeFTPRequest_Upload },
@@ -152,8 +150,8 @@ const sp_nativeinfo_t system2_natives[] =
 
     { "System2Response.GetLastUrl", NativeResponse_GetLastUrl },
     { "System2Response.GetContent", NativeResponse_GetContent },
-    { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
     { "System2Response.ContentSize.get", NativeResponse_GetContentSize },
+    { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
     { "System2Response.TotalTime.get", NativeResponse_GetTotalTime },
 
     { "System2HTTPResponse.GetHeader", NativeHTTPResponse_GetHeader },

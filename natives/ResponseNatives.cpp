@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,16 +36,6 @@ cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params)
     return 1;
 }
 
-cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
-        return 0;
-    }
-
-    return response->statusCode;
-}
-
-
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
@@ -64,6 +54,15 @@ cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *par
     }
 
     return response->content.length();
+}
+
+cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params) {
+    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    if (response == NULL) {
+        return 0;
+    }
+
+    return response->statusCode;
 }
 
 
@@ -88,7 +87,7 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
     pContext->LocalToString(params[2], &header);
 
     if (response->headers.find(header) == response->headers.end()) {
-        return false;
+        return 0;
     }
 
     pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), NULL);

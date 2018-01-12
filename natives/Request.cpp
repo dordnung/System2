@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,4 +26,8 @@
 
 
 Request::Request(std::string url, IPluginFunction *responseCallback) :
-    url(url), port(-1), autoClean(false), timeout(-1), any(0), responseCallback(responseCallback), progressCallback(NULL) {};
+    url(url), port(-1), timeout(-1), data(0), responseCallback(responseCallback), progressCallback(NULL) {};
+
+Request::Request(const Request &request) :
+    url(request.url), port(request.port), timeout(request.timeout), data(request.data),
+    responseCallback(request.responseCallback), progressCallback(request.progressCallback) {};
