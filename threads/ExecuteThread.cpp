@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,10 @@
 #include "ExecuteCallback.h"
 
 
-ExecuteThread::ExecuteThread(std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner) : IThread() {
+ExecuteThread::ExecuteThread(std::string command, int data, IPluginFunction *callback) : IThread() {
     this->command = command;
     this->data = data;
-
     this->callback = callback;
-    this->owner = owner;
 }
 
 
@@ -55,7 +53,7 @@ void ExecuteThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(success, output, this->command, this->data, this->callback, this->owner));
+    system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(this->callback, success, output, this->command, this->data));
 }
 
 

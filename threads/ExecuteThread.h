@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,9 @@ private:
     int data;
 
     IPluginFunction *callback;
-    IdentityToken_t *owner;
 
 public:
-    ExecuteThread(std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner);
+    ExecuteThread(std::string command, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);
