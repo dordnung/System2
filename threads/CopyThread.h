@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,14 @@
 
 class CopyThread : public IThread {
 private:
+    IPluginFunction * callback;
+
     std::string from;
     std::string to;
-    IPluginFunction *callback;
     int data;
 
 public:
-    CopyThread(std::string from, std::string to, IPluginFunction *callback, int data);
+    CopyThread(IPluginFunction *callback, std::string from, std::string to, int data);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

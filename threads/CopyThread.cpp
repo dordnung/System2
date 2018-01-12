@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@
 #include <fstream>
 
 
-CopyThread::CopyThread(std::string from, std::string to, IPluginFunction *callback, int data) : IThread() {
+CopyThread::CopyThread(IPluginFunction *callback, std::string from, std::string to, int data) : IThread() {
     this->from = from;
     this->to = to;
-    this->callback = callback;
     this->data = data;
+    this->callback = callback;
 }
 
 
