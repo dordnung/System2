@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,24 +32,17 @@
 
 class RequestThread : public IThread {
 private:
-    Request * request;
-
-protected:
-    Handle_t requestHandle;
-    IdentityToken_t *owner;
+    static uint32_t lastProgressFrame;
+    Request *request;
 
 public:
     typedef struct {
-        uint32_t lastFrame;
-        RequestThread *requestThread;
-    } ProgressInfo;
-
-    typedef struct {
         std::string content;
         FILE *file;
-    } DataInfo;
+    } WriteDataInfo;
 
-    RequestThread(Request *request, Handle_t requestHandle, IdentityToken_t *owner);
+    RequestThread(Request *request);
+    virtual ~RequestThread() = 0;
 
     void ApplyRequest(CURL *curl);
 
@@ -57,7 +50,7 @@ public:
     virtual void OnTerminate(IThreadHandle *pThread, bool cancel);
 
     static size_t WriteData(char *ptr, size_t size, size_t nmemb, void *userdata);
-    static size_t ReadData(char *buffer, size_t size, size_t nitems, void *instream);
+    static size_t ReadFile(char *buffer, size_t size, size_t nitems, void *instream);
     static size_t ProgressUpdated(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
 };
 
