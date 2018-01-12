@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,38 @@
 
 HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback) : Request(url, responseCallback), followRedirects(true), autoReferer(false) {};
 
+HTTPRequest::HTTPRequest(const HTTPRequest &request) :
+    Request(request), data(request.data), outputFile(request.outputFile), headers(request.headers), userAgent(request.userAgent),
+    username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {};
 
-void HTTPRequest::Get(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_GET, requestHandle, owner);
+
+void HTTPRequest::Get() {
+    this->makeThread(METHOD_GET);
 }
 
-void HTTPRequest::Post(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_POST, requestHandle, owner);
+void HTTPRequest::Post() {
+    this->makeThread(METHOD_POST);
 }
 
-void HTTPRequest::Put(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_PUT, requestHandle, owner);
+void HTTPRequest::Put() {
+    this->makeThread(METHOD_PUT);
 }
 
-void HTTPRequest::Patch(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_PATCH, requestHandle, owner);
+void HTTPRequest::Patch() {
+    this->makeThread(METHOD_PATCH);
 }
 
-void HTTPRequest::Delete(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_DELETE, requestHandle, owner);
+void HTTPRequest::Delete() {
+    this->makeThread(METHOD_DELETE);
 }
 
-void HTTPRequest::Head(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(METHOD_HEAD, requestHandle, owner);
+void HTTPRequest::Head() {
+    this->makeThread(METHOD_HEAD);
 }
 
 
-void HTTPRequest::makeThread(HTTPRequestMethod method, Handle_t requestHandle, IdentityToken_t *owner) {
-    HTTPRequestThread *requestThread = new HTTPRequestThread(this, requestHandle, owner, method);
+void HTTPRequest::makeThread(HTTPRequestMethod method) {
+    // Make a copy for the thread, so it works independent
+    HTTPRequestThread *requestThread = new HTTPRequestThread(new HTTPRequest(*this), method);
     threader->MakeThread(requestThread);
 }

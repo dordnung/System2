@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,25 @@
 #include "FTPRequestThread.h"
 
 
-FTPRequest::FTPRequest(std::string url, IPluginFunction *responseCallback) : Request(url, responseCallback), appendToFile(false), createMissingDirs(true) {};
+FTPRequest::FTPRequest(std::string url, IPluginFunction *responseCallback)
+    : Request(url, responseCallback), appendToFile(false), createMissingDirs(true) {};
+
+FTPRequest::FTPRequest(const FTPRequest &request) :
+    Request(request), file(request.file), username(request.username), password(request.password),
+    appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs) {};
 
 
-void FTPRequest::Download(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(true, requestHandle, owner);
+void FTPRequest::Download() {
+    this->makeThread(true);
 }
 
-void FTPRequest::Upload(Handle_t requestHandle, IdentityToken_t *owner) {
-    this->makeThread(false, requestHandle, owner);
+void FTPRequest::Upload() {
+    this->makeThread(false);
 }
 
 
-void FTPRequest::makeThread(bool isDownload, Handle_t requestHandle, IdentityToken_t *owner) {
-    FTPRequestThread *requestThread = new FTPRequestThread(this, requestHandle, owner, isDownload);
+void FTPRequest::makeThread(bool isDownload) {
+    // Make a copy for the thread, so it works independent
+    FTPRequestThread *requestThread = new FTPRequestThread(new FTPRequest(*this), isDownload);
     threader->MakeThread(requestThread);
 }

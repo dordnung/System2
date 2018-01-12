@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,22 +36,24 @@ public:
     std::string data;
     std::string outputFile;
     std::map<std::string, std::string> headers;
+    std::string userAgent;
     std::string username;
     std::string password;
     bool followRedirects;
     bool autoReferer;
 
     HTTPRequest(std::string url, IPluginFunction *responseCallback);
+    HTTPRequest(const HTTPRequest &request);
 
-    void Get(Handle_t requestHandle, IdentityToken_t *owner);
-    void Post(Handle_t requestHandle, IdentityToken_t *owner);
-    void Put(Handle_t requestHandle, IdentityToken_t *owner);
-    void Patch(Handle_t requestHandle, IdentityToken_t *owner);
-    void Delete(Handle_t requestHandle, IdentityToken_t *owner);
-    void Head(Handle_t requestHandle, IdentityToken_t *owner);
+    void Get();
+    void Post();
+    void Put();
+    void Patch();
+    void Delete();
+    void Head();
 
 private:
-    void makeThread(HTTPRequestMethod method, Handle_t requestHandle, IdentityToken_t *owner);
+    void makeThread(HTTPRequestMethod method);
 };
 
 
