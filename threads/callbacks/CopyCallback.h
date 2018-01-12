@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +25,22 @@
 #ifndef _SYSTEM2_COPY_CALLBACK_H_
 #define _SYSTEM2_COPY_CALLBACK_H_
 
+#include "Callback.h"
 #include "extension.h"
 
 
 class CopyCallback : public Callback {
 private:
+    IPluginFunction * callback;
+
     bool success;
     std::string from;
     std::string to;
-    IPluginFunction *callback;
     int data;
 
 public:
-    CopyCallback(bool success, std::string from, std::string to, IPluginFunction *callback, int data);
+    CopyCallback(IPluginFunction *callback, bool success, std::string from, std::string to, int data);
+
     virtual void Fire();
 };
 
