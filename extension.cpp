@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,12 @@
 
 #include "extension.h"
 #include "Natives.h"
-#include "CommandOutputHandler.h"
+#include "ExecuteCallbackHandler.h"
 #include "RequestHandler.h"
-#include "ResponseHandler.h"
+#include "ResponseCallbackHandler.h"
 #include "LegacyNatives.h"
 #include "LegacyFTPThread.h"
+#include "FTPRequestThread.h"
 
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
@@ -41,12 +42,13 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 
     // Create needed mutex
     mutex = threader->MakeMutex();
+    ftpMutex = threader->MakeMutex();
     legacyFTPMutex = threader->MakeMutex();
 
-    // Creates handles
-    commandOutputHandler.Initialize();
+    // Create handles
+    executeCallbackHandler.Initialize();
     requestHandler.Initialize();
-    responseHandler.Initialize();
+    responseCallbackHandler.Initialize();
 
     smutils->AddGameFrameHook(&OnGameFrameHit);
 
@@ -59,12 +61,13 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 void System2Extension::SDK_OnUnload() {
     // Remove created mutex
     mutex->DestroyThis();
+    ftpMutex->DestroyThis();
     legacyFTPMutex->DestroyThis();
 
     // Remove handles
-    commandOutputHandler.Shutdown();
+    executeCallbackHandler.Shutdown();
     requestHandler.Shutdown();
-    responseHandler.Shutdown();
+    responseCallbackHandler.Shutdown();
 
     smutils->RemoveGameFrameHook(&OnGameFrameHit);
 
