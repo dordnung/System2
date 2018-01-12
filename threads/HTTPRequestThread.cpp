@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,14 @@
 #include "HTTPRequestMethod.h"
 
 
-HTTPRequestThread::HTTPRequestThread(HTTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner, HTTPRequestMethod requestMethod)
-    : RequestThread(request, requestHandle, owner), request(request), requestMethod(requestMethod) {};
+HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod)
+    : RequestThread(httpRequest), httpRequest(httpRequest), requestMethod(requestMethod) {};
 
 
 void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
     // Create a curl object
     CURL *curl = curl_easy_init();
+
     if (curl) {
         // Apply general request stuff
         this->ApplyRequest(curl);
@@ -43,19 +44,19 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
         // Set write function
-        DataInfo writeData = { std::string(), NULL };
+        WriteDataInfo writeData = { std::string(), NULL };
 
         // Check if also write to an output file
-        if (!this->request->outputFile.empty()) {
+        if (!this->httpRequest->outputFile.empty()) {
             // Get the full path to the file
             char filePath[PLATFORM_MAX_PATH + 1];
-            smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->request->outputFile.c_str());
+            smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->httpRequest->outputFile.c_str());
 
             // Open the file
             FILE *file = fopen(filePath, "wb");
             if (!file) {
                 // Create error callback and clean up curl
-                system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Couldn't open output file", this->request, this->requestHandle, this->owner));
+                system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Can not open output file", this->httpRequest, this->requestMethod));
                 curl_easy_cleanup(curl);
 
                 return;
@@ -68,18 +69,23 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, RequestThread::WriteData);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
 
+        // Set the http user agent
+        if (!this->httpRequest->userAgent.empty()) {
+            curl_easy_setopt(curl, CURLOPT_USERAGENT, this->httpRequest->userAgent.c_str());
+        }
+
         // Set the http username
-        if (!this->request->username.empty()) {
-            curl_easy_setopt(curl, CURLOPT_USERNAME, this->request->username.c_str());
+        if (!this->httpRequest->username.empty()) {
+            curl_easy_setopt(curl, CURLOPT_USERNAME, this->httpRequest->username.c_str());
         }
 
         // Set the http password
-        if (!this->request->password.empty()) {
-            curl_easy_setopt(curl, CURLOPT_PASSWORD, this->request->password.c_str());
+        if (!this->httpRequest->password.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PASSWORD, this->httpRequest->password.c_str());
         }
 
         // Set the follow redirect property
-        if (this->request->followRedirects) {
+        if (this->httpRequest->followRedirects) {
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
         } else {
@@ -87,24 +93,24 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Set the auto referer property
-        if (this->request->autoReferer) {
+        if (this->httpRequest->autoReferer) {
             curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1L);
         } else {
             curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 0L);
         }
 
         // Set data to send
-        if (!this->request->data.empty()) {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->request->data.c_str());
+        if (!this->httpRequest->data.empty()) {
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->httpRequest->data.c_str());
         } else {
             curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
         }
 
         // Set headers
         struct curl_slist *headers;
-        if (!this->request->headers.empty()) {
+        if (!this->httpRequest->headers.empty()) {
             std::string header;
-            for (std::map<std::string, std::string>::iterator it = this->request->headers.begin(); it != this->request->headers.end(); ++it) {
+            for (std::map<std::string, std::string>::iterator it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {
                 header = it->first + ":" + it->second;
                 headers = curl_slist_append(headers, header.c_str());
             }
@@ -113,7 +119,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Get response headers
-        HeaderInfo headerData = { this->request, curl, std::map<std::string, std::string>() };
+        HeaderInfo headerData = { this->httpRequest, curl, std::map<std::string, std::string>() };
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, HTTPRequestThread::ReadHeader);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
@@ -142,9 +148,9 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Perform curl operation and create the callback
         std::shared_ptr<HTTPResponseCallback> callback;
         if (curl_easy_perform(curl) == CURLE_OK) {
-            callback = std::make_shared<HTTPResponseCallback>(curl, writeData.content, headerData.headers, this->request, this->requestHandle, this->owner);
+            callback = std::make_shared<HTTPResponseCallback>(curl, writeData.content, this->httpRequest, this->requestMethod, headerData.headers);
         } else {
-            callback = std::make_shared<HTTPResponseCallback>(errorBuffer, this->request, this->requestHandle, this->owner);
+            callback = std::make_shared<HTTPResponseCallback>(errorBuffer, this->httpRequest, this->requestMethod);
         }
 
         // Clean up curl
@@ -161,6 +167,6 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Append callback so it can be fired
         system2Extension.AppendCallback(callback);
     } else {
-        system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Couldn't initialize CURL", this->request, this->requestHandle, this->owner));
+        system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Couldn't initialize CURL", this->httpRequest, this->requestMethod));
     }
 }

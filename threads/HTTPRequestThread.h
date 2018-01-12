@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@
 
 class HTTPRequestThread : public RequestThread {
 private:
-    HTTPRequest * request;
+    HTTPRequest * httpRequest;
     HTTPRequestMethod requestMethod;
 
 public:
     typedef struct {
-        HTTPRequest *request;
+        HTTPRequest *httpRequest;
         CURL *curl;
         std::map<std::string, std::string> headers;
     } HeaderInfo;
 
-    HTTPRequestThread(HTTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner, HTTPRequestMethod requestMethod);
+    HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod);
 
     virtual void RunThread(IThreadHandle *pThread);
 
