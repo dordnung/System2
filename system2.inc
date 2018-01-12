@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  * 
- * Copyright (C) 2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +30,22 @@
 
 
 /**
- * Max size of a command when using formatted natives.
+ * Max length of a command when using formatted natives.
  */
 #define CMD_MAX_LENGTH 2048
 
 
 /**
- * A list of possible archive formats for the System2_Compress native.
+ * A list of possible HTTP request methods.
  */
-enum CompressArchive
+enum HTTPRequestMethod
 {
-    ARCHIVE_ZIP,
-    ARCHIVE_7Z,
-    ARCHIVE_GZIP,
-    ARCHIVE_BZIP2,
-    ARCHIVE_TAR
+    METHOD_GET,
+    METHOD_POST,
+    METHOD_PUT,
+    METHOD_PATCH,
+    METHOD_DELETE,
+    METHOD_HEAD
 }
 
 
@@ -58,6 +59,18 @@ enum CompressLevel
     LEVEL_5,
     LEVEL_7,
     LEVEL_9             // Strongest
+}
+
+/**
+ * A list of possible archive formats for the System2_Compress native.
+ */
+enum CompressArchive
+{
+    ARCHIVE_ZIP,
+    ARCHIVE_7Z,
+    ARCHIVE_GZIP,
+    ARCHIVE_BZIP2,
+    ARCHIVE_TAR
 }
 
 
@@ -75,29 +88,54 @@ enum OS
 
 
 /**
- * Called when a HTTP or FTP request was finished.
+ * Called when a HTTP request was finished.
  * The response will only be valid in the callback and will be destroyed afterwards.
- * The request will also be deleted after the callback, if auto cleanup is enabled in the request.
+ * The request is a copy of the original request and will be destroyed afterwards.
  *
  * @param success       Whether the request could made.
  *                      This not means that the request itself was successful!
  * @param error         If success is false this will contain the error message.
- * @param request       The original made HTTP/FTP request.
- * @param response      HTTP/FTP response of the request. Will be null if success is false!
+ * @param request       A copy of the made HTTP request.
+ *                      Can't be deleted, as it will be destroyed after the callback!
+ * @param response      HTTP response of the request. Is null if success is false.
+ *                      Can't be deleted, as it will be destroyed after the callback!
+ * @param method        The HTTP request method that was made.
  *
  * @noreturn
  */
-typeset System2ReponseCallback
+typeset System2HTTPResponseCallback
 {
-    function void (bool success, char[] error, System2HTTPRequest request, System2HTTPResponse response);
-    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response);
+    function void (bool success, char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method);
+};
+
+/**
+ * Called when a FTP request was finished.
+ * The response will only be valid in the callback and will be destroyed afterwards.
+ * The request is a copy of the original request and will be destroyed afterwards.
+ *
+ * @param success       Whether the request could made.
+ *                      This not means that the request itself was successful!
+ * @param error         If success is false this will contain the error message.
+ * @param request       A copy of the made FTP request.
+ *                      Can't be deleted, as it will be destroyed after the callback!
+ * @param response      FTP response of the request. Is null if success is false.
+ *                      Can't be deleted, as it will be destroyed after the callback!
+ * @param downloaded    True when a file was downloaded, false when a file was uploaded.
+ *
+ * @noreturn
+ */
+typeset System2FTPResponseCallback
+{
+    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response, bool downloaded);
 };
 
 
 /**
- * Called on a frequent interval while data of a HTTP/FTP request is being transferred.
+ * Called on a frequent interval while data of a HTTP request is being transferred.
+ * The request is a copy of the original request and will be destroyed afterwards.
  *
- * @param request       The original made HTTP/FTP request.
+ * @param request       A copy of the made HTTP request.
+ *                      Can't be deleted, as it will be destroyed after the callback!
  * @param dlTotal       Total expected download size in bytes.
  * @param dlNow         Downloaded bytes so far.
  * @param ulTotal       Total expected upload size in bytes.
@@ -105,10 +143,27 @@ typeset System2ReponseCallback
  *
  * @noreturn
  */
-typeset System2ProgressCallback
+typeset System2HTTPProgressCallback
 {
-    function void (System2HTTPRequest request, float dlTotal, float dlNow, float ulTotal, float ulNow);
-    function void (System2FTPRequest request, float dlTotal, float dlNow, float ulTotal, float ulNow);
+    function void (System2HTTPRequest request, int dlTotal, int dlNow, int ulTotal, int ulNow);
+};
+
+/**
+ * Called on a frequent interval while data of a FTP request is being transferred.
+ * The request is a copy of the original request and will be destroyed afterwards.
+ *
+ * @param request       A copy of the made FTP request.
+ *                      Can't be deleted, as it will be destroyed after the callback!
+ * @param dlTotal       Total expected download size in bytes.
+ * @param dlNow         Downloaded bytes so far.
+ * @param ulTotal       Total expected upload size in bytes.
+ * @param ulNow         Uploaded bytes so far.
+ *
+ * @noreturn
+ */
+typeset System2FTPProgressCallback
+{
+    function void (System2FTPRequest request, int dlTotal, int dlNow, int ulTotal, int ulNow);
 };
 
 
@@ -137,9 +192,10 @@ typeset System2CopyCallback
  *
  * @param success       Whether the execution was successful or not.
  *                      This not means that the command itself was successful!
- * @param output        Output of the execution. Will be null if success is false!
+ * @param output        Output of the execution. Is null if success is false.
+ *                      Can't be deleted, as it will be destroyed after the callback!
  * @param command       The executed command.
- * @param data          Data passed to the execution.
+ * @param data          Data passed to the execution native.
  *
  * @noreturn
  */
@@ -153,34 +209,13 @@ typeset System2ExecuteCallback
 
 /**
  * Basic methodmap for a request.
- * Use System2HTTPRequest or System2FTPRequest to create a request.
+ * Use System2HTTPRequest or System2FTPRequest to actually create a request.
  */
 methodmap System2Request < Handle {
     /**
-     * Sets the response callback for when the request is finished.
-     *
-     * @param callback  Response callback to call when the request is finished.
-     *
-     * @noreturn
-     * @error       Invalid Handle.
-     */
-    public native void SetResponseCallback(System2ReponseCallback callback);
-
-    /**
-     * Sets the progress callback for the transfer of the request.
-     *
-     * @param callback  Progress callback to call for the transfer.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetProgressCallback(System2ProgressCallback callback);
-
-
-    /**
      * Sets the URL of the request.
      * Query parameters have to be given directly in the URL.
-     * Use System2_URLEncode to encode the query parameters.
+     * Use System2_URLEncode to encode the URL or query parameters.
      *
      * @param url       URL to use for the request.
      *
@@ -218,30 +253,6 @@ methodmap System2Request < Handle {
      */
     public native int GetPort();
 
-
-    /**
-     * The auto clean feature.
-     */
-    property bool AutoClean {
-        /**
-         * Returns whether auto clean is enabled.
-         *
-         * @return True if auto clean is enabled, otherwise false.
-         * @error Invalid Handle.
-         */
-        public native get();
-
-        /**
-         * When enabling auto clean, then the request will be automatically deleted after the response callback.
-         *
-         * @param enable    Whether to enable auto clean or ot.
-         *
-         * @noreturn
-         * @error Invalid Handle.
-         */
-        public native set(bool enable);
-    }
-
     /**
      * The timeout for the request.
      */
@@ -255,7 +266,7 @@ methodmap System2Request < Handle {
         public native get();
 
         /**
-         * Set the timeout for the request.
+         * Sets the timeout for the request.
          *
          * @param millis    The timeout for the request in milliseconds.
          *
@@ -303,7 +314,19 @@ methodmap System2HTTPRequest < System2Request {
      * @noreturn
      * @error Invalid Handle.
      */
-    public native System2HTTPRequest(const char[] url, System2ReponseCallback callback);
+    public native System2HTTPRequest(const char[] url, System2HTTPResponseCallback callback);
+
+
+    /**
+     * Sets the progress callback for the transfer of the request.
+     * This is useful when downloading or uploading stuff.
+     *
+     * @param callback  Progress callback to call for the transfer.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetProgressCallback(System2HTTPProgressCallback callback);
 
 
     /**
@@ -331,6 +354,7 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Sets the file to write the output of the request to.
+     * Use this to download content to a file.
      *
      * @param file      File to write the output to.
      *
@@ -387,8 +411,8 @@ methodmap System2HTTPRequest < System2Request {
      * Retrieves all set header names of the request.
      *
      * @param names     Array of char arrays to store the names of the headers in.
-     * @param maxNames  Max numbers to retrieve (first dimension of the names array).
-     * @param maxName   Maxlength of a single name (second dimension of the names array).
+     * @param maxNames  Max. header names to retrieve (first dimension of the names array).
+     * @param maxName   Maxlength of a single header name (second dimension of the names array).
      *
      * @noreturn
      * @error Invalid Handle.
@@ -414,16 +438,6 @@ methodmap System2HTTPRequest < System2Request {
         return headers;
     }
 
-
-    /**
-     * Sets the referer for the request.
-     *
-     * @param referer   Referer to use.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetReferer(const char[] referer);
 
     /**
      * Sets the user agent for the request.
@@ -501,6 +515,7 @@ methodmap System2HTTPRequest < System2Request {
     property bool FollowRedirects {
         /**
          * Returns whether the request follow redirects or not.
+         * Default is to follow redirects.
          *
          * @return True if it follow redirects, otherwise false.
          * @error Invalid Handle.
@@ -525,6 +540,7 @@ methodmap System2HTTPRequest < System2Request {
     property bool AutoReferer {
         /**
          * Returns whether to automatically append refereres on redirect.
+         * Default is not to automatically append refereres.
          *
          * @return True if referers will automatically append, otherwise false.
          * @error Invalid Handle.
@@ -553,13 +569,24 @@ methodmap System2FTPRequest < System2Request {
     /**
      * Creates a new FTP Request.
      *
-     * @param url       URL to use for the request.
+     * @param url       FTP URL to use for the request.
      * @param callback  Response callback to call when the request is finished.
      *
      * @noreturn
      * @error Invalid Handle.
      */
-    public native System2FTPRequest(const char[] url, System2ReponseCallback responseCallback);
+    public native System2FTPRequest(const char[] url, System2FTPResponseCallback callback);
+
+
+    /**
+     * Sets the progress callback for the transfer of the request.
+     *
+     * @param callback  Progress callback to call for the transfer.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetProgressCallback(System2FTPProgressCallback callback);
 
 
     /**
@@ -576,7 +603,7 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * Sends the request in order to download a file.
-
+     *
      * @param file      File to write downloaded content to.
      *
      * @noreturn
@@ -597,11 +624,11 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * The append to file property.
-     * Default the file will be replaced.
      */
     property bool AppendToFile {
         /**
          * Returns whether the request appends to the FTP file or replaces it when uploading a file.
+         * Default the file will be replaced.
          *
          * @return True if it append, false if replacing.
          * @error Invalid Handle.
@@ -610,6 +637,7 @@ methodmap System2FTPRequest < System2Request {
 
         /**
          * Sets whether to append to the FTP file or to replace it when uploading a file. 
+         * Default the file will be replaced.
          *
          * @param append    True to append to file, otherwise false to replace it.
          *
@@ -621,11 +649,11 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * The create missing dirs property.
-     * Default missing dirs will be created.
      */
     property bool CreateMissingDirs {
         /**
          * Returns whether the request creates missing dirs when uploading a file.
+         * Default missing dirs will be created.
          *
          * @return True if it creates missing dirs, otherwise false.
          * @error Invalid Handle.
@@ -634,6 +662,7 @@ methodmap System2FTPRequest < System2Request {
 
         /**
          * Sets whether to create missing dirs when uploading a file.
+         * Default missing dirs will be created.
          *
          * @param create    True to create missing dirs, otherwise false.
          *
@@ -700,9 +729,9 @@ methodmap System2Response < Handle {
 
     property float TotalTime {
         /**
-         * Returns the total time from the request until the response.
+         * Returns the total time from the request until the response in seconds.
          *
-         * @return Total time from the request until the response.
+         * @return Total time from the request until the response in seconds.
          * @error Invalid Handle.
          */
         public native get();
@@ -738,8 +767,8 @@ methodmap System2HTTPResponse < System2Response {
      * Retrieves all header names of the response.
      *
      * @param names     Array of char arrays to store the names of the headers in.
-     * @param maxNames  Max numbers to retrieve (first dimension of the names array).
-     * @param maxName   Maxlength of a single name (second dimension of the names array).
+     * @param maxNames  Max. header names to retrieve (first dimension of the names array).
+     * @param maxName   Maxlength of a single header name (second dimension of the names array).
      *
      * @noreturn
      * @error Invalid Handle.
@@ -876,7 +905,7 @@ native void System2_Extract(System2ExecuteCallback callback, const char[] archiv
 
 /**
  * Executes a threaded system command.
- * Hint: Append 2>&1 to retrieve also output to stderr.
+ * Hint: Append 2>&1 to your command to retrieve also output to stderr.
  *
  * @param callback  Callback function when command was executed.
  * @param command   Command to execute.
@@ -890,7 +919,7 @@ native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[
 /**
  * Executes a threaded system command with support for a formatted command.
  * Note that the maxlength of the command is CMD_MAX_LENGTH, use System2_ExecuteThreaded if you need more.
- * Hint: Append 2>&1 to retrieve also output to stderr.
+ * Hint: Append 2>&1 to your command to retrieve also output to stderr.
  *
  * @param callback  Callback function when command was executed.
  * @param data      Data to pass to the callback.
@@ -904,7 +933,7 @@ native void System2_ExecuteFormattedThreaded(System2ExecuteCallback callback, an
 
 /**
  * Executes a non threaded system command.
- * Hint: Append 2>&1 to retrieve also output to stderr.
+ * Hint: Append 2>&1 to your command to retrieve also output to stderr.
  *
  * @param output    Buffer to store the output in.
  * @param maxlength Maxlength of the output buffer.
@@ -918,7 +947,7 @@ native bool System2_Execute(char[] output, int maxlength, const char[] command);
 /**
  * Executes a non threaded system command with support for a formatted command.
  * Note that the maxlength of the command is CMD_MAX_LENGTH, use System2_Execute if you need more.
- * Hint: Append 2>&1 to retrieve also output to stderr.
+ * Hint: Append 2>&1 to your command to retrieve also output to stderr.
  *
  * @param output    Buffer to store the output in.
  * @param maxlength Maxlength of the output buffer.
@@ -933,7 +962,7 @@ native bool System2_ExecuteFormatted(char[] output, int maxlength, const char[] 
 
 /**
  * Retrieves the absolute path to the gamedir of the current running game (e.g. /home/.../.../cstrike).
- * You may need this when running system commands.
+ * You may need this when executing system commands.
  *
  * @param gamedir       Buffer to store gamedir in.
  * @param maxlength     Maxlength of the buffer.
@@ -1003,7 +1032,7 @@ native bool System2_GetFileCRC32(const char[] file, char[] buffer, int maxlength
 
 /**
  *
- * DEPRECATED v2 STUFF, do not use anymore!
+ * DEPRECATED v2 STUFF, do not use that anymore!
  *
  */
 
@@ -1278,20 +1307,17 @@ public Extension __ext_system2 =
 #if !defined REQUIRE_EXTENSIONS
     public void __ext_system2_SetNTVOptional()
     {
-        MarkNativeAsOptional("System2Request.SetResponseCallback");
-        MarkNativeAsOptional("System2Request.SetProgressCallback");
         MarkNativeAsOptional("System2Request.SetURL");
         MarkNativeAsOptional("System2Request.GetURL");
         MarkNativeAsOptional("System2Request.SetPort");
         MarkNativeAsOptional("System2Request.GetPort");
-        MarkNativeAsOptional("System2Request.AutoClean.get");
-        MarkNativeAsOptional("System2Request.AutoClean.set");
         MarkNativeAsOptional("System2Request.Timeout.get");
         MarkNativeAsOptional("System2Request.Timeout.set");
         MarkNativeAsOptional("System2Request.Any.get");
         MarkNativeAsOptional("System2Request.Any.set");
         
         MarkNativeAsOptional("System2HTTPRequest.System2HTTPRequest");
+        MarkNativeAsOptional("System2HTTPRequest.SetProgressCallback");
         MarkNativeAsOptional("System2HTTPRequest.SetData");
         MarkNativeAsOptional("System2HTTPRequest.GetData");
         MarkNativeAsOptional("System2HTTPRequest.SetOutputFile");
@@ -1300,6 +1326,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.GetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersArray");
+        MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
+        MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
         MarkNativeAsOptional("System2HTTPRequest.GET");
         MarkNativeAsOptional("System2HTTPRequest.POST");
         MarkNativeAsOptional("System2HTTPRequest.PUT");
@@ -1312,6 +1340,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.AutoReferer.set");
         
         MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
+        MarkNativeAsOptional("System2FTPRequest.SetProgressCallback");
         MarkNativeAsOptional("System2FTPRequest.SetAuthentication");
         MarkNativeAsOptional("System2FTPRequest.Download");
         MarkNativeAsOptional("System2FTPRequest.Upload");
@@ -1322,16 +1351,13 @@ public Extension __ext_system2 =
         
         MarkNativeAsOptional("System2Response.GetLastUrl");
         MarkNativeAsOptional("System2Response.GetContent");
-        MarkNativeAsOptional("System2Response.StatusCode.get");
         MarkNativeAsOptional("System2Response.ContentSize.get");
+        MarkNativeAsOptional("System2Response.StatusCode.get");
         MarkNativeAsOptional("System2Response.TotalTime.get");
         
         MarkNativeAsOptional("System2HTTPResponse.GetHeader");
         MarkNativeAsOptional("System2HTTPResponse.GetHeadersCount");
         MarkNativeAsOptional("System2HTTPResponse.GetHeadersArray");
-        
-        MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
-        MarkNativeAsOptional("System2ExecuteOutput.Size.get");
 
         MarkNativeAsOptional("System2_URLEncode");
         MarkNativeAsOptional("System2_URLDecode");
@@ -1343,6 +1369,9 @@ public Extension __ext_system2 =
 
         MarkNativeAsOptional("System2_ExecuteThreaded");
         MarkNativeAsOptional("System2_ExecuteFormattedThreaded");
+        MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
+        MarkNativeAsOptional("System2ExecuteOutput.Size.get");
+
         MarkNativeAsOptional("System2_Execute");
         MarkNativeAsOptional("System2_ExecuteFormatted");
 
