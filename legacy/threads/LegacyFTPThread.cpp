@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +30,11 @@
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
 IMutex *legacyFTPMutex;
 
-LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, 
-                                 std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback) : IThread() {
-    this->download = download;
+LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile,
+                                 std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback)
+    : IThread(), download(download), remoteFile(remoteFile), localFile(localFile), host(url),
+    username(user), password(pw), port(port), data(data), callback(callback) {}
 
-    this->remoteFile = remoteFile;
-    this->localFile = localFile;
-    this->host = url;
-    this->username = user;
-    this->password = pw;
-
-    this->port = port;
-    this->data = data;
-
-    this->callback = callback;
-}
 
 void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     // Get the full path to the local file

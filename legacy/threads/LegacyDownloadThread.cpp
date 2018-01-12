@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,8 @@
 #include "LegacyDownloadCallback.h"
 
 
-LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback) : IThread() {
-    this->url = url;
-    this->localFile = localFile;
-    this->data = data;
-    this->callback = callback;
-}
+LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback)
+    : IThread(), url(url), localFile(localFile), data(data), callback(callback) {}
 
 
 void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {

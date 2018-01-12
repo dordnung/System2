@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,28 +25,11 @@
 #include "LegacyDownloadCallback.h"
 
 
-LegacyDownloadCallback::LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback) {
-    this->finished = true;
-    this->curlError = curlError;
-    this->dlTotal = 0.0f;
-    this->dlNow = 0.0f;
-    this->ulTotal = 0.0f;
-    this->ulNow = 0.0f;
-    this->data = data;
-    this->callback = callback;
-}
+LegacyDownloadCallback::LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback)
+    : curlError(curlError), data(data), callback(callback), finished(true), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f) {}
 
-LegacyDownloadCallback::LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback) {
-    this->finished = finished;
-    this->curlError = curlError;
-    this->dlTotal = dlTotal;
-    this->dlNow = dlNow;
-    this->ulTotal = ulTotal;
-    this->ulNow = ulNow;
-    this->data = data;
-    this->callback = callback;
-}
-
+LegacyDownloadCallback::LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback)
+    : finished(finished), curlError(curlError), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data), callback(callback) {}
 
 void LegacyDownloadCallback::Fire() {
     this->callback->PushCell(this->finished);

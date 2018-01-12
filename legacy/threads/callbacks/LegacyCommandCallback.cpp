@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,8 @@
 #include "LegacyCommandCallback.h"
 
 
-LegacyCommandCallback::LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, LegacyCommandState state) {
-    this->output = output;
-    this->command = command;
-    this->data = data;
-
-    this->callback = callback;
-    this->state = state;
-}
-
+LegacyCommandCallback::LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, LegacyCommandState state)
+    : output(output), command(command), data(data), callback(callback), state(state) {}
 
 void LegacyCommandCallback::Fire() {
     this->callback->PushString(this->output.c_str());

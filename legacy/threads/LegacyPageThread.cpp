@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,8 @@
 #include "LegacyCommandThread.h"
 
 
-LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback) : IThread() {
-    this->url = url;
-    this->post = post;
-    this->useragent = useragent;
-
-    this->data = data;
-    this->callback = callback;
-}
+LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback)
+    : IThread(), url(url), post(post), useragent(useragent), data(data), callback(callback) {}
 
 
 void LegacyPageThread::RunThread(IThreadHandle *pHandle) {

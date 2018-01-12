@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        LegacyCommandThread *commandThread = new LegacyCommandThread(command, pContext->GetFunctionById(params[1]), params[6]);
+        LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[6], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to compress %s", zdir, ldir);
@@ -262,7 +262,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        LegacyCommandThread *commandThread = new LegacyCommandThread(command, pContext->GetFunctionById(params[1]), params[4]);
+        LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[4], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to extract %s", zdir, ldir);
@@ -278,7 +278,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
     smutils->FormatString(command, sizeof(command), pContext, params, 2);
 
     // Start the thread that executes the command
-    LegacyCommandThread *commandThread = new LegacyCommandThread(command, pContext->GetFunctionById(params[1]), 0);
+    LegacyCommandThread *commandThread = new LegacyCommandThread(command, 0, pContext->GetFunctionById(params[1]));
     threader->MakeThread(commandThread);
 
     return 1;
@@ -291,7 +291,7 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
     // Start the thread that executes the command
-    LegacyCommandThread *commandThread = new LegacyCommandThread(command, pContext->GetFunctionById(params[1]), params[2]);
+    LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[2], pContext->GetFunctionById(params[1]));
     threader->MakeThread(commandThread);
 
     return 1;

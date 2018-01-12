@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@
 class LegacyCommandThread : public IThread {
 private:
     std::string command;
-    IPluginFunction *callback;
     int data;
+    IPluginFunction *callback;
 
 public:
-    LegacyCommandThread(std::string command, IPluginFunction *callback, int data);
+    LegacyCommandThread(std::string command, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);
