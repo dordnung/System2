@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,11 @@
 #include "FTPResponseCallback.h"
 
 
-FTPRequestThread::FTPRequestThread(FTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner, bool isDownload)
-    : RequestThread(request, requestHandle, owner), request(request), isDownload(isDownload) {};
+ // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+IMutex *ftpMutex;
+
+FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest, bool isDownload)
+    : RequestThread(ftpRequest), ftpRequest(ftpRequest), isDownload(isDownload) {};
 
 
 void FTPRequestThread::RunThread(IThreadHandle *pHandle) {

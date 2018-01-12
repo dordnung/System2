@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,15 @@
 #include "FTPRequest.h"
 
 
+ // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+extern IMutex *ftpMutex;
+
 class FTPRequestThread : public RequestThread {
-private:
-    FTPRequest * request;
+public:
+    FTPRequest * ftpRequest;
     bool isDownload;
 
-public:
-    FTPRequestThread(FTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner, bool isDownload);
+    FTPRequestThread(FTPRequest *ftpRequest, bool isDownload);
 
     virtual void RunThread(IThreadHandle *pThread);
 };
