@@ -1,6 +1,6 @@
 /**
 * -----------------------------------------------------
-* File        RequestHandler.h
+* File        ResponseCallbackHandler.h
 * Authors     David Ordnung
 * License     GPLv3
 * Web         http://dordnung.de
@@ -22,55 +22,40 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef _SYSTEM2_REQUEST_HANDLER_H_
-#define _SYSTEM2_REQUEST_HANDLER_H_
+#ifndef _SYSTEM2_RESPONSE_CALLBACK_HANDLER_H_
+#define _SYSTEM2_RESPONSE_CALLBACK_HANDLER_H_
 
 #include "Handler.h"
 
 
-class RequestHandler : public Handler {
+class ResponseCallbackHandler : public IHandleTypeDispatch {
 private:
     HandleType_t handleType;
 
 public:
-    RequestHandler();
+    ResponseCallbackHandler();
 
     virtual void Initialize();
     virtual void Shutdown();
 
-    template<class RequestClass>
-    Handle_t CreateGlobalHandle(RequestClass *request, IdentityToken_t *owner) {
+    template<class ResponseCallbackClass>
+    Handle_t CreateHandle(ResponseCallbackClass *responseCallback, IdentityToken_t *owner) {
         return handlesys->CreateHandle(this->handleType,
-                                       request,
+                                       responseCallback,
                                        owner,
                                        myself->GetIdentity(),
                                        NULL);
     }
 
-    template<class RequestClass>
-    Handle_t CreateLocaleHandle(RequestClass *request, IdentityToken_t *owner) {
-        HandleAccess rules;
-        g_pHandleSys->InitAccessDefaults(NULL, &rules);
-        rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
-        rules.access[HandleAccess_Clone] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
-
+    template<class ResponseCallbackClass>
+    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, ResponseCallbackClass **responseCallback) {
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->CreateHandleEx(this->handleType
-                                         request,
-                                         &sec,
-                                         &rules,
-                                         NULL);
-    }
-
-    template<class RequestClass>
-    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, RequestClass **request) {
-        HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&request))
+        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&responseCallback))
     }
 
     virtual void OnHandleDestroy(HandleType_t type, void *object);
 };
 
-extern RequestHandler requestHandler;
+extern ResponseCallbackHandler responseCallbackHandler;
 
 #endif

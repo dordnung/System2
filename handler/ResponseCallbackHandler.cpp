@@ -1,12 +1,12 @@
 /**
 * -----------------------------------------------------
-* File        ResponseHandler.cpp
+* File        ResponseCallbackHandler.cpp
 * Authors     David Ordnung
 * License     GPLv3
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2017 David Ordnung
+* Copyright (C) 2013-2018 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,20 +22,20 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-#include "ResponseHandler.h"
+#include "ResponseCallbackHandler.h"
 
 
-HandleType_t responseHandleType = 0;
-ResponseHandler responseHandler;
+ResponseCallbackHandler::ResponseCallbackHandler() : handleType(0) {}
 
-void ResponseHandler::Initialize() {
+void ResponseCallbackHandler::Initialize() {
     HandleAccess rules;
     handlesys->InitAccessDefaults(NULL, &rules);
 
     // Do not allowe deleting of the handle, as this will always deleted after the callback
-    rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_IDENTITY;
+    rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
+    rules.access[HandleAccess_Clone] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
 
-    responseHandleType =
+    this->handleType =
         handlesys->CreateType("System2Response",
                               this,
                               0,
@@ -45,10 +45,14 @@ void ResponseHandler::Initialize() {
                               NULL);
 }
 
-void ResponseHandler::Shutdown() {
-    handlesys->RemoveType(responseHandleType, myself->GetIdentity());
+void ResponseCallbackHandler::Shutdown() {
+    handlesys->RemoveType(this->handleType, myself->GetIdentity());
 }
 
-void ResponseHandler::OnHandleDestroy(HandleType_t type, void *object) {
-    // Nothing to do, as handle is a shared pointer and will be deleted automatically
+void ResponseCallbackHandler::OnHandleDestroy(HandleType_t type, void *object) {
+    // Nothing to do, as handle is a callback and will be deleted otherwise
 }
+
+
+// Create an instance of the response callback handler
+ResponseCallbackHandler responseCallbackHandler;

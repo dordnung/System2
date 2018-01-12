@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,10 @@
 #include "RequestHandler.h"
 
 
-HandleType_t requestHandleType = 0;
-RequestHandler requestHandler;
+RequestHandler::RequestHandler() : handleType(0) {}
 
 void RequestHandler::Initialize() {
-    requestHandleType =
+    this->handleType =
         handlesys->CreateType("System2Request",
                               this,
                               0,
@@ -40,9 +39,13 @@ void RequestHandler::Initialize() {
 }
 
 void RequestHandler::Shutdown() {
-    handlesys->RemoveType(requestHandleType, myself->GetIdentity());
+    handlesys->RemoveType(this->handleType, myself->GetIdentity());
 }
 
 void RequestHandler::OnHandleDestroy(HandleType_t type, void *object) {
     delete object;
 }
+
+
+// Create an instance of the request handler
+RequestHandler requestHandler;

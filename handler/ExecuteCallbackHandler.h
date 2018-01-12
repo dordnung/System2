@@ -1,12 +1,12 @@
 /**
 * -----------------------------------------------------
-* File        CommandOutputHandler.h
+* File        ExecuteCallbackHandler.h
 * Authors     David Ordnung
 * License     GPLv3
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2017 David Ordnung
+* Copyright (C) 2013-2018 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,29 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 
-#ifndef _SYSTEM2_COMMAND_OUTPUT_HANDLER_H_
-#define _SYSTEM2_COMMAND_OUTPUT_HANDLER_H_
+#ifndef _SYSTEM2_EXECUTE_CALLBACK_HANDLER_H_
+#define _SYSTEM2_EXECUTE_CALLBACK_HANDLER_H_
 
 #include "Handler.h"
+#include "ExecuteCallback.h"
 
 
-class CommandOutputHandler : public Handler {
+class ExecuteCallbackHandler : public Handler {
+private:
+    HandleType_t handleType;
+
 public:
+    ExecuteCallbackHandler();
+
     virtual void Initialize();
     virtual void Shutdown();
+
+    Handle_t CreateHandle(ExecuteCallback *callback, IdentityToken_t *owner);
+    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, ExecuteCallback **callback);
 
     virtual void OnHandleDestroy(HandleType_t type, void *object);
 };
 
-extern HandleType_t commandOutputHandleType;
-extern CommandOutputHandler commandOutputHandler;
+extern ExecuteCallbackHandler executeCallbackHandler;
 
 #endif
