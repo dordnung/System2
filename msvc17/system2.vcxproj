@@ -47,7 +47,6 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/MP /D SE_EPISODEONE=1 /D SE_DARKMESSIAH=2 /D SE_ORANGEBOX=3 /D SE_BLOODYGOODTIME=4 /D SE_EYE=5 /D SE_CSS=6 /D SE_ORANGEBOXVALVE=7 /D SE_LEFT4DEAD=8 /D SE_LEFT4DEAD2=9 /D SE_ALIENSWARM=10 /D SE_PORTAL2=11 /D SE_CSGO=12</AdditionalOptions>
-      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <IgnoreSpecificDefaultLibraries>
@@ -68,9 +67,10 @@
     <ClCompile Include="..\3rdparty\crc\crc32.cpp" />
     <ClCompile Include="..\3rdparty\md5\md5.cpp" />
     <ClCompile Include="..\extension.cpp" />
-    <ClCompile Include="..\handler\CommandOutputHandler.cpp" />
+    <ClCompile Include="..\handler\ExecuteCallbackHandler.cpp" />
+    <ClCompile Include="..\handler\Handler.cpp" />
     <ClCompile Include="..\handler\RequestHandler.cpp" />
-    <ClCompile Include="..\handler\ResponseHandler.cpp" />
+    <ClCompile Include="..\handler\ResponseCallbackHandler.cpp" />
     <ClCompile Include="..\legacy\LegacyNatives.cpp" />
     <ClCompile Include="..\legacy\threads\callbacks\LegacyCommandCallback.cpp" />
     <ClCompile Include="..\legacy\threads\callbacks\LegacyDownloadCallback.cpp" />
@@ -88,6 +88,7 @@
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
     <ClCompile Include="..\threads\callbacks\CopyCallback.cpp" />
     <ClCompile Include="..\threads\callbacks\ExecuteCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\FTPResponseCallback.cpp" />
     <ClCompile Include="..\threads\callbacks\HTTPResponseCallback.cpp" />
     <ClCompile Include="..\threads\callbacks\ProgressCallback.cpp" />
     <ClCompile Include="..\threads\callbacks\ResponseCallback.cpp" />
@@ -103,10 +104,10 @@
     <ClInclude Include="..\CompressArchive.h" />
     <ClInclude Include="..\CompressLevel.h" />
     <ClInclude Include="..\extension.h" />
-    <ClInclude Include="..\handler\CommandOutputHandler.h" />
+    <ClInclude Include="..\handler\ExecuteCallbackHandler.h" />
     <ClInclude Include="..\handler\Handler.h" />
     <ClInclude Include="..\handler\RequestHandler.h" />
-    <ClInclude Include="..\handler\ResponseHandler.h" />
+    <ClInclude Include="..\handler\ResponseCallbackHandler.h" />
     <ClInclude Include="..\legacy\LegacyNatives.h" />
     <ClInclude Include="..\legacy\threads\callbacks\LegacyCommandCallback.h" />
     <ClInclude Include="..\legacy\threads\callbacks\LegacyDownloadCallback.h" />

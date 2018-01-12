@@ -72,12 +72,6 @@
     <ClCompile Include="..\sdk\smsdk_ext.cpp">
       <Filter>SourceMod SDK</Filter>
     </ClCompile>
-    <ClCompile Include="..\handler\ResponseHandler.cpp">
-      <Filter>Source Files\handler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\handler\CommandOutputHandler.cpp">
-      <Filter>Source Files\handler</Filter>
-    </ClCompile>
     <ClCompile Include="..\handler\RequestHandler.cpp">
       <Filter>Source Files\handler</Filter>
     </ClCompile>
@@ -159,6 +153,18 @@
     <ClCompile Include="..\legacy\threads\LegacyDownloadThread.cpp">
       <Filter>Source Files\legacy\threads</Filter>
     </ClCompile>
+    <ClCompile Include="..\threads\callbacks\FTPResponseCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\ExecuteCallbackHandler.cpp">
+      <Filter>Source Files\handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\ResponseCallbackHandler.cpp">
+      <Filter>Source Files\handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\Handler.cpp">
+      <Filter>Source Files\handler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">
@@ -170,16 +176,10 @@
     <ClInclude Include="..\sdk\smsdk_ext.h">
       <Filter>SourceMod SDK</Filter>
     </ClInclude>
-    <ClInclude Include="..\handler\CommandOutputHandler.h">
-      <Filter>Header Files\handler</Filter>
-    </ClInclude>
     <ClInclude Include="..\handler\Handler.h">
       <Filter>Header Files\handler</Filter>
     </ClInclude>
     <ClInclude Include="..\handler\RequestHandler.h">
-      <Filter>Header Files\handler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\handler\ResponseHandler.h">
       <Filter>Header Files\handler</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\crc\crc.h">
@@ -271,6 +271,12 @@
     </ClInclude>
     <ClInclude Include="..\legacy\threads\callbacks\LegacyCommandCallback.h">
       <Filter>Header Files\legacy\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handler\ExecuteCallbackHandler.h">
+      <Filter>Header Files\handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handler\ResponseCallbackHandler.h">
+      <Filter>Header Files\handler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
