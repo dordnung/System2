@@ -28,7 +28,7 @@
 #include "Handler.h"
 
 
-class ResponseCallbackHandler : public IHandleTypeDispatch {
+class ResponseCallbackHandler : public Handler {
 private:
     HandleType_t handleType;
 

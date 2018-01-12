@@ -33,6 +33,8 @@ public:
     virtual void Initialize() = 0;
     virtual void Shutdown() = 0;
 
+    void FreeHandle(Handle_t hndl, IdentityToken_t *owner);
+
     virtual void OnHandleDestroy(HandleType_t type, void *object) = 0;
 };
 
