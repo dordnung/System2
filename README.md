@@ -27,7 +27,7 @@ Binaries and information can be found on alliedmods: [https://forums.alliedmods.
 - **Build libcurl**
   1. `wget https://curl.haxx.se/download/curl-7.57.0.zip && unzip curl-7.57.0.zip`
   2. `cd curl-7.57.0`
-  3. `env LIBS="-ldl" CPPFLAGS="-I$BUILD_DIR/zlib-1.2.11" LDFLAGS="-L$BUILD_DIR/openssl-1.1.0f -L$BUILD_DIR/zlib-1.2.11" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0f --with-zlib=$BUILD_DIR/zlib-1.2.11 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-sspi --disable-tls-srp --disable-manual --disable-proxy --disable-libcurl-option --without-librtmp --without-libidn --without-libssh2 --without-nghttp2 --without-gssapi --host=i686-pc-linux-gnu CFLAGS=-m32 CC=/usr/bin/gcc && make`
+  3. `env LIBS="-ldl" CPPFLAGS="-I$BUILD_DIR/zlib-1.2.11" LDFLAGS="-L$BUILD_DIR/openssl-1.1.0f -L$BUILD_DIR/zlib-1.2.11" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0f --with-zlib=$BUILD_DIR/zlib-1.2.11 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-sspi --disable-tls-srp --disable-manual --disable-proxy --disable-libcurl-option --without-librtmp --without-libidn --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 CC=/usr/bin/gcc && make`
   4. **DO NOT INSTALL IT!**
   4. `cd $BUILD_DIR`
 
