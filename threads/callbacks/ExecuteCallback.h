@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +26,22 @@
 #define _SYSTEM2_EXECUTE_CALLBACK_H_
 
 #include "Callback.h"
+#include "extension.h"
 
 
 class ExecuteCallback : public Callback {
 private:
+    IPluginFunction * callback;
+
     bool success;
     std::string output;
     std::string command;
     int data;
 
-    IPluginFunction *callback;
-    IdentityToken_t *owner;
-
 public:
-    ExecuteCallback(bool success, std::string output, std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner);
+    ExecuteCallback(IPluginFunction *callback, bool success, std::string output, std::string command, int data);
 
-    std::string &GetOutput();
+    const std::string &GetOutput();
     virtual void Fire();
 };
 

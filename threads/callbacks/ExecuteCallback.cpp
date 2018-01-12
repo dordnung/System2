@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,45 +23,35 @@
  */
 
 #include "ExecuteCallback.h"
-#include "CommandOutputHandler.h"
+#include "ExecuteCallbackHandler.h"
 
 
-ExecuteCallback::ExecuteCallback(bool success, std::string output, std::string command, int data, IPluginFunction *callback, IdentityToken_t *owner) {
-    this->success = success;
-    this->output = output;
-    this->command = command;
-    this->data = data;
-
-    this->callback = callback;
-    this->owner = owner;
-}
+ExecuteCallback::ExecuteCallback(IPluginFunction *callback, bool success, std::string output, std::string command, int data)
+    : callback(callback), success(success), output(output), command(command), data(data) {}
 
 
-std::string &ExecuteCallback::GetOutput() {
+const std::string &ExecuteCallback::GetOutput() {
     return this->output;
 }
 
-
 void ExecuteCallback::Fire() {
-    // Create the output handle
-    Handle_t hndl = BAD_HANDLE;
+    IdentityToken_t *owner = this->callback->GetParentContext()->GetIdentity();
+    Handle_t outputHandle = BAD_HANDLE;
+
     if (this->success) {
-        hndl = handlesys->CreateHandle(commandOutputHandleType,
-                                       this,
-                                       this->owner,
-                                       myself->GetIdentity(),
-                                       NULL);
+        // Create the output handle
+        outputHandle = executeCallbackHandler.CreateHandle(this, owner);
     }
 
+    // Push every argument to the callback and execute it
     this->callback->PushCell(this->success);
-    this->callback->PushCell(hndl);
+    this->callback->PushCell(outputHandle);
     this->callback->PushString(this->command.c_str());
     this->callback->PushCell(this->data);
     this->callback->Execute(NULL);
 
     // Delete the output handle when finished
-    if (hndl != BAD_HANDLE) {
-        HandleSecurity sec = { this->owner, myself->GetIdentity() };
-        handlesys->FreeHandle(hndl, &sec);
+    if (outputHandle != BAD_HANDLE) {
+        executeCallbackHandler.FreeHandle(outputHandle, owner);
     }
 }
