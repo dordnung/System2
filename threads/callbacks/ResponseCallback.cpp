@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,13 @@
  */
 
 #include "ResponseCallback.h"
-#include "ResponseHandler.h"
+#include "RequestHandler.h"
 
 
-ResponseCallback::ResponseCallback(std::string error, Request *request, Handle_t requestHandle, IdentityToken_t *owner)
-    : success(true), error(error), request(request), requestHandle(requestHandle),
-    statusCode(-1), totalTime(0.0f), owner(owner) {};
+ResponseCallback::ResponseCallback(Request *request, std::string error)
+    : request(request), error(error), statusCode(0), totalTime(0.0f) {};
 
-
-ResponseCallback::ResponseCallback(CURL *curl, std::string content, Request *request, Handle_t requestHandle, IdentityToken_t *owner)
-    : success(true), content(content), request(request), requestHandle(requestHandle), owner(owner) {
+ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string content) : request(request), content(content) {
     // Get the response code
     long code;
     if (curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK) {
@@ -45,8 +42,6 @@ ResponseCallback::ResponseCallback(CURL *curl, std::string content, Request *req
     char *url = NULL;
     if (curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url) == CURLE_OK && url) {
         this->lastURL = url;
-    } else {
-        this->lastURL = std::string();
     }
 
     double total;
@@ -59,14 +54,12 @@ ResponseCallback::ResponseCallback(CURL *curl, std::string content, Request *req
 
 
 void ResponseCallback::Fire() {
-    // Create the response handle
-    Handle_t hndl = BAD_HANDLE;
-    if (this->success) {
-        hndl = handlesys->CreateHandle(responseHandleType,
-                                       this,
-                                       this->owner,
-                                       myself->GetIdentity(),
-                                       NULL);
+    IdentityToken_t *owner = this->request->responseCallback->GetParentContext()->GetIdentity();
+    Handle_t responseHandle = BAD_HANDLE;
+
+    if (this->error.empty()) {
+        // Create a response handle to this callback on success
+        responseHandle = responseCallbackHandler.CreateHandle(this, owner);
         this->request->responseCallback->PushCell(true);
         this->request->responseCallback->PushString("");
     } else {
@@ -74,19 +67,25 @@ void ResponseCallback::Fire() {
         this->request->responseCallback->PushString(this->error.c_str());
     }
 
-    this->request->responseCallback->PushCell(this->requestHandle);
-    this->request->responseCallback->PushCell(hndl);
+    // Create a temporary request handle, so in the callback the correct request will be used
+    Handle_t requestHandle = requestHandler.CreateLocaleHandle(this->request, owner);
+    this->request->responseCallback->PushCell(requestHandle);
+
+    this->request->responseCallback->PushCell(responseHandle);
+
+    // Fire the PreFire event for subclasses
+    this->PreFire();
+
+    // Finally execute the callback
     this->request->responseCallback->Execute(NULL);
 
-    // Delete the response handle when finished
-    if (hndl != BAD_HANDLE) {
-        HandleSecurity sec = { this->owner, myself->GetIdentity() };
-        handlesys->FreeHandle(hndl, &sec);
+    // Delete the request handle when finished
+    if (requestHandle != BAD_HANDLE) {
+        requestHandler.FreeHandle(requestHandle, owner);
     }
 
-    // Delete the request handle when finished and auto clean up is enabled
-    if (this->request->autoClean) {
-        HandleSecurity sec = { this->owner, myself->GetIdentity() };
-        handlesys->FreeHandle(this->requestHandle, &sec);
+    // Delete the response handle when finished
+    if (responseHandle != BAD_HANDLE) {
+        responseCallbackHandler.FreeHandle(responseHandle, owner);
     }
 }

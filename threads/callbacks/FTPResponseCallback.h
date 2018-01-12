@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2017 David Ordnung
+* Copyright (C) 2013-2018 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,19 @@
 #define _SYSTEM2_FTP_RESPONSE_CALLBACK_H_
 
 #include "ResponseCallback.h"
+#include "FTPRequest.h"
 
 
 class FTPResponseCallback : public ResponseCallback {
+private:
+    bool isDownload;
 
+public:
+    FTPResponseCallback(FTPRequest *ftpRequest, std::string error, bool isDownload);
+    FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content, bool isDownload);
+
+private:
+    virtual void PreFire();
 };
 
 #endif

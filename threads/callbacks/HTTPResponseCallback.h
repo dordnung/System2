@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2017 David Ordnung
+* Copyright (C) 2013-2018 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,20 @@
 
 #include "ResponseCallback.h"
 #include "HTTPRequest.h"
-#include <map>
 
 
 class HTTPResponseCallback : public ResponseCallback {
+private:
+    HTTPRequestMethod requestMethod;
+
 public:
     std::map<std::string, std::string> headers;
 
-    HTTPResponseCallback(std::string error, HTTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner);
-    HTTPResponseCallback(CURL *curl, std::string content, std::map<std::string, std::string> headers, HTTPRequest *request, Handle_t requestHandle, IdentityToken_t *owner);
+    HTTPResponseCallback(HTTPRequest *httpRequest, std::string error, HTTPRequestMethod requestMethod);
+    HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl, std::string content, HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers);
+
+private:
+    virtual void PreFire();
 };
 
 #endif
