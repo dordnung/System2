@@ -120,11 +120,16 @@ $(BIN_DIR)/%.o: %.cpp
 	$(CPP) $(INCLUDE) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 all: check
-	mkdir -p $(BIN_DIR)/sdk
-	mkdir -p $(BIN_DIR)/threads
-	mkdir -p $(BIN_DIR)/hash
+	mkdir -p $(BIN_DIR)/3rdparty/crc
+	mkdir -p $(BIN_DIR)/3rdparty/md5
+	mkdir -p $(BIN_DIR)/handler
 	mkdir -p $(BIN_DIR)/legacy
 	mkdir -p $(BIN_DIR)/legacy/threads
+	mkdir -p $(BIN_DIR)/legacy/threads/callbacks
+	mkdir -p $(BIN_DIR)/natives
+	mkdir -p $(BIN_DIR)/sdk
+	mkdir -p $(BIN_DIR)/threads
+	mkdir -p $(BIN_DIR)/threads/callbacks
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -139,10 +144,15 @@ default: all
 
 clean: check
 	rm -rf $(BIN_DIR)/*.o
-	rm -rf $(BIN_DIR)/sdk/*.o
-	rm -rf $(BIN_DIR)/threads/*.o
-	rm -rf $(BIN_DIR)/hash/*.o
+	rm -rf $(BIN_DIR)/3rdparty/crc/*.o
+	rm -rf $(BIN_DIR)/3rdparty/md5/*.o
+	rm -rf $(BIN_DIR)/handler/*.o
 	rm -rf $(BIN_DIR)/legacy/*.o
 	rm -rf $(BIN_DIR)/legacy/threads/*.o
+	rm -rf $(BIN_DIR)/legacy/threads/callbacks/*.o
+	rm -rf $(BIN_DIR)/natives/*.o
+	rm -rf $(BIN_DIR)/sdk/*.o
+	rm -rf $(BIN_DIR)/threads/*.o
+	rm -rf $(BIN_DIR)/threads/callbacks/*.o
 	rm -rf $(BIN_DIR)/$(BINARY)
 
