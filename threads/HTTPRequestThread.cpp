@@ -26,9 +26,6 @@
 #include "HTTPResponseCallback.h"
 #include "HTTPRequestMethod.h"
 
-#include <functional>
-#include <cctype>
-
 
 HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod)
     : RequestThread(httpRequest), httpRequest(httpRequest), requestMethod(requestMethod) {};
@@ -196,16 +193,24 @@ size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, v
 
     size_t realsize = size * nitems;
     if (realsize > 0) {
+        std::string name;
+        std::string value;
+
         // Get the header as string
         std::string header = std::string(buffer, realsize);
 
         // Get the name and the value of the header
         size_t semi = header.find(':');
         if (semi == std::string::npos) {
-            headerInfo->headers[Trim(header)] = "";
+            name = header;
         } else {
-            headerInfo->headers[Trim(header.substr(0, semi))] = Trim(header.substr(semi + 1));
+            name = header.substr(0, semi);
+            value = header.substr(semi + 1);
         }
+
+        Trim(name);
+        Trim(value);
+        headerInfo->headers[name] = value;
     }
 
     return realsize;
@@ -228,14 +233,24 @@ inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const s
 }
 
 inline std::string& HTTPRequestThread::LeftTrim(std::string &str) {
-    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
-                                        std::not1(std::ptr_fun<int, int>(std::isspace))));
+    std::size_t found = str.find_first_not_of(" \t\f\v\n\r");
+    if (found != std::string::npos) {
+        str.erase(0, found);
+    } else {
+        str.clear();
+    }
+
     return str;
 }
 
 inline std::string& HTTPRequestThread::RightTrim(std::string &str) {
-    str.erase(std::find_if(str.rbegin(), str.rend(),
-                           std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+    std::size_t found = str.find_last_not_of(" \t\f\v\n\r");
+    if (found != std::string::npos) {
+        str.erase(found + 1);
+    } else {
+        str.clear();
+    }
+
     return str;
 }
 
