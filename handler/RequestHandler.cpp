@@ -23,6 +23,7 @@
  */
 
 #include "RequestHandler.h"
+#include "Request.h"
 
 
 RequestHandler::RequestHandler() : handleType(0) {}
@@ -43,7 +44,7 @@ void RequestHandler::Shutdown() {
 }
 
 void RequestHandler::OnHandleDestroy(HandleType_t type, void *object) {
-    delete object;
+    delete (Request *)object;
 }
 
 
