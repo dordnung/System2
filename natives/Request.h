@@ -33,6 +33,7 @@ class Request {
 public:
     std::string url;
     int port;
+    bool verifySSL;
     int timeout;
     int data;
 

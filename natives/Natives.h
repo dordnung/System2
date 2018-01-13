@@ -31,6 +31,8 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params);
@@ -110,6 +112,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2Request.GetURL", NativeRequest_GetURL },
     { "System2Request.SetPort", NativeRequest_SetPort },
     { "System2Request.GetPort", NativeRequest_GetPort },
+    { "System2Request.SetVerifySSL", NativeRequest_SetVerifySSL },
+    { "System2Request.GetVerifySSL", NativeRequest_GetVerifySSL },
     { "System2Request.Timeout.get", NativeRequest_GetTimeout },
     { "System2Request.Timeout.set", NativeRequest_SetTimeout },
     { "System2Request.Any.get", NativeRequest_GetAnyData },

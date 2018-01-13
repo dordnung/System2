@@ -26,10 +26,10 @@
 
 
 Request::Request(std::string url, IPluginFunction *responseCallback) :
-    url(url), port(-1), timeout(-1), data(0), responseCallback(responseCallback), progressCallback(NULL) {};
+    url(url), port(-1), verifySSL(true), timeout(-1), data(0), responseCallback(responseCallback), progressCallback(NULL) {};
 
 Request::Request(const Request &request) :
-    url(request.url), port(request.port), timeout(request.timeout), data(request.data),
+    url(request.url), port(request.port), verifySSL(request.verifySSL), timeout(request.timeout), data(request.data),
     responseCallback(request.responseCallback), progressCallback(request.progressCallback) {};
 
 Request::~Request() {}

@@ -38,6 +38,12 @@ void RequestThread::ApplyRequest(CURL *curl) {
         curl_easy_setopt(curl, CURLOPT_PORT, this->request->port);
     }
 
+    // Disable SSL verifying if wanted
+    if (!this->request->verifySSL) {
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    }
+
     // Set progress function
     if (this->request->progressCallback != NULL) {
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);

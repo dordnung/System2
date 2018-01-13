@@ -70,6 +70,25 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
     return request->port;
 }
 
+cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    request->verifySSL = params[2];
+    return 1;
+}
+
+cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    return request->verifySSL;
+}
+
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::convertRequest<Request>(params[1], pContext);
     if (request == NULL) {

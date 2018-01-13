@@ -120,13 +120,13 @@ typeset System2HTTPResponseCallback
  *                      Can't be deleted, as it will be destroyed after the callback!
  * @param response      FTP response of the request. Is null if success is false.
  *                      Can't be deleted, as it will be destroyed after the callback!
- * @param downloaded    True when a file was downloaded, false when a file was uploaded.
+ * @param uploaded      True when a file was uploaded, otherwise false.
  *
  * @noreturn
  */
 typeset System2FTPResponseCallback
 {
-    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response, bool downloaded);
+    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response, bool uploaded);
 };
 
 
@@ -254,6 +254,47 @@ methodmap System2Request < Handle {
     public native int GetPort();
 
     /**
+     * Sets the file to write the output of the request to.
+     * Use this to download content to a file.
+     *
+     * @param file      File to write the output to.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetOutputFile(const char[] file);
+
+    /**
+     * Retrieves the file to write the output of the request to.
+     *
+     * @param file      Buffer to store file in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void GetOutputFile(char[] file, int maxlength);
+
+    /**
+     * Sets whether to verify the SSL certificate on connections using SSL.
+     * Only disable this, when you know what you do!
+     *
+     * @param verify    True to verify SSL certificate, otherwise false.
+     *
+     * @noreturn
+     * @error Invalid Handle.
+     */
+    public native void SetVerifySSL(bool verify);
+
+    /**
+     * Returns whether SSL certificates will be verified.
+     *
+     * @return True if SSL certificates will be verified, otherwise false.
+     * @error Invalid Handle.
+     */
+    public native bool GetVerifySSL();
+
+    /**
      * The timeout for the request.
      */
     property int Timeout {
@@ -350,30 +391,6 @@ methodmap System2HTTPRequest < System2Request {
      * @error Invalid Handle.
      */
     public native void GetData(char[] data, int maxlength);
-
-
-    /**
-     * Sets the file to write the output of the request to.
-     * Use this to download content to a file.
-     *
-     * @param file      File to write the output to.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void SetOutputFile(const char[] file);
-
-    /**
-     * Retrieves the file to write the output of the request to.
-     *
-     * @param file      Buffer to store file in.
-     * @param maxlength Maxlength of the buffer.
-     *
-     * @noreturn
-     * @error Invalid Handle.
-     */
-    public native void GetOutputFile(char[] file, int maxlength);
-
 
     /**
      * Sets a HTTP request header.
@@ -602,14 +619,12 @@ methodmap System2FTPRequest < System2Request {
 
 
     /**
-     * Sends the request in order to download a file.
-     *
-     * @param file      File to write downloaded content to.
+     * Sends the request.
      *
      * @noreturn
      * @error Invalid Handle.
      */
-    public native void Download(const char[] file);
+    public native void Request();
 
     /**
      * Sends the request in order to upload content to a file.
@@ -1311,6 +1326,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Request.GetURL");
         MarkNativeAsOptional("System2Request.SetPort");
         MarkNativeAsOptional("System2Request.GetPort");
+        MarkNativeAsOptional("System2Request.SetVerifySSL");
+        MarkNativeAsOptional("System2Request.GetVerifySSL");
         MarkNativeAsOptional("System2Request.Timeout.get");
         MarkNativeAsOptional("System2Request.Timeout.set");
         MarkNativeAsOptional("System2Request.Any.get");
