@@ -94,7 +94,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
 
                 // Also use accept encoding of CURL
                 if (this->EqualsIgnoreCase(it->first, "Accept-Encoding")) {
-                    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, it->second);
+                    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, it->second.c_str());
                 }
             }
 
