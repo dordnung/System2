@@ -48,6 +48,9 @@ void RequestThread::ApplyRequest(CURL *curl) {
     // Set timeout
     if (this->request->timeout > 0) {
         curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, this->request->timeout);
+    } else {
+        // Set connect timeout to a better default value
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 60);
     }
 
     // Prevent signals to interrupt our thread

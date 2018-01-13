@@ -156,7 +156,12 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         if (curl_easy_perform(curl) == CURLE_OK) {
             callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, curl, writeData.content, this->requestMethod, headerData.headers);
         } else {
-            callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, errorBuffer, this->requestMethod);
+            if (!strlen(errorBuffer)) {
+                // Set readable error if there is no one
+                callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, "Couldn't execute HTTP request", this->requestMethod);
+            } else {
+                callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, errorBuffer, this->requestMethod);
+            }
         }
 
         // Clean up curl
