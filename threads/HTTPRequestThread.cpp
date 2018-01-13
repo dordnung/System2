@@ -212,7 +212,7 @@ size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, v
 }
 
 
-inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string& str1, const std::string& str2) {
+inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const std::string &str2) {
     size_t str1Len = str1.size();
     if (str2.size() != str1Len) {
         return false;
@@ -227,18 +227,18 @@ inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string& str1, const s
     return true;
 }
 
-inline std::string &HTTPRequestThread::LeftTrim(std::string &str) {
+inline std::string& HTTPRequestThread::LeftTrim(std::string &str) {
     str.erase(str.begin(), std::find_if(str.begin(), str.end(),
                                         std::not1(std::ptr_fun<int, int>(std::isspace))));
     return str;
 }
 
-inline std::string &HTTPRequestThread::RightTrim(std::string &str) {
+inline std::string& HTTPRequestThread::RightTrim(std::string &str) {
     str.erase(std::find_if(str.rbegin(), str.rend(),
                            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
     return str;
 }
 
-inline std::string &HTTPRequestThread::Trim(std::string &str) {
+inline std::string& HTTPRequestThread::Trim(std::string &str) {
     return LeftTrim(RightTrim(str));
 }

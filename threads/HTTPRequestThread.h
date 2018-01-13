@@ -48,9 +48,9 @@ public:
     static size_t ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata);
 
 private:
-    static inline std::string &HTTPRequestThread::LeftTrim(std::string &str);
-    static inline std::string &HTTPRequestThread::RightTrim(std::string &str);
-    static inline std::string &HTTPRequestThread::Trim(std::string &str);
+    static inline std::string& LeftTrim(std::string &str);
+    static inline std::string& RightTrim(std::string &str);
+    static inline std::string& Trim(std::string &str);
     static inline bool EqualsIgnoreCase(const std::string &str1, const std::string &str2);
 };
 
