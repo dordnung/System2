@@ -2,6 +2,7 @@
 #define _CRC_H
 
 #include <sstream>
+#include <string.h>
 
 uint32_t updateCRC32(unsigned char ch, uint32_t crc);
 bool crc32file(char *name, uint32_t *crc, long *charcnt);
