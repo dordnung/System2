@@ -36,9 +36,9 @@ private:
 
 public:
     typedef struct {
-        HTTPRequest *httpRequest;
         CURL *curl;
         std::map<std::string, std::string> headers;
+        long lastResponseCode;
     } HeaderInfo;
 
     HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod);
@@ -46,6 +46,12 @@ public:
     virtual void RunThread(IThreadHandle *pThread);
 
     static size_t ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata);
+
+private:
+    static inline std::string &HTTPRequestThread::LeftTrim(std::string &str);
+    static inline std::string &HTTPRequestThread::RightTrim(std::string &str);
+    static inline std::string &HTTPRequestThread::Trim(std::string &str);
+    static inline bool EqualsIgnoreCase(const std::string &str1, const std::string &str2);
 };
 
 

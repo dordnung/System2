@@ -26,6 +26,9 @@
 #include "HTTPResponseCallback.h"
 #include "HTTPRequestMethod.h"
 
+#include <functional>
+#include <cctype>
+
 
 HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod)
     : RequestThread(httpRequest), httpRequest(httpRequest), requestMethod(requestMethod) {};
@@ -56,7 +59,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
             FILE *file = fopen(filePath, "wb");
             if (!file) {
                 // Create error callback and clean up curl
-                system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Can not open output file", this->httpRequest, this->requestMethod));
+                system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Can not open output file", this->requestMethod));
                 curl_easy_cleanup(curl);
 
                 return;
@@ -87,39 +90,40 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Set the follow redirect property
         if (this->httpRequest->followRedirects) {
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-            curl_easy_setopt(curl, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
-        } else {
-            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L);
-        }
 
-        // Set the auto referer property
-        if (this->httpRequest->autoReferer) {
-            curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1L);
-        } else {
-            curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 0L);
+            // Set the auto referer property
+            if (this->httpRequest->autoReferer) {
+                curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1L);
+            }
         }
 
         // Set data to send
         if (!this->httpRequest->data.empty()) {
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->httpRequest->data.c_str());
-        } else {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
         }
 
         // Set headers
-        struct curl_slist *headers;
+        struct curl_slist *headers = NULL;
         if (!this->httpRequest->headers.empty()) {
             std::string header;
             for (std::map<std::string, std::string>::iterator it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {
-                header = it->first + ":" + it->second;
+                if (!it->first.empty()) {
+                    header = it->first + ":";
+                }
+                header = header + it->second;
                 headers = curl_slist_append(headers, header.c_str());
+
+                // Also use accept encoding of CURL
+                if (this->EqualsIgnoreCase(it->first, "Accept-Encoding")) {
+                    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, it->second);
+                }
             }
 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         }
 
         // Get response headers
-        HeaderInfo headerData = { this->httpRequest, curl, std::map<std::string, std::string>() };
+        HeaderInfo headerData = { curl, std::map<std::string, std::string>(), -1L };
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, HTTPRequestThread::ReadHeader);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
 
@@ -130,6 +134,11 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
                 break;
             case METHOD_POST:
                 curl_easy_setopt(curl, CURLOPT_POST, 1L);
+                if (this->httpRequest->data.empty()) {
+                    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
+                    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
+                }
+
                 break;
             case METHOD_PUT:
                 curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -148,9 +157,9 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Perform curl operation and create the callback
         std::shared_ptr<HTTPResponseCallback> callback;
         if (curl_easy_perform(curl) == CURLE_OK) {
-            callback = std::make_shared<HTTPResponseCallback>(curl, writeData.content, this->httpRequest, this->requestMethod, headerData.headers);
+            callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, curl, writeData.content, this->requestMethod, headerData.headers);
         } else {
-            callback = std::make_shared<HTTPResponseCallback>(errorBuffer, this->httpRequest, this->requestMethod);
+            callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, errorBuffer, this->requestMethod);
         }
 
         // Clean up curl
@@ -167,6 +176,69 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Append callback so it can be fired
         system2Extension.AppendCallback(callback);
     } else {
-        system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>("Couldn't initialize CURL", this->httpRequest, this->requestMethod));
+        system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Couldn't initialize CURL", this->requestMethod));
     }
+}
+
+
+size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata) {
+    // Get the header info
+    HeaderInfo *headerInfo = (HeaderInfo *)userdata;
+
+    long responseCode;
+    curl_easy_getinfo(headerInfo->curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
+    // CURL will give not only the latest headers, so check if the response code changed
+    if (headerInfo->lastResponseCode != responseCode) {
+        headerInfo->lastResponseCode = responseCode;
+        headerInfo->headers.clear();
+    }
+
+    size_t realsize = size * nitems;
+    if (realsize > 0) {
+        // Get the header as string
+        std::string header = std::string(buffer, realsize);
+
+        // Get the name and the value of the header
+        size_t semi = header.find(':');
+        if (semi == std::string::npos) {
+            headerInfo->headers[Trim(header)] = "";
+        } else {
+            headerInfo->headers[Trim(header.substr(0, semi))] = Trim(header.substr(semi + 1));
+        }
+    }
+
+    return realsize;
+}
+
+
+inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string& str1, const std::string& str2) {
+    size_t str1Len = str1.size();
+    if (str2.size() != str1Len) {
+        return false;
+    }
+
+    for (size_t i = 0; i < str1Len; ++i) {
+        if (tolower(str1[i]) != tolower(str2[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+inline std::string &HTTPRequestThread::LeftTrim(std::string &str) {
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
+                                        std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return str;
+}
+
+inline std::string &HTTPRequestThread::RightTrim(std::string &str) {
+    str.erase(std::find_if(str.rbegin(), str.rend(),
+                           std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+    return str;
+}
+
+inline std::string &HTTPRequestThread::Trim(std::string &str) {
+    return LeftTrim(RightTrim(str));
 }

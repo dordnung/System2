@@ -31,7 +31,6 @@ uint32_t RequestThread::lastProgressFrame = 0;
 
 RequestThread::RequestThread(Request *request) : request(request) {};
 
-
 void RequestThread::ApplyRequest(CURL *curl) {
     // Set URL and port
     curl_easy_setopt(curl, CURLOPT_URL, this->request->url.c_str());
@@ -55,7 +54,6 @@ void RequestThread::ApplyRequest(CURL *curl) {
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 }
 
-
 void RequestThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
     delete this;
 }
@@ -77,12 +75,10 @@ size_t RequestThread::WriteData(char *ptr, size_t size, size_t nmemb, void *user
     return realsize;
 }
 
-
 size_t RequestThread::ReadFile(char *buffer, size_t size, size_t nitems, void *instream) {
     // Just read the content from the file
     return fread(buffer, size, nitems, (FILE *)instream);
 }
-
 
 size_t RequestThread::ProgressUpdated(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
     RequestThread *requestThread = (RequestThread *)clientp;
