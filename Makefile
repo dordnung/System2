@@ -20,7 +20,7 @@ PROJECT = system2
 #USEMETA = true
 
 OBJECTS = 3rdparty/crc/crc32.cpp 3rdparty/md5/md5.cpp
-OBJECTS += handler/ExecuteCallbackHandler.cpp Handler.cpp handler/RequestHandler.cpp handler/ResponseCallbackHandler.cpp
+OBJECTS += handler/ExecuteCallbackHandler.cpp handler/Handler.cpp handler/RequestHandler.cpp handler/ResponseCallbackHandler.cpp
 OBJECTS += legacy/LegacyNatives.cpp
 OBJECTS += legacy/threads/LegacyCommandThread.cpp legacy/threads/LegacyDownloadThread.cpp legacy/threads/LegacyFTPThread.cpp legacy/threads/LegacyPageThread.cpp
 OBJECTS += legacy/threads/callbacks/LegacyCommandCallback.cpp legacy/threads/callbacks/LegacyDownloadCallback.cpp
