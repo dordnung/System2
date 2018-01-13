@@ -35,23 +35,25 @@ const std::string &ExecuteCallback::GetOutput() {
 }
 
 void ExecuteCallback::Fire() {
-    IdentityToken_t *owner = this->callback->GetParentContext()->GetIdentity();
-    Handle_t outputHandle = BAD_HANDLE;
+    if (this->callback->IsRunnable()) {
+        IdentityToken_t *owner = this->callback->GetParentContext()->GetIdentity();
+        Handle_t outputHandle = BAD_HANDLE;
 
-    if (this->success) {
-        // Create the output handle
-        outputHandle = executeCallbackHandler.CreateHandle(this, owner);
-    }
+        if (this->success) {
+            // Create the output handle
+            outputHandle = executeCallbackHandler.CreateHandle(this, owner);
+        }
 
-    // Push every argument to the callback and execute it
-    this->callback->PushCell(this->success);
-    this->callback->PushCell(outputHandle);
-    this->callback->PushString(this->command.c_str());
-    this->callback->PushCell(this->data);
-    this->callback->Execute(NULL);
+        // Push every argument to the callback and execute it
+        this->callback->PushCell(this->success);
+        this->callback->PushCell(outputHandle);
+        this->callback->PushString(this->command.c_str());
+        this->callback->PushCell(this->data);
+        this->callback->Execute(NULL);
 
-    // Delete the output handle when finished
-    if (outputHandle != BAD_HANDLE) {
-        executeCallbackHandler.FreeHandle(outputHandle, owner);
+        // Delete the output handle when finished
+        if (outputHandle != BAD_HANDLE) {
+            executeCallbackHandler.FreeHandle(outputHandle, owner);
+        }
     }
 }

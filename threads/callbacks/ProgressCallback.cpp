@@ -31,19 +31,21 @@ ProgressCallback::ProgressCallback(Request *request, int dlTotal, int dlNow, int
 
 
 void ProgressCallback::Fire() {
-    // Create a temporary request handle, so in the callback the correct request will be used
-    IdentityToken_t *owner = request->responseCallback->GetParentContext()->GetIdentity();
-    Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
+    if (request->progressCallback->IsRunnable()) {
+        // Create a temporary request handle, so in the callback the correct request will be used
+        IdentityToken_t *owner = request->progressCallback->GetParentContext()->GetIdentity();
+        Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
 
-    request->progressCallback->PushCell(requestHandle);
-    request->progressCallback->PushCell(this->dlTotal);
-    request->progressCallback->PushCell(this->dlNow);
-    request->progressCallback->PushCell(this->ulTotal);
-    request->progressCallback->PushCell(this->ulNow);
-    request->progressCallback->Execute(NULL);
+        request->progressCallback->PushCell(requestHandle);
+        request->progressCallback->PushCell(this->dlTotal);
+        request->progressCallback->PushCell(this->dlNow);
+        request->progressCallback->PushCell(this->ulTotal);
+        request->progressCallback->PushCell(this->ulNow);
+        request->progressCallback->Execute(NULL);
 
-    // Delete the request handle when finished
-    if (requestHandle != BAD_HANDLE) {
-        requestHandler.FreeHandle(requestHandle, owner);
+        // Delete the request handle when finished
+        if (requestHandle != BAD_HANDLE) {
+            requestHandler.FreeHandle(requestHandle, owner);
+        }
     }
 }

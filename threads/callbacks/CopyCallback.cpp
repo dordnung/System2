@@ -29,9 +29,11 @@ CopyCallback::CopyCallback(IPluginFunction *callback, bool success, std::string 
     : callback(callback), success(success), from(from), to(to), data(data) {}
 
 void CopyCallback::Fire() {
-    this->callback->PushCell(this->success);
-    this->callback->PushString(this->from.c_str());
-    this->callback->PushString(this->to.c_str());
-    this->callback->PushCell(this->data);
-    this->callback->Execute(NULL);
+    if (this->callback->IsRunnable()) {
+        this->callback->PushCell(this->success);
+        this->callback->PushString(this->from.c_str());
+        this->callback->PushString(this->to.c_str());
+        this->callback->PushCell(this->data);
+        this->callback->Execute(NULL);
+    }
 }

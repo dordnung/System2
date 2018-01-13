@@ -54,38 +54,40 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
 
 
 void ResponseCallback::Fire() {
-    IdentityToken_t *owner = this->request->responseCallback->GetParentContext()->GetIdentity();
-    Handle_t responseHandle = BAD_HANDLE;
+    if (request->responseCallback->IsRunnable()) {
+        IdentityToken_t *owner = this->request->responseCallback->GetParentContext()->GetIdentity();
+        Handle_t responseHandle = BAD_HANDLE;
 
-    if (this->error.empty()) {
-        // Create a response handle to this callback on success
-        responseHandle = responseCallbackHandler.CreateHandle(this, owner);
-        this->request->responseCallback->PushCell(true);
-        this->request->responseCallback->PushString("");
-    } else {
-        this->request->responseCallback->PushCell(false);
-        this->request->responseCallback->PushString(this->error.c_str());
-    }
+        if (this->error.empty()) {
+            // Create a response handle to this callback on success
+            responseHandle = responseCallbackHandler.CreateHandle(this, owner);
+            this->request->responseCallback->PushCell(true);
+            this->request->responseCallback->PushString("");
+        } else {
+            this->request->responseCallback->PushCell(false);
+            this->request->responseCallback->PushString(this->error.c_str());
+        }
 
-    // Create a temporary request handle, so in the callback the correct request will be used
-    Handle_t requestHandle = requestHandler.CreateLocaleHandle(this->request, owner);
-    this->request->responseCallback->PushCell(requestHandle);
+        // Create a temporary request handle, so in the callback the correct request will be used
+        Handle_t requestHandle = requestHandler.CreateLocaleHandle(this->request, owner);
+        this->request->responseCallback->PushCell(requestHandle);
 
-    this->request->responseCallback->PushCell(responseHandle);
+        this->request->responseCallback->PushCell(responseHandle);
 
-    // Fire the PreFire event for subclasses
-    this->PreFire();
+        // Fire the PreFire event for subclasses
+        this->PreFire();
 
-    // Finally execute the callback
-    this->request->responseCallback->Execute(NULL);
+        // Finally execute the callback
+        this->request->responseCallback->Execute(NULL);
 
-    // Delete the request handle when finished
-    if (requestHandle != BAD_HANDLE) {
-        requestHandler.FreeHandle(requestHandle, owner);
-    }
+        // Delete the request handle when finished
+        if (requestHandle != BAD_HANDLE) {
+            requestHandler.FreeHandle(requestHandle, owner);
+        }
 
-    // Delete the response handle when finished
-    if (responseHandle != BAD_HANDLE) {
-        responseCallbackHandler.FreeHandle(responseHandle, owner);
+        // Delete the response handle when finished
+        if (responseHandle != BAD_HANDLE) {
+            responseCallbackHandler.FreeHandle(responseHandle, owner);
+        }
     }
 }
