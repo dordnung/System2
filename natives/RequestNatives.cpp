@@ -156,11 +156,13 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
     pContext->LocalToString(params[2], &url);
 
     HTTPRequest *request = new HTTPRequest(url, pContext->GetFunctionById(params[3]));
-    if (!request) {
-        return BAD_HANDLE;
+
+    Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
+    if (hndl == BAD_HANDLE) {
+        pContext->ReportError("Couldn't create HTTPRequest handle");
     }
 
-    return requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
+    return hndl;
 }
 
 cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
@@ -389,11 +391,13 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
     pContext->LocalToString(params[2], &url);
 
     FTPRequest *request = new FTPRequest(url, pContext->GetFunctionById(params[3]));
-    if (!request) {
-        return BAD_HANDLE;
+
+    Handle_t hndl = requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
+    if (hndl == BAD_HANDLE) {
+        pContext->ReportError("Couldn't create FTPRequest handle");
     }
 
-    return requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
+    return hndl;
 }
 
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
