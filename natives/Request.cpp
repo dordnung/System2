@@ -31,3 +31,5 @@ Request::Request(std::string url, IPluginFunction *responseCallback) :
 Request::Request(const Request &request) :
     url(request.url), port(request.port), timeout(request.timeout), data(request.data),
     responseCallback(request.responseCallback), progressCallback(request.progressCallback) {};
+
+Request::~Request() {}

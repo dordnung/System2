@@ -49,7 +49,7 @@ public:
         HandleError err;
 
         ResponseCallbackClass *response;
-        if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &request)) != HandleError_None) {
+        if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &response)) != HandleError_None) {
             pContext->ReportError("Invalid response handle %x (error %d)", hndl, err);
             return NULL;
         }

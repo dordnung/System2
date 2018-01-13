@@ -42,7 +42,6 @@ public:
     } WriteDataInfo;
 
     RequestThread(Request *request);
-    virtual ~RequestThread() = 0;
 
     void ApplyRequest(CURL *curl);
 

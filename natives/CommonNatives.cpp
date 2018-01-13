@@ -40,7 +40,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[3], &to);
 
     // Start the thread that copys a file
-    CopyThread *copyThread = new CopyThread(pContext->GetFunctionById(params[1]), from, to, params[4]);
+    CopyThread *copyThread = new CopyThread(from, to, params[4], pContext->GetFunctionById(params[1]));
     threader->MakeThread(copyThread);
 
     return 1;

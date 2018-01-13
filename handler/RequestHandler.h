@@ -55,7 +55,7 @@ public:
         rules.access[HandleAccess_Clone] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
 
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->CreateHandleEx(this->handleType
+        return handlesys->CreateHandleEx(this->handleType,
                                          request,
                                          &sec,
                                          &rules,
@@ -65,7 +65,7 @@ public:
     template<class RequestClass>
     HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, RequestClass **request) {
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&request))
+        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&request);
     }
 
     virtual void OnHandleDestroy(HandleType_t type, void *object);

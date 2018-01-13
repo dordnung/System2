@@ -37,5 +37,5 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
     bool success = true;
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(success));
+    system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "", true));
 }

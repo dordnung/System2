@@ -72,7 +72,7 @@ cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *param
         return 0;
     }
 
-    return response->totalTime;
+    return sp_ftoc(response->totalTime);
 }
 
 

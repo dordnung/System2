@@ -30,14 +30,14 @@
 
 class CopyThread : public IThread {
 private:
-    IPluginFunction * callback;
-
     std::string from;
     std::string to;
     int data;
 
+    IPluginFunction * callback;
+
 public:
-    CopyThread(IPluginFunction *callback, std::string from, std::string to, int data);
+    CopyThread(std::string from, std::string to, int data, IPluginFunction *callback);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);
