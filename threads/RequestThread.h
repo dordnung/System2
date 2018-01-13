@@ -43,7 +43,7 @@ public:
 
     RequestThread(Request *request);
 
-    void ApplyRequest(CURL *curl);
+    bool ApplyRequest(CURL *curl, WriteDataInfo &writeData);
 
     virtual void RunThread(IThreadHandle *pThread) = 0;
     virtual void OnTerminate(IThreadHandle *pThread, bool cancel);

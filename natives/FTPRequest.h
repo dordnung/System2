@@ -30,7 +30,6 @@
 
 class FTPRequest : public Request {
 public:
-    std::string file;
     std::string username;
     std::string password;
     bool appendToFile;
@@ -39,11 +38,11 @@ public:
     FTPRequest(std::string url, IPluginFunction *responseCallback);
     FTPRequest(const FTPRequest &request);
 
-    void Download();
-    void Upload();
+    void MakeRequest();
+    void Upload(std::string uploadFile);
 
 private:
-    void makeThread(bool download);
+    void MakeThread(std::string uploadFile);
 };
 
 

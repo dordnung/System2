@@ -26,39 +26,40 @@
 #include "HTTPRequestThread.h"
 
 
-HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback) : Request(url, responseCallback), followRedirects(true), autoReferer(false) {};
+HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback)
+    : Request(url, responseCallback), followRedirects(true), autoReferer(false) {};
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
-    Request(request), data(request.data), outputFile(request.outputFile), headers(request.headers), userAgent(request.userAgent),
+    Request(request), data(request.data), headers(request.headers), userAgent(request.userAgent),
     username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {};
 
 
 void HTTPRequest::Get() {
-    this->makeThread(METHOD_GET);
+    this->MakeThread(METHOD_GET);
 }
 
 void HTTPRequest::Post() {
-    this->makeThread(METHOD_POST);
+    this->MakeThread(METHOD_POST);
 }
 
 void HTTPRequest::Put() {
-    this->makeThread(METHOD_PUT);
+    this->MakeThread(METHOD_PUT);
 }
 
 void HTTPRequest::Patch() {
-    this->makeThread(METHOD_PATCH);
+    this->MakeThread(METHOD_PATCH);
 }
 
 void HTTPRequest::Delete() {
-    this->makeThread(METHOD_DELETE);
+    this->MakeThread(METHOD_DELETE);
 }
 
 void HTTPRequest::Head() {
-    this->makeThread(METHOD_HEAD);
+    this->MakeThread(METHOD_HEAD);
 }
 
 
-void HTTPRequest::makeThread(HTTPRequestMethod method) {
+void HTTPRequest::MakeThread(HTTPRequestMethod method) {
     // Make a copy for the thread, so it works independent
     HTTPRequestThread *requestThread = new HTTPRequestThread(new HTTPRequest(*this), method);
     threader->MakeThread(requestThread);

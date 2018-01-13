@@ -34,7 +34,6 @@
 class HTTPRequest : public Request {
 public:
     std::string data;
-    std::string outputFile;
     std::map<std::string, std::string> headers;
     std::string userAgent;
     std::string username;
@@ -53,7 +52,7 @@ public:
     void Head();
 
 private:
-    void makeThread(HTTPRequestMethod method);
+    void MakeThread(HTTPRequestMethod method);
 };
 
 

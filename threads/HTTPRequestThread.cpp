@@ -37,37 +37,19 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
 
     if (curl) {
         // Apply general request stuff
-        this->ApplyRequest(curl);
+        WriteDataInfo writeData = { std::string(), NULL };
+        if (!this->ApplyRequest(curl, writeData)) {
+            // Create error callback and clean up curl
+            system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Can not open output file", this->requestMethod));
+            curl_easy_cleanup(curl);
+
+            return;
+        }
 
         // Collect error information
         char errorBuffer[CURL_ERROR_SIZE + 1];
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
-        // Set write function
-        WriteDataInfo writeData = { std::string(), NULL };
-
-        // Check if also write to an output file
-        if (!this->httpRequest->outputFile.empty()) {
-            // Get the full path to the file
-            char filePath[PLATFORM_MAX_PATH + 1];
-            smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->httpRequest->outputFile.c_str());
-
-            // Open the file
-            FILE *file = fopen(filePath, "wb");
-            if (!file) {
-                // Create error callback and clean up curl
-                system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Can not open output file", this->requestMethod));
-                curl_easy_cleanup(curl);
-
-                return;
-            }
-
-            writeData.file = file;
-        }
-
-        // Set the write function and data
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, RequestThread::WriteData);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
 
         // Set the http user agent
         if (!this->httpRequest->userAgent.empty()) {

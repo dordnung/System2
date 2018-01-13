@@ -31,7 +31,7 @@ uint32_t RequestThread::lastProgressFrame = 0;
 
 RequestThread::RequestThread(Request *request) : request(request) {};
 
-void RequestThread::ApplyRequest(CURL *curl) {
+bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     // Set URL and port
     curl_easy_setopt(curl, CURLOPT_URL, this->request->url.c_str());
     if (this->request->port > 0) {
@@ -43,6 +43,23 @@ void RequestThread::ApplyRequest(CURL *curl) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     }
+
+    // Check if also write to an output file
+    if (!this->request->outputFile.empty()) {
+        // Get the full path to the file
+        char filePath[PLATFORM_MAX_PATH + 1];
+        smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->request->outputFile.c_str());
+
+        // Open the file writeable
+        writeData.file = fopen(filePath, "wb");
+        if (!writeData.file) {
+            return false;
+        }
+    }
+
+    // Set the write function and data
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, RequestThread::WriteData);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
 
     // Set progress function
     if (this->request->progressCallback != NULL) {
@@ -61,6 +78,8 @@ void RequestThread::ApplyRequest(CURL *curl) {
 
     // Prevent signals to interrupt our thread
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+
+    return true;
 }
 
 void RequestThread::OnTerminate(IThreadHandle *pThread, bool cancel) {

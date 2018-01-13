@@ -31,11 +31,11 @@
 
 class FTPResponseCallback : public ResponseCallback {
 private:
-    bool isDownload;
+    std::string uploadFile;
 
 public:
-    FTPResponseCallback(FTPRequest *ftpRequest, std::string error, bool isDownload);
-    FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content, bool isDownload);
+    FTPResponseCallback(FTPRequest *ftpRequest, std::string error, std::string uploadFile);
+    FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content, std::string uploadFile);
 
 private:
     virtual void PreFire();

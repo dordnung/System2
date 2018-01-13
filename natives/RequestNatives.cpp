@@ -70,6 +70,29 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
     return request->port;
 }
 
+cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *outputFile;
+    pContext->LocalToString(params[2], &outputFile);
+
+    request->outputFile = outputFile;
+    return 1;
+}
+
+cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    pContext->StringToLocalUTF8(params[2], params[3], request->outputFile.c_str(), NULL);
+    return 1;
+}
+
 cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::convertRequest<Request>(params[1], pContext);
     if (request == NULL) {
@@ -170,29 +193,6 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
     }
 
     pContext->StringToLocalUTF8(params[2], params[3], request->data.c_str(), NULL);
-    return 1;
-}
-
-cell_t NativeHTTPRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    char *outputFile;
-    pContext->LocalToString(params[2], &outputFile);
-
-    request->outputFile = outputFile;
-    return 1;
-}
-
-cell_t NativeHTTPRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    pContext->StringToLocalUTF8(params[2], params[3], request->outputFile.c_str(), NULL);
     return 1;
 }
 
@@ -422,17 +422,13 @@ cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t
     return 1;
 }
 
-cell_t NativeFTPRequest_Download(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
 
-    char *outputFile;
-    pContext->LocalToString(params[2], &outputFile);
-
-    request->file = outputFile;
-    request->Download();
+    request->MakeRequest();
     return 1;
 }
 
@@ -444,9 +440,7 @@ cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
 
     char *inputFile;
     pContext->LocalToString(params[2], &inputFile);
-
-    request->file = inputFile;
-    request->Upload();
+    request->Upload(inputFile);
 
     return 1;
 }

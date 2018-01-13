@@ -35,9 +35,9 @@ extern IMutex *ftpMutex;
 class FTPRequestThread : public RequestThread {
 public:
     FTPRequest * ftpRequest;
-    bool isDownload;
+    std::string uploadFile;
 
-    FTPRequestThread(FTPRequest *ftpRequest, bool isDownload);
+    FTPRequestThread(FTPRequest *ftpRequest, std::string uploadFile);
 
     virtual void RunThread(IThreadHandle *pThread);
 };

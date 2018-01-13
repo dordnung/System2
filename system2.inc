@@ -105,7 +105,7 @@ enum OS
  */
 typeset System2HTTPResponseCallback
 {
-    function void (bool success, char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method);
+    function void (bool success, const char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method);
 };
 
 /**
@@ -120,13 +120,13 @@ typeset System2HTTPResponseCallback
  *                      Can't be deleted, as it will be destroyed after the callback!
  * @param response      FTP response of the request. Is null if success is false.
  *                      Can't be deleted, as it will be destroyed after the callback!
- * @param uploaded      True when a file was uploaded, otherwise false.
+ * @param uploadedFile  The uploaded file or empty if no file was uploaded.
  *
  * @noreturn
  */
 typeset System2FTPResponseCallback
 {
-    function void (bool success, char[] error, System2FTPRequest request, System2FTPResponse response, bool uploaded);
+    function void (bool success, const char[] error, System2FTPRequest request, System2FTPResponse response, const char[] uploadedFile);
 };
 
 
@@ -255,7 +255,7 @@ methodmap System2Request < Handle {
 
     /**
      * Sets the file to write the output of the request to.
-     * Use this to download content to a file.
+     * Use this to download the output of a response to a file.
      *
      * @param file      File to write the output to.
      *
@@ -620,6 +620,7 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * Sends the request.
+     * May result in a directory listing or a file download.
      *
      * @noreturn
      * @error Invalid Handle.
@@ -1326,6 +1327,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Request.GetURL");
         MarkNativeAsOptional("System2Request.SetPort");
         MarkNativeAsOptional("System2Request.GetPort");
+        MarkNativeAsOptional("System2Request.SetOutputFile");
+        MarkNativeAsOptional("System2Request.GetOutputFile");
         MarkNativeAsOptional("System2Request.SetVerifySSL");
         MarkNativeAsOptional("System2Request.GetVerifySSL");
         MarkNativeAsOptional("System2Request.Timeout.get");
@@ -1337,8 +1340,6 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.SetProgressCallback");
         MarkNativeAsOptional("System2HTTPRequest.SetData");
         MarkNativeAsOptional("System2HTTPRequest.GetData");
-        MarkNativeAsOptional("System2HTTPRequest.SetOutputFile");
-        MarkNativeAsOptional("System2HTTPRequest.GetOutputFile");
         MarkNativeAsOptional("System2HTTPRequest.SetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
@@ -1359,7 +1360,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
         MarkNativeAsOptional("System2FTPRequest.SetProgressCallback");
         MarkNativeAsOptional("System2FTPRequest.SetAuthentication");
-        MarkNativeAsOptional("System2FTPRequest.Download");
+        MarkNativeAsOptional("System2FTPRequest.Request");
         MarkNativeAsOptional("System2FTPRequest.Upload");
         MarkNativeAsOptional("System2FTPRequest.AppendToFile.get");
         MarkNativeAsOptional("System2FTPRequest.AppendToFile.set");

@@ -31,6 +31,8 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
@@ -42,8 +44,6 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
 cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
@@ -64,7 +64,7 @@ cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_Download(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params);
@@ -112,6 +112,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2Request.GetURL", NativeRequest_GetURL },
     { "System2Request.SetPort", NativeRequest_SetPort },
     { "System2Request.GetPort", NativeRequest_GetPort },
+    { "System2Request.SetOutputFile", NativeRequest_SetOutputFile },
+    { "System2Request.GetOutputFile", NativeRequest_GetOutputFile },
     { "System2Request.SetVerifySSL", NativeRequest_SetVerifySSL },
     { "System2Request.GetVerifySSL", NativeRequest_GetVerifySSL },
     { "System2Request.Timeout.get", NativeRequest_GetTimeout },
@@ -123,8 +125,6 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.SetProgressCallback", NativeHTTPRequest_SetProgressCallback },
     { "System2HTTPRequest.SetData", NativeHTTPRequest_SetData },
     { "System2HTTPRequest.GetData", NativeHTTPRequest_GetData },
-    { "System2HTTPRequest.SetOutputFile", NativeHTTPRequest_SetOutputFile },
-    { "System2HTTPRequest.GetOutputFile", NativeHTTPRequest_GetOutputFile },
     { "System2HTTPRequest.SetHeader", NativeHTTPRequest_SetHeader },
     { "System2HTTPRequest.GetHeader", NativeHTTPRequest_GetHeader },
     { "System2HTTPRequest.GetHeadersCount", NativeHTTPRequest_GetHeadersCount },
@@ -145,7 +145,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },
     { "System2FTPRequest.SetAuthentication", NativeFTPRequest_SetAuthentication },
-    { "System2FTPRequest.Download", NativeFTPRequest_Download },
+    { "System2FTPRequest.Request", NativeFTPRequest_Request },
     { "System2FTPRequest.Upload", NativeFTPRequest_Upload },
     { "System2FTPRequest.AppendToFile.get", NativeFTPRequest_GetAppendToFile },
     { "System2FTPRequest.AppendToFile.set", NativeFTPRequest_SetAppendToFile },
