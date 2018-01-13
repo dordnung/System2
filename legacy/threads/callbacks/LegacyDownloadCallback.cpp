@@ -26,7 +26,7 @@
 
 
 LegacyDownloadCallback::LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback)
-    : curlError(curlError), data(data), callback(callback), finished(true), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f) {}
+    : finished(true), curlError(curlError), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f), data(data), callback(callback) {}
 
 LegacyDownloadCallback::LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback)
     : finished(finished), curlError(curlError), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data), callback(callback) {}
