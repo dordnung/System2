@@ -29,7 +29,7 @@
 
 
 cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -42,7 +42,7 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -52,7 +52,7 @@ cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -62,7 +62,7 @@ cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -71,7 +71,7 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -84,7 +84,7 @@ cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *param
 }
 
 cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -94,7 +94,7 @@ cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *param
 }
 
 cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -104,7 +104,7 @@ cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params
 }
 
 cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -113,7 +113,7 @@ cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params
 }
 
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -122,7 +122,7 @@ cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) 
 }
 
 cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -132,7 +132,7 @@ cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) 
 }
 
 cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -141,7 +141,7 @@ cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) 
 }
 
 cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::convertRequest<Request>(params[1], pContext);
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -166,7 +166,7 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
 }
 
 cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -176,7 +176,7 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
 }
 
 cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -189,7 +189,7 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
 }
 
 cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -199,7 +199,7 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
 }
 
 cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -214,7 +214,7 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
 }
 
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -231,7 +231,7 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
 }
 
 cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -240,7 +240,7 @@ cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t 
 }
 
 cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -259,7 +259,7 @@ cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t 
 }
 
 cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -272,7 +272,7 @@ cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *pa
 }
 
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -288,7 +288,7 @@ cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const 
 }
 
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -298,7 +298,7 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -308,7 +308,7 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -318,7 +318,7 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -328,7 +328,7 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -338,7 +338,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
 }
 
 cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -348,7 +348,7 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -357,7 +357,7 @@ cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell
 }
 
 cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -367,7 +367,7 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
 }
 
 cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -376,7 +376,7 @@ cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *
 }
 
 cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::convertRequest<HTTPRequest>(params[1], pContext);
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -401,7 +401,7 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
 }
 
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -411,7 +411,7 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
 }
 
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -427,7 +427,7 @@ cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t
 }
 
 cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -437,7 +437,7 @@ cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params) 
 }
 
 cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -450,7 +450,7 @@ cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
 }
 
 cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -459,7 +459,7 @@ cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *
 }
 
 cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -469,7 +469,7 @@ cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *
 }
 
 cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }
@@ -478,7 +478,7 @@ cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cel
 }
 
 cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::convertRequest<FTPRequest>(params[1], pContext);
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
     }

@@ -27,7 +27,7 @@
 
 
 cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -37,7 +37,7 @@ cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params)
 }
 
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -48,7 +48,7 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
 
 
 cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -57,7 +57,7 @@ cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *par
 }
 
 cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -67,7 +67,7 @@ cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *para
 
 
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::convertResponse<ResponseCallback>(params[1], pContext);
+    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -78,7 +78,7 @@ cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *param
 
 
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::convertResponse<HTTPResponseCallback>(params[1], pContext);
+    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -95,7 +95,7 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
 }
 
 cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::convertResponse<HTTPResponseCallback>(params[1], pContext);
+    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }
@@ -104,7 +104,7 @@ cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t
 }
 
 cell_t NativeHTTPResponse_GetHeadersArray(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::convertResponse<HTTPResponseCallback>(params[1], pContext);
+    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
     }

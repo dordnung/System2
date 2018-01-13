@@ -46,7 +46,7 @@ public:
     virtual ~Request() = 0;
 
     template<class RequestClass>
-    static RequestClass *convertRequest(Handle_t hndl, IPluginContext *pContext) {
+    static RequestClass *ConvertRequest(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
 
         RequestClass *request;

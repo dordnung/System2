@@ -45,7 +45,7 @@ public:
     ResponseCallback(Request *request, CURL *curl, std::string content);
 
     template<class ResponseCallbackClass>
-    static ResponseCallbackClass *convertResponse(Handle_t hndl, IPluginContext *pContext) {
+    static ResponseCallbackClass *ConvertResponse(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
 
         ResponseCallbackClass *response;
