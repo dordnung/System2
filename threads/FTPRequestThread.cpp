@@ -29,9 +29,7 @@
  // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
 IMutex *ftpMutex;
 
-FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest, std::string uploadFile)
-    : RequestThread(ftpRequest), ftpRequest(ftpRequest), uploadFile(uploadFile) {};
-
+FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
 
 void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
     // Create a curl object
@@ -41,7 +39,7 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Apply general request stuff
         WriteDataInfo writeData = { std::string(), NULL };
         if (!this->ApplyRequest(curl, writeData)) {
-            system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open output file", this->uploadFile));
+            system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open output file"));
             curl_easy_cleanup(curl);
 
             return;
@@ -52,16 +50,16 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
         FILE *file = NULL;
-        if (!this->uploadFile.empty()) {
+        if (!this->ftpRequest->inputFile.empty()) {
             // Get the full path to the file
             char filePath[PLATFORM_MAX_PATH + 1];
-            smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->uploadFile.c_str());
+            smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->ftpRequest->inputFile.c_str());
 
             // Open the file readable
             file = fopen(filePath, "rb");
             if (!file) {
                 // Create error callback and clean up curl
-                system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open file to upload", this->uploadFile));
+                system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open file to upload"));
                 curl_easy_cleanup(curl);
 
                 return;
@@ -87,13 +85,13 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Perform curl operation and create the callback
         std::shared_ptr<FTPResponseCallback> callback;
         if (curl_easy_perform(curl) == CURLE_OK) {
-            callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content, this->uploadFile);
+            callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content);
         } else {
             if (!strlen(errorBuffer)) {
                 // Set readable error if there is no one
-                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't execute FTP request", this->uploadFile);
+                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't execute FTP request");
             } else {
-                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, errorBuffer, this->uploadFile);
+                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, errorBuffer);
             }
         }
 
@@ -111,6 +109,6 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Append callback so it can be fired
         system2Extension.AppendCallback(callback);
     } else {
-        system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't initialize CURL", this->uploadFile));
+        system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't initialize CURL"));
     }
 }

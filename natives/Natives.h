@@ -64,8 +64,9 @@ cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
@@ -145,8 +146,9 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },
     { "System2FTPRequest.SetAuthentication", NativeFTPRequest_SetAuthentication },
-    { "System2FTPRequest.Request", NativeFTPRequest_Request },
-    { "System2FTPRequest.Upload", NativeFTPRequest_Upload },
+    { "System2FTPRequest.SetInputFile", NativeFTPRequest_SetInputFile },
+    { "System2FTPRequest.GetInputFile", NativeFTPRequest_GetInputFile },
+    { "System2FTPRequest.StartRequest", NativeFTPRequest_StartRequest },
     { "System2FTPRequest.AppendToFile.get", NativeFTPRequest_GetAppendToFile },
     { "System2FTPRequest.AppendToFile.set", NativeFTPRequest_SetAppendToFile },
     { "System2FTPRequest.CreateMissingDirs.get", NativeFTPRequest_GetCreateMissingDirs },

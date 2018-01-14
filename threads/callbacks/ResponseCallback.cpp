@@ -33,7 +33,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
     // Get the response code
     long code;
     if (curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK) {
-        this->statusCode = (int)code;
+        this->statusCode = static_cast<int>(code);
     } else {
         this->statusCode = 0;
     }
@@ -46,7 +46,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
 
     double total;
     if (curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total) == CURLE_OK) {
-        this->totalTime = (float)total;
+        this->totalTime = static_cast<float>(total);
     } else {
         this->totalTime = 0.0f;
     }

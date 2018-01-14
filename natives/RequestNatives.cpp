@@ -426,17 +426,7 @@ cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t
     return 1;
 }
 
-cell_t NativeFTPRequest_Request(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    request->MakeRequest();
-    return 1;
-}
-
-cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;
@@ -444,8 +434,28 @@ cell_t NativeFTPRequest_Upload(IPluginContext *pContext, const cell_t *params) {
 
     char *inputFile;
     pContext->LocalToString(params[2], &inputFile);
-    request->Upload(inputFile);
 
+    request->inputFile = inputFile;
+    return 1;
+}
+
+cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *params) {
+    FTPRequest *request = FTPRequest::ConvertRequest<FTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    pContext->StringToLocalUTF8(params[2], params[3], request->inputFile.c_str(), NULL);
+    return 1;
+}
+
+cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *params) {
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    request->MakeRequest();
     return 1;
 }
 

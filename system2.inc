@@ -120,13 +120,12 @@ typeset System2HTTPResponseCallback
  *                      Can't be deleted, as it will be destroyed after the callback!
  * @param response      FTP response of the request. Is null if success is false.
  *                      Can't be deleted, as it will be destroyed after the callback!
- * @param uploadedFile  The uploaded file or empty if no file was uploaded.
  *
  * @noreturn
  */
 typeset System2FTPResponseCallback
 {
-    function void (bool success, const char[] error, System2FTPRequest request, System2FTPResponse response, const char[] uploadedFile);
+    function void (bool success, const char[] error, System2FTPRequest request, System2FTPResponse response);
 };
 
 
@@ -294,9 +293,7 @@ methodmap System2Request < Handle {
      */
     public native bool GetVerifySSL();
 
-    /**
-     * The timeout for the request.
-     */
+
     property int Timeout {
         /**
          * Returns the timeout for the request.
@@ -317,9 +314,6 @@ methodmap System2Request < Handle {
         public native set(int millis);
     }
 
-    /**
-     * The any data bound to the request.
-     */
     property any Any {
         /**
          * Returns the any data that was bound to this request.
@@ -526,9 +520,7 @@ methodmap System2HTTPRequest < System2Request {
      */
     public native void HEAD();
 
-    /**
-     * The follow redirects property.
-     */
+
     property bool FollowRedirects {
         /**
          * Returns whether the request follow redirects or not.
@@ -551,9 +543,6 @@ methodmap System2HTTPRequest < System2Request {
         public native set(bool follow);
     }
 
-    /**
-     * The auto referer property.
-     */
     property bool AutoReferer {
         /**
          * Returns whether to automatically append refereres on redirect.
@@ -594,7 +583,6 @@ methodmap System2FTPRequest < System2Request {
      */
     public native System2FTPRequest(const char[] url, System2FTPResponseCallback callback);
 
-
     /**
      * Sets the progress callback for the transfer of the request.
      *
@@ -604,7 +592,6 @@ methodmap System2FTPRequest < System2Request {
      * @error           Invalid Request.
      */
     public native void SetProgressCallback(System2FTPProgressCallback callback);
-
 
     /**
      * Sets authentication for the request.
@@ -617,30 +604,41 @@ methodmap System2FTPRequest < System2Request {
      */
     public native void SetAuthentication(const char[] username, const char[] password);
 
-
     /**
-     * Sends the request.
-     * May result in a directory listing or a file download.
-     *
-     * @noreturn
-     * @error           Invalid Request.
-     */
-    public native void Request();
-
-    /**
-     * Sends the request in order to upload content to a file.
+     * Sets the file to upload to a FTP server.
+     * If this is set, an upload approach will be used.
      *
      * @param file      File to upload.
-
+     *
      * @noreturn
      * @error           Invalid Request.
      */
-    public native void Upload(const char[] file);
+    public native void SetInputFile(const char[] file);
+
+    /**
+     * Retrieves the file which should be uploaded.
+     *
+     * @param file      Buffer to store file in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     * @error           Invalid Request.
+     */
+    public native void GetInputFile(char[] file, int maxlength);
 
 
     /**
-     * The append to file property.
+     * Starts the request.
+     *
+     * If a input file is set the request will upload this file.
+     * Otherwise it may result in a directory listing or a file download.
+     *
+     * @noreturn
+     * @error           Invalid Request.
      */
+    public native void StartRequest();
+
+
     property bool AppendToFile {
         /**
          * Returns whether the request appends to the FTP file or replaces it when uploading a file.
@@ -663,9 +661,6 @@ methodmap System2FTPRequest < System2Request {
         public native set(bool append);
     }
 
-    /**
-     * The create missing dirs property.
-     */
     property bool CreateMissingDirs {
         /**
          * Returns whether the request creates missing dirs when uploading a file.
@@ -1360,8 +1355,9 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
         MarkNativeAsOptional("System2FTPRequest.SetProgressCallback");
         MarkNativeAsOptional("System2FTPRequest.SetAuthentication");
-        MarkNativeAsOptional("System2FTPRequest.Request");
-        MarkNativeAsOptional("System2FTPRequest.Upload");
+        MarkNativeAsOptional("System2FTPRequest.SetInputFile");
+        MarkNativeAsOptional("System2FTPRequest.GetInputFile");
+        MarkNativeAsOptional("System2FTPRequest.StartRequest");
         MarkNativeAsOptional("System2FTPRequest.AppendToFile.get");
         MarkNativeAsOptional("System2FTPRequest.AppendToFile.set");
         MarkNativeAsOptional("System2FTPRequest.CreateMissingDirs.get");

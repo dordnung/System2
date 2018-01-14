@@ -32,6 +32,7 @@ class FTPRequest : public Request {
 public:
     std::string username;
     std::string password;
+    std::string inputFile;
     bool appendToFile;
     bool createMissingDirs;
 
@@ -39,10 +40,9 @@ public:
     FTPRequest(const FTPRequest &request);
 
     void MakeRequest();
-    void Upload(std::string uploadFile);
 
 private:
-    void MakeThread(std::string uploadFile);
+    void MakeThread();
 };
 
 

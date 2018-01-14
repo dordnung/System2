@@ -25,15 +25,13 @@
 #include "FTPResponseCallback.h"
 
 
-FTPResponseCallback::FTPResponseCallback(FTPRequest *ftpRequest, std::string error, std::string uploadFile)
-    : ResponseCallback(ftpRequest, error), uploadFile(uploadFile) {}
+FTPResponseCallback::FTPResponseCallback(FTPRequest *ftpRequest, std::string error)
+    : ResponseCallback(ftpRequest, error) {}
 
-
-FTPResponseCallback::FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content, std::string uploadFile)
-    : ResponseCallback(ftpRequest, curl, content), uploadFile(uploadFile) {}
+FTPResponseCallback::FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content)
+    : ResponseCallback(ftpRequest, curl, content) {}
 
 
 void FTPResponseCallback::PreFire() {
-    // Push whether something was downloaded or uploaded
-    this->request->responseCallback->PushString(this->uploadFile.c_str());
+    //  Nothing to do here
 }

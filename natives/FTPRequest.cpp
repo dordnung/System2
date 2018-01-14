@@ -30,21 +30,17 @@ FTPRequest::FTPRequest(std::string url, IPluginFunction *responseCallback)
     : Request(url, responseCallback), appendToFile(false), createMissingDirs(true) {};
 
 FTPRequest::FTPRequest(const FTPRequest &request) :
-    Request(request), username(request.username), password(request.password),
+    Request(request), username(request.username), password(request.password), inputFile(request.inputFile),
     appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs) {};
 
 
 void FTPRequest::MakeRequest() {
-    this->MakeThread(std::string());
-}
-
-void FTPRequest::Upload(std::string uploadFile) {
-    this->MakeThread(uploadFile);
+    this->MakeThread();
 }
 
 
-void FTPRequest::MakeThread(std::string uploadFile) {
+void FTPRequest::MakeThread() {
     // Make a copy for the thread, so it works independent
-    FTPRequestThread *requestThread = new FTPRequestThread(new FTPRequest(*this), uploadFile);
+    FTPRequestThread *requestThread = new FTPRequestThread(new FTPRequest(*this));
     threader->MakeThread(requestThread);
 }
