@@ -94,6 +94,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeExecuteOutput_GetExitStatus(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeExecute(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params);
@@ -176,6 +177,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2_ExecuteFormattedThreaded", NativeExecuteFormattedThreaded },
     { "System2ExecuteOutput.GetOutput", NativeExecuteOutput_GetOutput },
     { "System2ExecuteOutput.Size.get", NativeExecuteOutput_GetSize },
+    { "System2ExecuteOutput.ExitStatus.get", NativeExecuteOutput_GetExitStatus },
 
     { "System2_Execute", NativeExecute },
     { "System2_ExecuteFormatted", NativeExecuteFormatted },

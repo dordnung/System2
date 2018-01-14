@@ -32,6 +32,7 @@ ExecuteThread::ExecuteThread(std::string command, int data, IPluginFunction *cal
 void ExecuteThread::RunThread(IThreadHandle *pHandle) {
     bool success = true;
     std::string output;
+    int exitStatus;
 
     // Execute the command
     FILE *commandFile = PosixOpen(this->command.c_str(), "r");
@@ -43,13 +44,13 @@ void ExecuteThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Close
-        PosixClose(commandFile);
+        exitStatus = PosixClose(commandFile);
     } else {
         success = false;
     }
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(this->callback, success, output, this->command, this->data));
+    system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(this->callback, success, exitStatus, output, this->command, this->data));
 }
 
 void ExecuteThread::OnTerminate(IThreadHandle *pThread, bool cancel) {

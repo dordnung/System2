@@ -223,7 +223,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
 
 
 cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params) {
-    // Get the handle to the command callback
+    // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 
     ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
@@ -249,9 +249,8 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     return length - bytes - offset;
 }
 
-
 cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params) {
-    // Get the handle to the command callback
+    // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 
     ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
@@ -261,6 +260,19 @@ cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *param
 
     // Just return the length
     return callback->GetOutput().length();
+}
+
+cell_t NativeExecuteOutput_GetExitStatus(IPluginContext *pContext, const cell_t *params) {
+    // Get the handle to the execute callback
+    Handle_t hndl = static_cast<Handle_t>(params[1]);
+
+    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    if (!callback) {
+        return 0;
+    }
+
+    // Just return the exit status
+    return callback->GetExitStatus();
 }
 
 

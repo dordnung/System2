@@ -26,12 +26,16 @@
 #include "ExecuteCallbackHandler.h"
 
 
-ExecuteCallback::ExecuteCallback(IPluginFunction *callback, bool success, std::string output, std::string command, int data)
-    : callback(callback), success(success), output(output), command(command), data(data) {}
+ExecuteCallback::ExecuteCallback(IPluginFunction *callback, bool success, int exitStatus, std::string output, std::string command, int data)
+    : callback(callback), success(success), exitStatus(exitStatus), output(output), command(command), data(data) {}
 
 
 const std::string &ExecuteCallback::GetOutput() const {
     return this->output;
+}
+
+int ExecuteCallback::GetExitStatus() const {
+    return this->exitStatus;
 }
 
 void ExecuteCallback::Fire() {
@@ -46,8 +50,8 @@ void ExecuteCallback::Fire() {
 
         // Push every argument to the callback and execute it
         this->callback->PushCell(this->success);
-        this->callback->PushCell(outputHandle);
         this->callback->PushString(this->command.c_str());
+        this->callback->PushCell(outputHandle);
         this->callback->PushCell(this->data);
         this->callback->Execute(NULL);
 

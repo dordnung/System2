@@ -191,17 +191,18 @@ typeset System2CopyCallback
  *
  * @param success       Whether the execution was successful or not.
  *                      This not means that the command itself was successful!
+ *                      Check the ExitStatus of the output for this.
+ * @param command       The executed command.
  * @param output        Output of the execution. Is null if success is false.
  *                      Can't be deleted, as it will be destroyed after the callback!
- * @param command       The executed command.
  * @param data          Data passed to the execution native.
  *
  * @noreturn
  */
 typeset System2ExecuteCallback
 {
-    function void (bool success, System2ExecuteOutput output, const char[] command, any data);
-    function void (bool success, System2ExecuteOutput output, const char[] command);
+    function void (bool success, const char[] command, System2ExecuteOutput output, any data);
+    function void (bool success, const char[] command, System2ExecuteOutput output);
 };
 
 
@@ -842,6 +843,16 @@ methodmap System2ExecuteOutput < Handle {
          */
         public native get();
     }
+
+    property int ExitStatus {
+        /**
+         * Returns the exit status of the execution.
+         *
+         * @return      The exit status.
+         * @error       Invalid Output.
+         */
+        public native get();
+    }
 }
 
 
@@ -1385,6 +1396,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2_ExecuteFormattedThreaded");
         MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
         MarkNativeAsOptional("System2ExecuteOutput.Size.get");
+        MarkNativeAsOptional("System2ExecuteOutput.ExitStatus.get");
 
         MarkNativeAsOptional("System2_Execute");
         MarkNativeAsOptional("System2_ExecuteFormatted");
