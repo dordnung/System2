@@ -225,11 +225,9 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
 cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params) {
     // Get the handle to the command callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
-    HandleError err;
 
-    ExecuteCallback *callback;
-    if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &callback)) != HandleError_None) {
-        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
+    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    if (!callback) {
         return 0;
     }
 
@@ -238,6 +236,7 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     if (offset < 0) {
         offset = 0;
     }
+
     if (offset > (int)callback->GetOutput().length()) {
         offset = callback->GetOutput().length();
     }
@@ -251,11 +250,9 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
 cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params) {
     // Get the handle to the command callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
-    HandleError err;
 
-    ExecuteCallback *callback;
-    if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &callback)) != HandleError_None) {
-        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
+    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    if (!callback) {
         return 0;
     }
 

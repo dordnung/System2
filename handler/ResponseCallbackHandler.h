@@ -50,7 +50,7 @@ public:
     template<class ResponseCallbackClass>
     HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, ResponseCallbackClass **responseCallback) {
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&responseCallback);
+        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)responseCallback);
     }
 
     virtual void OnHandleDestroy(HandleType_t type, void *object);

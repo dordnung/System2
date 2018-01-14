@@ -43,6 +43,8 @@ public:
 
     const std::string &GetOutput();
     virtual void Fire();
+
+    static ExecuteCallback *ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext);
 };
 
 #endif

@@ -60,7 +60,7 @@ Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback *callback, Identit
 HandleError ExecuteCallbackHandler::ReadHandle(Handle_t hndl, IdentityToken_t *owner, ExecuteCallback **callback) {
     HandleSecurity sec = { owner, myself->GetIdentity() };
 
-    return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)&callback);
+    return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)callback);
 }
 
 

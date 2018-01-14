@@ -49,7 +49,7 @@ public:
     static RequestClass *ConvertRequest(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
 
-        RequestClass *request;
+        RequestClass *request = NULL;
         if ((err = requestHandler.ReadHandle<RequestClass>(hndl, pContext->GetIdentity(), &request)) != HandleError_None) {
             pContext->ReportError("Invalid request handle %x (error %d)", hndl, err);
             return NULL;

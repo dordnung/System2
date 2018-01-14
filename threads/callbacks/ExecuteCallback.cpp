@@ -57,3 +57,15 @@ void ExecuteCallback::Fire() {
         }
     }
 }
+
+ExecuteCallback *ExecuteCallback::ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext) {
+    HandleError err;
+
+    ExecuteCallback *executeCallback = NULL;
+    if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &executeCallback)) != HandleError_None) {
+        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
+        return NULL;
+    }
+
+    return executeCallback;
+}

@@ -26,12 +26,8 @@
 #include "ExecuteCallback.h"
 
 
-ExecuteThread::ExecuteThread(std::string command, int data, IPluginFunction *callback) : IThread() {
-    this->command = command;
-    this->data = data;
-    this->callback = callback;
-}
-
+ExecuteThread::ExecuteThread(std::string command, int data, IPluginFunction *callback)
+    : IThread(), command(command), data(data), callback(callback) {}
 
 void ExecuteThread::RunThread(IThreadHandle *pHandle) {
     bool success = true;
@@ -55,7 +51,6 @@ void ExecuteThread::RunThread(IThreadHandle *pHandle) {
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(this->callback, success, output, this->command, this->data));
 }
-
 
 void ExecuteThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
     delete this;

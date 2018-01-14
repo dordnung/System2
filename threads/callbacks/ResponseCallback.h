@@ -48,7 +48,7 @@ public:
     static ResponseCallbackClass *ConvertResponse(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
 
-        ResponseCallbackClass *response;
+        ResponseCallbackClass *response = NULL;
         if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &response)) != HandleError_None) {
             pContext->ReportError("Invalid response handle %x (error %d)", hndl, err);
             return NULL;
