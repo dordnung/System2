@@ -220,7 +220,7 @@ methodmap System2Request < Handle {
      * @param url       URL to use for the request.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetURL(const char[] url);
 
@@ -231,25 +231,25 @@ methodmap System2Request < Handle {
      * @param maxlength Maxlength of the buffer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void GetURL(char[] url, int maxlength);
 
     /**
      * Sets the port of the request.
      *
-     * @param port       Port to use for the request.
+     * @param port      Port to use for the request.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetPort(int port);
 
     /**
      * Returns the port of the request.
      *
-     * @return The port of the request or 0 if none set.
-     * @error Invalid Handle.
+     * @return          The port of the request or 0 if none set.
+     * @error           Invalid Request.
      */
     public native int GetPort();
 
@@ -260,7 +260,7 @@ methodmap System2Request < Handle {
      * @param file      File to write the output to.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetOutputFile(const char[] file);
 
@@ -271,7 +271,7 @@ methodmap System2Request < Handle {
      * @param maxlength Maxlength of the buffer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void GetOutputFile(char[] file, int maxlength);
 
@@ -282,15 +282,15 @@ methodmap System2Request < Handle {
      * @param verify    True to verify SSL certificate, otherwise false.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetVerifySSL(bool verify);
 
     /**
      * Returns whether SSL certificates will be verified.
      *
-     * @return True if SSL certificates will be verified, otherwise false.
-     * @error Invalid Handle.
+     * @return          True if SSL certificates will be verified, otherwise false.
+     * @error           Invalid Request.
      */
     public native bool GetVerifySSL();
 
@@ -301,8 +301,8 @@ methodmap System2Request < Handle {
         /**
          * Returns the timeout for the request.
          *
-         * @return The timeout of the request in milliseconds or 0 if none set.
-         * @error Invalid Handle.
+         * @return          The timeout of the request in milliseconds or 0 if none set.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -312,7 +312,7 @@ methodmap System2Request < Handle {
          * @param millis    The timeout for the request in milliseconds.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(int millis);
     }
@@ -324,8 +324,8 @@ methodmap System2Request < Handle {
         /**
          * Returns the any data that was bound to this request.
          *
-         * @return The any data that was bound or 0 if none set.
-         * @error Invalid Handle.
+         * @return          The any data that was bound or 0 if none set.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -335,7 +335,7 @@ methodmap System2Request < Handle {
          * @param Any       The any data to add.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(any Any);
     }
@@ -353,7 +353,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param callback  Response callback to call when the request is finished.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native System2HTTPRequest(const char[] url, System2HTTPResponseCallback callback);
 
@@ -365,7 +365,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param callback  Progress callback to call for the transfer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetProgressCallback(System2HTTPProgressCallback callback);
 
@@ -377,7 +377,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param data      Body data to send with the request.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetData(const char[] data);
 
@@ -388,7 +388,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param maxlength Maxlength of the buffer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void GetData(char[] data, int maxlength);
 
@@ -400,7 +400,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param value     Value to set the header to.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetHeader(const char[] header, const char[] value);
 
@@ -411,16 +411,16 @@ methodmap System2HTTPRequest < System2Request {
      * @param value     Buffer to store value in.
      * @param maxlength Maxlength of the buffer.
      *
-     * @return True if header was set, otherwise false.
-     * @error Invalid Handle.
+     * @return          True if header was set, otherwise false.
+     * @error           Invalid Request.
      */
     public native bool GetHeader(const char[] header, char[] value, int maxlength);
 
     /**
      * Returns the number of set headers.
      *
-     * @return The number of set headers.
-     * @error Invalid Handle.
+     * @return          The number of set headers.
+     * @error           Invalid Request.
      */
     public native int GetHeadersCount();
 
@@ -432,7 +432,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param maxName   Maxlength of a single header name (second dimension of the names array).
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
 
@@ -440,8 +440,8 @@ methodmap System2HTTPRequest < System2Request {
      * Returns all header names of the request as ArrayList.
      * Attention: ArrayList has to be deleted after use!
      *
-     * @return ArrayList with all request header names.
-     * @error Invalid Handle.
+     * @return          ArrayList with all request header names.
+     * @error           Invalid Request.
      */
     public ArrayList GetHeaders() {
         int numHeaders = this.GetHeadersCount();
@@ -462,7 +462,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param userAgent User agent to use.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetUserAgent(const char[] userAgent);
 
@@ -473,7 +473,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param password  Password to use for basic authentication.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetBasicAuthentication(const char[] username, const char[] password);
 
@@ -482,7 +482,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the GET method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void GET();
 
@@ -490,7 +490,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the POST method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void POST();
     
@@ -498,7 +498,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the PUT method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void PUT();
     
@@ -506,7 +506,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the PATCH method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void PATCH();
     
@@ -514,7 +514,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the DELETE method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void DELETE();
     
@@ -522,7 +522,7 @@ methodmap System2HTTPRequest < System2Request {
      * Sends the request with the HEAD method.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void HEAD();
 
@@ -534,8 +534,8 @@ methodmap System2HTTPRequest < System2Request {
          * Returns whether the request follow redirects or not.
          * Default is to follow redirects.
          *
-         * @return True if it follow redirects, otherwise false.
-         * @error Invalid Handle.
+         * @return          True if it follow redirects, otherwise false.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -546,7 +546,7 @@ methodmap System2HTTPRequest < System2Request {
          * @param follow    True to follow redirects, otherwise false.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(bool follow);
     }
@@ -559,8 +559,8 @@ methodmap System2HTTPRequest < System2Request {
          * Returns whether to automatically append refereres on redirect.
          * Default is not to automatically append refereres.
          *
-         * @return True if referers will automatically append, otherwise false.
-         * @error Invalid Handle.
+         * @return          True if referers will automatically append, otherwise false.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -569,10 +569,10 @@ methodmap System2HTTPRequest < System2Request {
          * This will only work when the FollowRedirects property is enabled.
          * Default is not to automatically append refereres.
          *
-         * @param auto    True to automatically append refereres, otherwise false.
+         * @param auto      True to automatically append refereres, otherwise false.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(bool auto);
     }
@@ -590,7 +590,7 @@ methodmap System2FTPRequest < System2Request {
      * @param callback  Response callback to call when the request is finished.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native System2FTPRequest(const char[] url, System2FTPResponseCallback callback);
 
@@ -601,7 +601,7 @@ methodmap System2FTPRequest < System2Request {
      * @param callback  Progress callback to call for the transfer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetProgressCallback(System2FTPProgressCallback callback);
 
@@ -613,7 +613,7 @@ methodmap System2FTPRequest < System2Request {
      * @param password  Password to use for authentication.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void SetAuthentication(const char[] username, const char[] password);
 
@@ -623,7 +623,7 @@ methodmap System2FTPRequest < System2Request {
      * May result in a directory listing or a file download.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void Request();
 
@@ -633,7 +633,7 @@ methodmap System2FTPRequest < System2Request {
      * @param file      File to upload.
 
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Request.
      */
     public native void Upload(const char[] file);
 
@@ -646,8 +646,8 @@ methodmap System2FTPRequest < System2Request {
          * Returns whether the request appends to the FTP file or replaces it when uploading a file.
          * Default the file will be replaced.
          *
-         * @return True if it append, false if replacing.
-         * @error Invalid Handle.
+         * @return          True if it append, false if replacing.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -658,7 +658,7 @@ methodmap System2FTPRequest < System2Request {
          * @param append    True to append to file, otherwise false to replace it.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(bool append);
     }
@@ -671,8 +671,8 @@ methodmap System2FTPRequest < System2Request {
          * Returns whether the request creates missing dirs when uploading a file.
          * Default missing dirs will be created.
          *
-         * @return True if it creates missing dirs, otherwise false.
-         * @error Invalid Handle.
+         * @return          True if it creates missing dirs, otherwise false.
+         * @error           Invalid Request.
          */
         public native get();
 
@@ -683,7 +683,7 @@ methodmap System2FTPRequest < System2Request {
          * @param create    True to create missing dirs, otherwise false.
          *
          * @noreturn
-         * @error Invalid Handle.
+         * @error           Invalid Request.
          */
         public native set(bool create);
     }
@@ -703,7 +703,7 @@ methodmap System2Response < Handle {
      * @param maxlength Maxlength of the URL buffer.
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Response.
      */
     public native void GetLastUrl(char[] url, int maxlength);
 
@@ -717,18 +717,18 @@ methodmap System2Response < Handle {
      * @param start     Start byte to start reading from.
      *                  You can use this to retrieve the content step by step.
      *
-     * @noreturn
-     * @error Invalid Handle.
+     * @return          Number of unread bytes. 0 if all bytes were read.
+     * @error           Invalid Response.
      */
-    public native void GetContent(char[] content, int maxlength, int start = 0);
+    public native int GetContent(char[] content, int maxlength, int start = 0);
 
 
     property int ContentSize {
         /**
          * Returns the size of the complete content.
          *
-         * @return Size of the content.
-         * @error Invalid Handle.
+         * @return      Size of the content.
+         * @error       Invalid Response.
          */
         public native get();
     }
@@ -737,8 +737,8 @@ methodmap System2Response < Handle {
         /**
          * Returns the status code of the response.
          *
-         * @return The status code.
-         * @error Invalid Handle.
+         * @return      The status code.
+         * @error       Invalid Response.
          */
         public native get();
     }
@@ -747,8 +747,8 @@ methodmap System2Response < Handle {
         /**
          * Returns the total time from the request until the response in seconds.
          *
-         * @return Total time from the request until the response in seconds.
-         * @error Invalid Handle.
+         * @return      Total time from the request until the response in seconds.
+         * @error       Invalid Response.
          */
         public native get();
     }
@@ -766,16 +766,16 @@ methodmap System2HTTPResponse < System2Response {
      * @param value     Buffer to store value in.
      * @param maxlength Maxlength of the buffer.
      *
-     * @return True if header was set, otherwise false.
-     * @error Invalid Handle.
+     * @return          True if header was set, otherwise false.
+     * @error           Invalid Response.
      */
     public native bool GetHeader(const char[] name, char[] value, int maxlength);
 
     /**
      * Returns the number of set headers.
      *
-     * @return The number of set headers.
-     * @error Invalid Handle.
+     * @return          The number of set headers.
+     * @error           Invalid Response.
      */
     public native int GetHeadersCount();
 
@@ -787,7 +787,7 @@ methodmap System2HTTPResponse < System2Response {
      * @param maxName   Maxlength of a single header name (second dimension of the names array).
      *
      * @noreturn
-     * @error Invalid Handle.
+     * @error           Invalid Response.
      */
     public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
 
@@ -795,8 +795,8 @@ methodmap System2HTTPResponse < System2Response {
      * Returns all header names of the response as ArrayList.
      * Attention: ArrayList has to be deleted after use!
      *
-     * @return ArrayList with all response header names.
-     * @error Invalid Handle.
+     * @return          ArrayList with all response header names.
+     * @error           Invalid Response.
      */
     public ArrayList GetHeaders() {
         int numHeaders = this.GetHeadersCount();
@@ -833,8 +833,8 @@ methodmap System2ExecuteOutput < Handle {
      * @param start     Start byte to start reading from.
      *                  You can use this to retrieve the output step by step. 
      * 
-     * @noreturn
-     * @error           Invalid Handle.
+     * @return          Number of unread bytes. 0 if all bytes were read.
+     * @error           Invalid Output.
      */
     public native void GetOutput(char[] output, int maxlength, int start = 0);
 
@@ -842,8 +842,8 @@ methodmap System2ExecuteOutput < Handle {
         /**
          * Returns the size of the complete output.
          *
-         * @return Size of the output.
-         * @error Invalid Handle.
+         * @return      Size of the output.
+         * @error       Invalid Output.
          */
         public native get();
     }
