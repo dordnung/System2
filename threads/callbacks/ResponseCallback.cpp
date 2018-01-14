@@ -44,6 +44,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
         this->lastURL = url;
     }
 
+    // Get the total execution time of the request
     double total;
     if (curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total) == CURLE_OK) {
         this->totalTime = static_cast<float>(total);

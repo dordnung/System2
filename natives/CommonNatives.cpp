@@ -195,6 +195,7 @@ cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
     char *str;
     pContext->LocalToString(params[1], &str);
 
+    // Use the curl escape method to encode it
     CURL *curl = curl_easy_init();
     if (curl) {
         char *output = curl_easy_escape(curl, str, 0);
@@ -219,6 +220,7 @@ cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params) {
     char *str;
     pContext->LocalToString(params[1], &str);
 
+    // Use the curl unescape method to decode it
     CURL *curl = curl_easy_init();
     if (curl) {
         char *output = curl_easy_unescape(curl, str, 0, NULL);

@@ -105,6 +105,7 @@ void System2Extension::GameFrameHit() {
         this->callbackQueue.front()->Fire();
 
         // Remove the callback from the queue
+        // No deleting needed, as callbacks are shared pointers
         callbackQueue.pop();
     }
 

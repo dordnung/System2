@@ -53,7 +53,6 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
         offset = length;
     }
 
-
     // Copy the content beginning from offset
     size_t bytes;
     pContext->StringToLocalUTF8(params[2], params[3], response->content.substr(offset).c_str(), &bytes);

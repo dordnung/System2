@@ -33,5 +33,5 @@ FTPResponseCallback::FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std
 
 
 void FTPResponseCallback::PreFire() {
-    //  Nothing to do here
+    // Nothing to do here
 }

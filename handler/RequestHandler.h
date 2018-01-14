@@ -49,6 +49,7 @@ public:
 
     template<class RequestClass>
     Handle_t CreateLocaleHandle(RequestClass *request, IdentityToken_t *owner) {
+        // Do not allow deleting or cloning for the plugin
         HandleAccess rules;
         g_pHandleSys->InitAccessDefaults(NULL, &rules);
         rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
