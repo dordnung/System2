@@ -184,7 +184,7 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
     char *data;
     pContext->LocalToString(params[2], &data);
 
-    request->data = data;
+    request->bodyData = data;
     return 1;
 }
 
@@ -194,7 +194,7 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[2], params[3], request->data.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], request->bodyData.c_str(), NULL);
     return 1;
 }
 
@@ -250,7 +250,7 @@ cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t 
 
     cell_t index = 0;
     std::map<std::string, std::string>::iterator it;
-    for (it = request->headers.begin(); it != request->headers.end() && index < params[3]; it++) {
+    for (it = request->headers.begin(); it != request->headers.end() && index < params[3]; ++it) {
         pContext->StringToLocalUTF8(array[index], params[4], it->first.c_str(), NULL);
         index++;
     }

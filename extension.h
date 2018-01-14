@@ -44,6 +44,8 @@ private:
     uint32_t frames;
 
 public:
+    System2Extension();
+
     void AppendCallback(std::shared_ptr<Callback> callback);
 
     void GameFrameHit();

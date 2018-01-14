@@ -41,7 +41,7 @@ public:
         FILE *file;
     } WriteDataInfo;
 
-    RequestThread(Request *request);
+    explicit RequestThread(Request *request);
 
     bool ApplyRequest(CURL *curl, WriteDataInfo &writeData);
 

@@ -77,8 +77,8 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Set data to send
-        if (!this->httpRequest->data.empty()) {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->httpRequest->data.c_str());
+        if (!this->httpRequest->bodyData.empty()) {
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->httpRequest->bodyData.c_str());
         }
 
         // Set headers
@@ -113,7 +113,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
                 break;
             case METHOD_POST:
                 curl_easy_setopt(curl, CURLOPT_POST, 1L);
-                if (this->httpRequest->data.empty()) {
+                if (this->httpRequest->bodyData.empty()) {
                     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
                     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, 0L);
                 }

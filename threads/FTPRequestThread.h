@@ -36,7 +36,7 @@ class FTPRequestThread : public RequestThread {
 public:
     FTPRequest * ftpRequest;
 
-    FTPRequestThread(FTPRequest *ftpRequest);
+    explicit FTPRequestThread(FTPRequest *ftpRequest);
 
     virtual void RunThread(IThreadHandle *pThread);
 };

@@ -50,7 +50,6 @@ public:
     void OnTerminate(IThreadHandle *pThread, bool cancel);
 
     static size_t GetPage(void *buffer, size_t size, size_t nmemb, void *userdata);
-
 };
 
 #endif

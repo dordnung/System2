@@ -30,7 +30,7 @@ HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback)
     : Request(url, responseCallback), followRedirects(true), autoReferer(false) {};
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
-    Request(request), data(request.data), headers(request.headers), userAgent(request.userAgent),
+    Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),
     username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {};
 
 

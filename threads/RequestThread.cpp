@@ -109,11 +109,16 @@ size_t RequestThread::ReadFile(char *buffer, size_t size, size_t nitems, void *i
 }
 
 size_t RequestThread::ProgressUpdated(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-    RequestThread *requestThread = (RequestThread *)clientp;
+    RequestThread *requestThread = static_cast<RequestThread *>(clientp);
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != requestThread->lastProgressFrame)) {
         // Append progress callback
-        system2Extension.AppendCallback(std::make_shared<ProgressCallback>(requestThread->request, (int)dltotal, (int)dlnow, (int)ultotal, (int)ulnow, requestThread->request->data));
+        system2Extension.AppendCallback(std::make_shared<ProgressCallback>(requestThread->request,
+                                                                           static_cast<int>(dltotal),
+                                                                           static_cast<int>(dlnow),
+                                                                           static_cast<int>(ultotal),
+                                                                           static_cast<int>(ulnow),
+                                                                           requestThread->request->data));
     }
 
     // Save current frame

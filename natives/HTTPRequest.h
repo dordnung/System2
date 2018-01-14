@@ -33,7 +33,7 @@
 
 class HTTPRequest : public Request {
 public:
-    std::string data;
+    std::string bodyData;
     std::map<std::string, std::string> headers;
     std::string userAgent;
     std::string username;

@@ -32,6 +32,8 @@
 #include "FTPRequestThread.h"
 
 
+System2Extension::System2Extension() : mutex(NULL), frames(0) {};
+
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     this->frames = 0;
 

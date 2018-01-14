@@ -128,7 +128,7 @@ cell_t NativeHTTPResponse_GetHeadersArray(IPluginContext *pContext, const cell_t
 
     cell_t index = 0;
     std::map<std::string, std::string>::iterator it;
-    for (it = response->headers.begin(); it != response->headers.end() && index < params[3]; it++) {
+    for (it = response->headers.begin(); it != response->headers.end() && index < params[3]; ++it) {
         pContext->StringToLocalUTF8(array[index], params[4], it->first.c_str(), NULL);
         index++;
     }

@@ -30,7 +30,7 @@ ExecuteCallback::ExecuteCallback(IPluginFunction *callback, bool success, std::s
     : callback(callback), success(success), output(output), command(command), data(data) {}
 
 
-const std::string &ExecuteCallback::GetOutput() {
+const std::string &ExecuteCallback::GetOutput() const {
     return this->output;
 }
 

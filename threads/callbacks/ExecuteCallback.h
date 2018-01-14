@@ -41,7 +41,7 @@ private:
 public:
     ExecuteCallback(IPluginFunction *callback, bool success, std::string output, std::string command, int data);
 
-    const std::string &GetOutput();
+    const std::string &GetOutput() const;
     virtual void Fire();
 
     static ExecuteCallback *ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext);
