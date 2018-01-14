@@ -127,7 +127,9 @@ void PerformTests() {
 
 	// Assert GetOs does not return unkown
 	PrintToServer("INFO: Testing OS is defined");
-	assertValueNotEquals(view_as<int>(OS:OS_UNKNOWN), view_as<int>(System2_GetOS()));
+	OS os = System2_GetOS();
+	assertValueNotEquals(view_as<int>(OS:OS_UNKNOWN), view_as<int>(os));
+	PrintToServer("INFO: The OS is: %s", (os == OS:OS_WINDOWS) ? "Windows" : ((os == OS:OS_UNIX) ? "Linux" : "MAC"));
 
 	// Assert calculating MD5 hash of a string
 	char md5[33];
@@ -254,6 +256,8 @@ public Action OnCheckCallbacks(Handle timer, any isLegacy) {
 }
 
 
+/** CALLBACKS */
+
 void CopyFileCallback(bool success, const char[] from, const char[] to, any data) {
 	PrintToServer("INFO: Copied a file");
 	finishedCallbacks++;
@@ -327,6 +331,8 @@ void ExecuteCallback(bool success, System2ExecuteOutput output, const char[] com
 	assertStringEquals("IsATestCommand", output2);
 }
 
+
+/** LEGACY CALLBACKS */
 
 void GetPageCallbackUserAgent(const char[] output, const int size, CMDReturn status, any data, const char[] command) {
 	PrintToServer("INFO: Got a page with set user agent");
