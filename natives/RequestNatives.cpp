@@ -153,9 +153,9 @@ cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) 
 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params) {
     char *url;
-    pContext->LocalToString(params[2], &url);
+    pContext->LocalToString(params[1], &url);
 
-    HTTPRequest *request = new HTTPRequest(url, pContext->GetFunctionById(params[3]));
+    HTTPRequest *request = new HTTPRequest(url, pContext->GetFunctionById(params[2]));
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
@@ -388,9 +388,9 @@ cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
     char *url;
-    pContext->LocalToString(params[2], &url);
+    pContext->LocalToString(params[1], &url);
 
-    FTPRequest *request = new FTPRequest(url, pContext->GetFunctionById(params[3]));
+    FTPRequest *request = new FTPRequest(url, pContext->GetFunctionById(params[2]));
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
