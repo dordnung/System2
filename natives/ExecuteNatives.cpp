@@ -233,17 +233,20 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
 
     // Get offset and check range
     int offset = params[4];
+    int length = static_cast<int>(callback->GetOutput().length());
     if (offset < 0) {
         offset = 0;
     }
 
-    if (offset > (int)callback->GetOutput().length()) {
-        offset = callback->GetOutput().length();
+    if (offset > length) {
+        offset = length;
     }
 
     // Copy the output beginning from offset
-    pContext->StringToLocalUTF8(params[2], params[3], callback->GetOutput().substr(offset).c_str(), NULL);
-    return 1;
+    size_t bytes;
+    pContext->StringToLocalUTF8(params[2], params[3], callback->GetOutput().substr(offset).c_str(), &bytes);
+
+    return length - bytes - offset;
 }
 
 

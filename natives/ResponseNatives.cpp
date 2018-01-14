@@ -42,8 +42,23 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[2], params[3], response->content.c_str(), NULL);
-    return 1;
+    // Get offset and check range
+    int length = static_cast<int>(response->content.length());
+    int offset = params[4];
+    if (offset < 0) {
+        offset = 0;
+    }
+
+    if (offset > length) {
+        offset = length;
+    }
+
+
+    // Copy the content beginning from offset
+    size_t bytes;
+    pContext->StringToLocalUTF8(params[2], params[3], response->content.substr(offset).c_str(), &bytes);
+
+    return length - bytes - offset;
 }
 
 
