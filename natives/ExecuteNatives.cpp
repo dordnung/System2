@@ -140,7 +140,10 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[6], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: 7-ZIP executable couldn't be found or is not executable at %s", binDir);
+        std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
+
+        g_pSM->LogError(myself, error.c_str());
+        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(pContext->GetFunctionById(params[1]), false, 1, error, "", params[6]));
     }
 
     return 1;
@@ -169,7 +172,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
-    }
+}
 #endif
     g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), path);
     g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), archive);
@@ -188,7 +191,10 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[4], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: 7-ZIP executable couldn't be found or is not executable at %s", binDir);
+        std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
+
+        g_pSM->LogError(myself, error.c_str());
+        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(pContext->GetFunctionById(params[1]), false, 1, error, "", params[4]));
     }
 
     return 1;
