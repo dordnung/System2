@@ -49,6 +49,16 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
+        // Set the ftp username
+        if (!this->ftpRequest->username.empty()) {
+            curl_easy_setopt(curl, CURLOPT_USERNAME, this->ftpRequest->username.c_str());
+        }
+
+        // Set the ftp password
+        if (!this->ftpRequest->password.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PASSWORD, this->ftpRequest->password.c_str());
+        }
+
         FILE *file = NULL;
         if (!this->ftpRequest->inputFile.empty()) {
             // Get the full path to the file
@@ -77,6 +87,10 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
             curl_easy_setopt(curl, CURLOPT_APPEND, this->ftpRequest->appendToFile ? 1L : 0L);
             curl_easy_setopt(curl, CURLOPT_READDATA, file);
             curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
+        } else {
+            if (this->ftpRequest->listFilenamesOnly) {
+                curl_easy_setopt(curl, CURLOPT_DIRLISTONLY, 1L);
+            }
         }
 
         // Only one process can be connect to FTP

@@ -113,7 +113,7 @@ size_t RequestThread::ProgressUpdated(void *clientp, curl_off_t dltotal, curl_of
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != requestThread->lastProgressFrame)) {
         // Append progress callback
-        system2Extension.AppendCallback(std::make_shared<ProgressCallback>(requestThread->request,
+        system2Extension.AppendCallback(std::make_shared<ProgressCallback>(requestThread->request->Clone(),
                                                                            static_cast<int>(dltotal),
                                                                            static_cast<int>(dlnow),
                                                                            static_cast<int>(ultotal),

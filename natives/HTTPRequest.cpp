@@ -27,11 +27,16 @@
 
 
 HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback)
-    : Request(url, responseCallback), followRedirects(true), autoReferer(false) {};
+    : Request(url, responseCallback), followRedirects(true), autoReferer(false) {}
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
     Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),
-    username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {};
+    username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {}
+
+
+HTTPRequest * HTTPRequest::Clone() const {
+    return new HTTPRequest(*this);
+}
 
 
 void HTTPRequest::Get() {

@@ -307,7 +307,7 @@ methodmap System2Request < Handle {
         /**
          * Sets the timeout for the request.
          *
-         * @param millis    The timeout for the request in milliseconds.
+         * @param millis    The timeout for the request in milliseconds. 0 to disable.
          *
          * @noreturn
          * @error           Invalid Request.
@@ -412,6 +412,19 @@ methodmap System2HTTPRequest < System2Request {
     public native bool GetHeader(const char[] header, char[] value, int maxlength);
 
     /**
+     * Retrieves the name of a header at a given index.
+     * Use GetHeadersCount to retrieve the maximum index.
+     *
+     * @param index     Index of the header name.
+     * @param name      Buffer to store name in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @return          True if header was found, otherwise false.
+     * @error           Invalid Response.
+     */
+    public native bool GetHeaderName(int index, char[] name, int maxlength);
+
+    /**
      * Returns the number of set headers.
      *
      * @return          The number of set headers.
@@ -420,31 +433,21 @@ methodmap System2HTTPRequest < System2Request {
     public native int GetHeadersCount();
 
     /**
-     * Retrieves all set header names of the request.
-     *
-     * @param names     Array of char arrays to store the names of the headers in.
-     * @param maxNames  Max. header names to retrieve (first dimension of the names array).
-     * @param maxName   Maxlength of a single header name (second dimension of the names array).
-     *
-     * @noreturn
-     * @error           Invalid Request.
-     */
-    public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
-
-    /**
      * Returns all header names of the request as ArrayList.
      * Attention: ArrayList has to be deleted after use!
+
+     * @param maxlength Maxlength of a header.
      *
      * @return          ArrayList with all request header names.
      * @error           Invalid Request.
      */
-    public ArrayList GetHeaders() {
-        int numHeaders = this.GetHeadersCount();
-        char[][] headersArray = new char[numHeaders][128];
+    public ArrayList GetHeaders(int maxlength = 256) {
+        ArrayList headers = new ArrayList(maxlength);
 
-        ArrayList headers = new ArrayList(128);
-        for (int i=0; i < numHeaders; i++) {
-            headers.PushString(headersArray[i]);
+        char[] headerName = new char[maxlength];
+        for (int i=0; i < this.GetHeadersCount(); i++) {
+            this.GetHeaderName(i, headerName, maxlength);
+            headers.PushString(headerName);
         }
 
         return headers;
@@ -683,6 +686,27 @@ methodmap System2FTPRequest < System2Request {
          */
         public native set(bool create);
     }
+
+
+    property bool ListFilenamesOnly {
+        /**
+         * Returns whether only file names should be fetched for directory listing.
+         *
+         * @return          True if only file names should be fetched
+         * @error           Invalid Request.
+         */
+        public native get();
+
+        /**
+         * Sets whether only file names should be fetched for directory listing.
+         *
+         * @param append    True it only file names should be fetched, otherwise false for full directory listing.
+         *
+         * @noreturn
+         * @error           Invalid Request.
+         */
+        public native set(bool append);
+    }
 }
 
 
@@ -701,7 +725,7 @@ methodmap System2Response < Handle {
      * @noreturn
      * @error           Invalid Response.
      */
-    public native void GetLastUrl(char[] url, int maxlength);
+    public native void GetLastURL(char[] url, int maxlength);
 
 
     /**
@@ -755,6 +779,7 @@ methodmap System2Response < Handle {
  * Methodmap for a response of a HTTP request.
  */
 methodmap System2HTTPResponse < System2Response {
+
     /**
      * Retrieves a HTTP response header
      *
@@ -768,6 +793,19 @@ methodmap System2HTTPResponse < System2Response {
     public native bool GetHeader(const char[] name, char[] value, int maxlength);
 
     /**
+     * Retrieves the name of a header at a given index.
+     * Use GetHeadersCount to retrieve the maximum index.
+     *
+     * @param index     Index of the header name.
+     * @param name      Buffer to store name in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @return          True if header was found, otherwise false.
+     * @error           Invalid Response.
+     */
+    public native bool GetHeaderName(int index, char[] name, int maxlength);
+
+    /**
      * Returns the number of set headers.
      *
      * @return          The number of set headers.
@@ -776,31 +814,21 @@ methodmap System2HTTPResponse < System2Response {
     public native int GetHeadersCount();
 
     /**
-     * Retrieves all header names of the response.
-     *
-     * @param names     Array of char arrays to store the names of the headers in.
-     * @param maxNames  Max. header names to retrieve (first dimension of the names array).
-     * @param maxName   Maxlength of a single header name (second dimension of the names array).
-     *
-     * @noreturn
-     * @error           Invalid Response.
-     */
-    public native void GetHeadersArray(char[][] names, int maxNames, int maxName);
-
-    /**
      * Returns all header names of the response as ArrayList.
      * Attention: ArrayList has to be deleted after use!
+
+     * @param maxlength Maxlength of a header.
      *
      * @return          ArrayList with all response header names.
-     * @error           Invalid Response.
+     * @error           Invalid Request.
      */
-    public ArrayList GetHeaders() {
-        int numHeaders = this.GetHeadersCount();
-        char[][] headersArray = new char[numHeaders][128];
+    public ArrayList GetHeaders(int maxlength = 256) {
+        ArrayList headers = new ArrayList(maxlength);
 
-        ArrayList headers = new ArrayList(128);
-        for (int i=0; i < numHeaders; i++) {
-            headers.PushString(headersArray[i]);
+        char[] headerName = new char[maxlength];
+        for (int i=0; i < this.GetHeadersCount(); i++) {
+            this.GetHeaderName(i, headerName, maxlength);
+            headers.PushString(headerName);
         }
 
         return headers;
@@ -832,7 +860,7 @@ methodmap System2ExecuteOutput < Handle {
      * @return          Number of unread bytes. 0 if all bytes were read.
      * @error           Invalid Output.
      */
-    public native void GetOutput(char[] output, int maxlength, int start = 0);
+    public native int GetOutput(char[] output, int maxlength, int start = 0);
 
     property int Size {
         /**
@@ -1348,8 +1376,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.GetData");
         MarkNativeAsOptional("System2HTTPRequest.SetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeader");
+        MarkNativeAsOptional("System2HTTPRequest.GetHeaderName");
         MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
-        MarkNativeAsOptional("System2HTTPRequest.GetHeadersArray");
         MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
         MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
         MarkNativeAsOptional("System2HTTPRequest.GET");
@@ -1373,16 +1401,18 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2FTPRequest.AppendToFile.set");
         MarkNativeAsOptional("System2FTPRequest.CreateMissingDirs.get");
         MarkNativeAsOptional("System2FTPRequest.CreateMissingDirs.set");
+        MarkNativeAsOptional("System2FTPRequest.ListFilenamesOnly.get");
+        MarkNativeAsOptional("System2FTPRequest.ListFilenamesOnly.set");
         
-        MarkNativeAsOptional("System2Response.GetLastUrl");
+        MarkNativeAsOptional("System2Response.GetLastURL");
         MarkNativeAsOptional("System2Response.GetContent");
         MarkNativeAsOptional("System2Response.ContentSize.get");
         MarkNativeAsOptional("System2Response.StatusCode.get");
         MarkNativeAsOptional("System2Response.TotalTime.get");
         
         MarkNativeAsOptional("System2HTTPResponse.GetHeader");
+        MarkNativeAsOptional("System2HTTPResponse.GetHeaderName");
         MarkNativeAsOptional("System2HTTPResponse.GetHeadersCount");
-        MarkNativeAsOptional("System2HTTPResponse.GetHeadersArray");
 
         MarkNativeAsOptional("System2_URLEncode");
         MarkNativeAsOptional("System2_URLDecode");

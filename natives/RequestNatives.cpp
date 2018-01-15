@@ -26,6 +26,7 @@
 #include "HTTPRequest.h"
 #include "FTPRequest.h"
 #include "RequestHandler.h"
+#include "HTTPRequestThread.h"
 
 
 cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
@@ -222,11 +223,31 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
     char *header;
     pContext->LocalToString(params[2], &header);
 
-    if (request->headers.find(header) == request->headers.end()) {
+    for (std::map<std::string, std::string>::iterator it = request->headers.begin(); it != request->headers.end(); ++it) {
+        if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
+            pContext->StringToLocalUTF8(params[3], params[4], request->headers[header].c_str(), NULL);
+            return 1;
+        }
+    }
+}
+
+cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+    if (request == NULL) {
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[3], params[4], request->headers[header].c_str(), NULL);
+    if (params[2] >= static_cast<int>(request->headers.size())) {
+        return 0;
+    }
+
+    // Map can't be accessed by index
+    std::map<std::string, std::string>::iterator it = request->headers.begin();
+    for (int i = 0; i < params[2]; i++) {
+        it++;
+    }
+
+    pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), NULL);
     return 1;
 }
 
@@ -237,25 +258,6 @@ cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t 
     }
 
     return request->headers.size();
-}
-
-cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    cell_t *array;
-    pContext->LocalToPhysAddr(params[2], &array);
-
-    cell_t index = 0;
-    std::map<std::string, std::string>::iterator it;
-    for (it = request->headers.begin(); it != request->headers.end() && index < params[3]; ++it) {
-        pContext->StringToLocalUTF8(array[index], params[4], it->first.c_str(), NULL);
-        index++;
-    }
-
-    return 1;
 }
 
 cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params) {
@@ -494,5 +496,24 @@ cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cel
     }
 
     request->createMissingDirs = params[2];
+    return 1;
+}
+
+cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    return request->listFilenamesOnly;
+}
+
+cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
+    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    request->listFilenamesOnly = params[2];
     return 1;
 }

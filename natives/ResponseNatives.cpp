@@ -24,9 +24,10 @@
 
 #include "ResponseCallback.h"
 #include "HTTPResponseCallback.h"
+#include "HTTPRequestThread.h"
 
 
-cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
@@ -100,11 +101,33 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
     char *header;
     pContext->LocalToString(params[2], &header);
 
-    if (response->headers.find(header) == response->headers.end()) {
+    for (std::map<std::string, std::string>::iterator it = response->headers.begin(); it != response->headers.end(); ++it) {
+        if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
+            pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), NULL);
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
+    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+    if (response == NULL) {
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), NULL);
+    if (params[2] >= static_cast<int>(response->headers.size())) {
+        return 0;
+    }
+
+    // Map can't be accessed by index
+    std::map<std::string, std::string>::iterator it = response->headers.begin();
+    for (int i = 0; i < params[2]; i++) {
+        it++;
+    }
+
+    pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), NULL);
     return 1;
 }
 
@@ -115,23 +138,4 @@ cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t
     }
 
     return response->headers.size();
-}
-
-cell_t NativeHTTPResponse_GetHeadersArray(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
-        return 0;
-    }
-
-    cell_t *array;
-    pContext->LocalToPhysAddr(params[2], &array);
-
-    cell_t index = 0;
-    std::map<std::string, std::string>::iterator it;
-    for (it = response->headers.begin(); it != response->headers.end() && index < params[3]; ++it) {
-        pContext->StringToLocalUTF8(array[index], params[4], it->first.c_str(), NULL);
-        index++;
-    }
-
-    return 1;
 }

@@ -46,8 +46,8 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
 cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetHeadersArray(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params);
@@ -71,16 +71,18 @@ cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *
 cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cell_t *params);
 
-cell_t NativeResponse_GetLastUrl(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHeadersArray(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
@@ -129,8 +131,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.GetData", NativeHTTPRequest_GetData },
     { "System2HTTPRequest.SetHeader", NativeHTTPRequest_SetHeader },
     { "System2HTTPRequest.GetHeader", NativeHTTPRequest_GetHeader },
+    { "System2HTTPRequest.GetHeaderName", NativeHTTPRequest_GetHeaderName },
     { "System2HTTPRequest.GetHeadersCount", NativeHTTPRequest_GetHeadersCount },
-    { "System2HTTPRequest.GetHeadersArray", NativeHTTPRequest_GetHeadersArray },
     { "System2HTTPRequest.SetUserAgent", NativeHTTPRequest_SetUserAgent },
     { "System2HTTPRequest.SetBasicAuthentication", NativeHTTPRequest_SetBasicAuthentication },
     { "System2HTTPRequest.GET", NativeHTTPRequest_GET },
@@ -154,16 +156,18 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2FTPRequest.AppendToFile.set", NativeFTPRequest_SetAppendToFile },
     { "System2FTPRequest.CreateMissingDirs.get", NativeFTPRequest_GetCreateMissingDirs },
     { "System2FTPRequest.CreateMissingDirs.set", NativeFTPRequest_SetCreateMissingDirs },
+    { "System2FTPRequest.ListFilenamesOnly.get", NativeFTPRequest_GetListFilenamesOnly },
+    { "System2FTPRequest.ListFilenamesOnly.set", NativeFTPRequest_SetListFilenamesOnly },
 
-    { "System2Response.GetLastUrl", NativeResponse_GetLastUrl },
+    { "System2Response.GetLastURL", NativeResponse_GetLastURL },
     { "System2Response.GetContent", NativeResponse_GetContent },
     { "System2Response.ContentSize.get", NativeResponse_GetContentSize },
     { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
     { "System2Response.TotalTime.get", NativeResponse_GetTotalTime },
 
     { "System2HTTPResponse.GetHeader", NativeHTTPResponse_GetHeader },
+    { "System2HTTPResponse.GetHeaderName", NativeHTTPResponse_GetHeaderName },
     { "System2HTTPResponse.GetHeadersCount", NativeHTTPResponse_GetHeadersCount },
-    { "System2HTTPResponse.GetHeadersArray", NativeHTTPResponse_GetHeadersArray },
 
     { "System2_URLEncode", NativeURLEncode },
     { "System2_URLDecode", NativeURLDecode },

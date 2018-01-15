@@ -35,9 +35,12 @@ public:
     std::string inputFile;
     bool appendToFile;
     bool createMissingDirs;
+    bool listFilenamesOnly;
 
     FTPRequest(std::string url, IPluginFunction *responseCallback);
     FTPRequest(const FTPRequest &request);
+
+    virtual FTPRequest *Clone() const;
 
     void MakeRequest();
 

@@ -43,7 +43,8 @@ public:
 
     Request(std::string url, IPluginFunction *responseCallback);
     Request(const Request &request);
-    virtual ~Request() = 0;
+
+    virtual Request *Clone() const = 0;
 
     template<class RequestClass>
     static RequestClass *ConvertRequest(Handle_t hndl, IPluginContext *pContext) {

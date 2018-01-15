@@ -44,6 +44,8 @@ public:
     HTTPRequest(std::string url, IPluginFunction *responseCallback);
     HTTPRequest(const HTTPRequest &request);
 
+    virtual HTTPRequest *Clone() const;
+
     void Get();
     void Post();
     void Put();

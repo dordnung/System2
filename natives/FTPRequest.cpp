@@ -27,12 +27,16 @@
 
 
 FTPRequest::FTPRequest(std::string url, IPluginFunction *responseCallback)
-    : Request(url, responseCallback), appendToFile(false), createMissingDirs(true) {};
+    : Request(url, responseCallback), appendToFile(false), createMissingDirs(true), listFilenamesOnly(false) {}
 
 FTPRequest::FTPRequest(const FTPRequest &request) :
     Request(request), username(request.username), password(request.password), inputFile(request.inputFile),
-    appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs) {};
+    appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs), listFilenamesOnly(request.listFilenamesOnly) {}
 
+
+FTPRequest * FTPRequest::Clone() const {
+    return new FTPRequest(*this);
+}
 
 void FTPRequest::MakeRequest() {
     this->MakeThread();

@@ -204,7 +204,7 @@ size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, v
 }
 
 
-inline bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const std::string &str2) {
+bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const std::string &str2) {
     size_t str1Len = str1.size();
     if (str2.size() != str1Len) {
         return false;
