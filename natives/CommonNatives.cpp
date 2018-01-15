@@ -39,8 +39,14 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &from);
     pContext->LocalToString(params[3], &to);
 
+    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        return 0;
+    }
+
     // Start the thread that copys a file
-    CopyThread *copyThread = new CopyThread(from, to, params[4], pContext->GetFunctionById(params[1]));
+    CopyThread *copyThread = new CopyThread(from, to, params[4], callback);
     threader->MakeThread(copyThread);
 
     return 1;

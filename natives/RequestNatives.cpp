@@ -156,7 +156,13 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
     char *url;
     pContext->LocalToString(params[1], &url);
 
-    HTTPRequest *request = new HTTPRequest(url, pContext->GetFunctionById(params[2]));
+    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        return BAD_HANDLE;
+    }
+
+    HTTPRequest *request = new HTTPRequest(url, callback);
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
@@ -172,7 +178,13 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
         return 0;
     }
 
-    request->progressCallback = pContext->GetFunctionById(params[2]);
+    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        return 0;
+    }
+
+    request->progressCallback = callback;
     return 1;
 }
 
@@ -394,7 +406,13 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
     char *url;
     pContext->LocalToString(params[1], &url);
 
-    FTPRequest *request = new FTPRequest(url, pContext->GetFunctionById(params[2]));
+    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        return BAD_HANDLE;
+    }
+
+    FTPRequest *request = new FTPRequest(url, callback);
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
@@ -410,7 +428,13 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
         return 0;
     }
 
-    request->progressCallback = pContext->GetFunctionById(params[2]);
+    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        return 0;
+    }
+
+    request->progressCallback = callback;
     return 1;
 }
 

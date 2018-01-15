@@ -50,6 +50,12 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
 
+    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        return 0;
+    }
+
     // Build the path to the executable, to the path to compress and the archive
 #if defined _WIN32 || defined _WIN64
     g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
@@ -137,13 +143,13 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[6], pContext->GetFunctionById(params[1]));
+        ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
         threader->MakeThread(commandThread);
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
 
         g_pSM->LogError(myself, error.c_str());
-        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(pContext->GetFunctionById(params[1]), false, 1, error, "", params[6]));
+        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[6]));
     }
 
     return 1;
@@ -161,6 +167,12 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
 
+    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        return 0;
+    }
+
     // Build the path to the executable, to the path to extract to and the archive
 #if defined _WIN32 || defined _WIN64
     g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
@@ -172,7 +184,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
-}
+    }
 #endif
     g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), path);
     g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), archive);
@@ -188,13 +200,13 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 #endif
 
         // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[4], pContext->GetFunctionById(params[1]));
+        ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
         threader->MakeThread(commandThread);
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
 
         g_pSM->LogError(myself, error.c_str());
-        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(pContext->GetFunctionById(params[1]), false, 1, error, "", params[4]));
+        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[4]));
     }
 
     return 1;
@@ -205,8 +217,14 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     char *command;
     pContext->LocalToString(params[2], &command);
 
+    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        return 0;
+    }
+
     // Start the thread that executes the command
-    ExecuteThread *commandThread = new ExecuteThread(command, params[3], pContext->GetFunctionById(params[1]));
+    ExecuteThread *commandThread = new ExecuteThread(command, params[3], callback);
     threader->MakeThread(commandThread);
 
     return 1;
@@ -217,8 +235,14 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     char command[MAX_COMMAND_LENGTH + 1];
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
+    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    if (!callback) {
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        return 0;
+    }
+
     // Start the thread that executes the command - with data
-    ExecuteThread *commandThread = new ExecuteThread(command, params[2], pContext->GetFunctionById(params[1]));
+    ExecuteThread *commandThread = new ExecuteThread(command, params[2], callback);
     threader->MakeThread(commandThread);
 
     return 1;
