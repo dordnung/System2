@@ -40,7 +40,8 @@ char testArchivePath[PLATFORM_MAX_PATH + 1];
 
 char longPage[4300];
 int finishedCallbacks = 0;
-
+bool isRunning = false;
+Handle runningTimer = INVALID_HANDLE;
 
 // Stuff which will be tested
 enum TestMethods
@@ -78,6 +79,15 @@ public void OnPluginStart() {
 
 
 public Action OnTest(int args) {
+    if (isRunning) {
+        PrintToServer("Tests are already running. Please wait...");
+        return Plugin_Handled;
+    }
+
+    // Max 30 seconds
+    isRunning = true;
+    runningTimer = CreateTimer(30.0, OnHardReset);
+
     // Set needed files to random names
     Format(testDownloadFilePath, sizeof(testDownloadFilePath), "%s/testFile_%d.txt", path, GetURandomInt());
     Format(testDownloadFtpFile, sizeof(testDownloadFtpFile), "%s/testFtpFile_%d.zip", path, GetURandomInt());
@@ -983,6 +993,13 @@ public Action OnCheckCallbacks(Handle timer, any isLegacy) {
     if (timesTimerCalled >= 20) {
         KillTimer(timer);
         assertValueEquals(callbacks, finishedCallbacks);
+
+        if (runningTimer != INVALID_HANDLE) {
+            KillTimer(runningTimer);
+            runningTimer = INVALID_HANDLE;
+        }
+
+        isRunning = false;
         return Plugin_Stop;
     } else if (finishedCallbacks == callbacks) {
         PrintToServer("---------------------------");
@@ -990,12 +1007,26 @@ public Action OnCheckCallbacks(Handle timer, any isLegacy) {
         if (!isLegacy) {
             KillTimer(timer);
             TestLegacy();
+        } else {
+            if (runningTimer != INVALID_HANDLE) {
+                KillTimer(runningTimer);
+                runningTimer = INVALID_HANDLE;
+            }
+            isRunning = false;
         }
+
         return Plugin_Stop;
     }
 
     timesTimerCalled++;
     return Plugin_Continue;
+}
+
+public Action OnHardReset(Handle timer) {
+    isRunning = false;
+    runningTimer = INVALID_HANDLE;
+
+    return Plugin_Stop;
 }
 
 
