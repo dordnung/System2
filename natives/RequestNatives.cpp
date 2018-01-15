@@ -246,7 +246,7 @@ cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *p
     // Map can't be accessed by index
     std::map<std::string, std::string>::iterator it = request->headers.begin();
     for (int i = 0; i < params[2]; i++) {
-        it++;
+        ++it;
     }
 
     pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), NULL);
