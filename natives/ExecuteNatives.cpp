@@ -29,17 +29,20 @@
 #include "CompressLevel.h"
 #include "CompressArchive.h"
 
-#if defined __unix__ || defined __linux__ || defined __unix
+#if defined _WIN32 || defined _WIN64
+#include <io.h>
+#define access _access
+#define X_OK 0x4
+#else
 #include <sys/utsname.h>
+#include <unistd.h>
 #endif
 
 #define MAX_COMMAND_LENGTH 2048
 
-
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     char *path;
     char *archive;
-
     char binDir[PLATFORM_MAX_PATH + 1];
     char fullPath[PLATFORM_MAX_PATH + 1];
     char fullArchivePath[PLATFORM_MAX_PATH + 1];
@@ -124,10 +127,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     }
 
     // 7z exists?
-    FILE *testExist;
-    if ((testExist = fopen(binDir, "rb")) != NULL) {
-        fclose(testExist);
-
+    if (access(binDir, X_OK) != -1) {
         // Create the compress command
         std::string command;
 #if defined _WIN32 || defined _WIN64
@@ -140,7 +140,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[6], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to compress %s", binDir, fullPath);
+        g_pSM->LogError(myself, "ERROR: 7-ZIP executable couldn't be found or is not executable at %s", binDir);
     }
 
     return 1;
@@ -175,10 +175,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
     g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), archive);
 
     // Test if the local file exists
-    FILE *testExist;
-    if ((testExist = fopen(binDir, "rb")) != NULL) {
-        fclose(testExist);
-
+    if (access(binDir, X_OK) != -1) {
         // Create the extract command
         std::string command;
 #if defined _WIN32
@@ -191,7 +188,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[4], pContext->GetFunctionById(params[1]));
         threader->MakeThread(commandThread);
     } else {
-        g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP executable at %s to extract %s", binDir, fullArchivePath);
+        g_pSM->LogError(myself, "ERROR: 7-ZIP executable couldn't be found or is not executable at %s", binDir);
     }
 
     return 1;
