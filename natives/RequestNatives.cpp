@@ -229,6 +229,8 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
             return 1;
         }
     }
+
+    return 0;
 }
 
 cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
