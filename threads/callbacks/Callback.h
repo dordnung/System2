@@ -28,6 +28,7 @@
 class Callback {
 public:
     virtual void Fire() = 0;
+    virtual void Abort() {};
 };
 
 #endif

@@ -47,5 +47,13 @@ void ProgressCallback::Fire() {
         if (requestHandle != BAD_HANDLE) {
             requestHandler.FreeHandle(requestHandle, owner);
         }
+    } else {
+        // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
+        delete this->request;
     }
+}
+
+void ProgressCallback::Abort() {
+    // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
+    delete this->request;
 }

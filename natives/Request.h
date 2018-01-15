@@ -43,6 +43,7 @@ public:
 
     Request(std::string url, IPluginFunction *responseCallback);
     Request(const Request &request);
+    virtual ~Request() = 0;
 
     virtual Request *Clone() const = 0;
 

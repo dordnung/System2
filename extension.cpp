@@ -61,17 +61,39 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 }
 
 void System2Extension::SDK_OnUnload() {
-    // Remove created mutex
-    mutex->DestroyThis();
-    ftpMutex->DestroyThis();
-    legacyFTPMutex->DestroyThis();
-
     // Remove handles
     executeCallbackHandler.Shutdown();
     requestHandler.Shutdown();
     responseCallbackHandler.Shutdown();
 
     smutils->RemoveGameFrameHook(&OnGameFrameHit);
+
+    // Remove all callbacks
+    while (!this->mutex->TryLock()) {
+#ifdef _WIN32
+        Sleep(50);
+#else
+        usleep(50000);
+#endif
+    }
+
+    // Are there outstandig callbacks?
+    while (!this->callbackQueue.empty()) {
+        // Abort the callback
+        this->callbackQueue.front()->Abort();
+
+        // Remove the callback from the queue
+        // No deleting needed, as callbacks are shared pointers
+        callbackQueue.pop();
+}
+
+    // Unlock mutex
+    this->mutex->Unlock();
+
+    // Remove created mutex
+    mutex->DestroyThis();
+    ftpMutex->DestroyThis();
+    legacyFTPMutex->DestroyThis();
 
     curl_global_cleanup();
 }

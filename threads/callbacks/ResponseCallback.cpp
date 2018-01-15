@@ -90,5 +90,13 @@ void ResponseCallback::Fire() {
         if (responseHandle != BAD_HANDLE) {
             responseCallbackHandler.FreeHandle(responseHandle, owner);
         }
+    } else {
+        // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
+        delete this->request;
     }
+}
+
+void ResponseCallback::Abort() {
+    // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
+    delete this->request;
 }

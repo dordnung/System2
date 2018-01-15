@@ -44,6 +44,8 @@ public:
     ResponseCallback(Request *request, std::string error);
     ResponseCallback(Request *request, CURL *curl, std::string content);
 
+    virtual void Abort();
+
     template<class ResponseCallbackClass>
     static ResponseCallbackClass *ConvertResponse(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
