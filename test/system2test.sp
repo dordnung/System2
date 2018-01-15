@@ -26,7 +26,7 @@
 
 #include <sourcemod>
 #include <profiler>
-#include "system2"
+#include <system2>
 
 
 char path[PLATFORM_MAX_PATH + 1];
