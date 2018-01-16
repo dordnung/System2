@@ -56,8 +56,6 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
 
 
 void ResponseCallback::Fire() {
-    smutils->LogError(myself, "R: Fire");
-
     IdentityToken_t *owner = this->request->responseCallbackFunction->plugin->GetIdentity();
     Handle_t responseHandle = BAD_HANDLE;
 

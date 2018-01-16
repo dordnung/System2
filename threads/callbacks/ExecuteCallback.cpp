@@ -39,8 +39,6 @@ int ExecuteCallback::GetExitStatus() const {
 }
 
 void ExecuteCallback::Fire() {
-    smutils->LogError(myself, "E: Fire");
-
     IdentityToken_t *owner = this->callbackFunction->plugin->GetIdentity();
     Handle_t outputHandle = BAD_HANDLE;
 

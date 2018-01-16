@@ -31,9 +31,7 @@ ProgressCallback::ProgressCallback(Request *request, int dlTotal, int dlNow, int
 
 
 void ProgressCallback::Fire() {
-    smutils->LogError(myself, "P: Fire");
-
-        // Create a temporary request handle, so in the callback the correct request will be used
+    // Create a temporary request handle, so in the callback the correct request will be used
     IdentityToken_t *owner = request->progressCallbackFunction->plugin->GetIdentity();
     Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
 

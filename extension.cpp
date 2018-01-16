@@ -104,9 +104,14 @@ void System2Extension::SDK_OnUnload() {
 
 void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
     // Search if the plugin has any pending callback functions and invalidate them
-    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
+    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end();) {
         if ((*it)->plugin == plugin) {
             (*it)->isValid = false;
+
+            // Remove it from the list
+            it = this->callbackFunctions.erase(it);
+        } else {
+            ++it;
         }
     }
 }
@@ -181,16 +186,10 @@ void System2Extension::GameFrameHit() {
     // Are there outstandig callbacks?
     if (!this->callbackQueue.empty()) {
         auto callback = this->callbackQueue.front();
-
         if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
-            // Fire the callback
+            // Fire the callback if the callback function is valid
             callback->Fire();
         }
-
-        // Delete the callback function when finished with the callback
-        // No deleting needed, as callback functions are shared pointers
-        this->callbackFunctions.erase(
-            std::remove(this->callbackFunctions.begin(), this->callbackFunctions.end(), callback->callbackFunction), this->callbackFunctions.end());
 
         // Remove the callback from the queue
         // No deleting needed, as callbacks are shared pointers

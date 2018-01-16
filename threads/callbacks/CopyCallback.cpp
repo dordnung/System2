@@ -29,7 +29,6 @@ CopyCallback::CopyCallback(std::shared_ptr<CallbackFunction_t> callbackFunction,
     : Callback(callbackFunction), success(success), from(from), to(to), data(data) {}
 
 void CopyCallback::Fire() {
-    smutils->LogError(myself, "C: Fire");
     this->callbackFunction->function->PushCell(this->success);
     this->callbackFunction->function->PushString(this->from.c_str());
     this->callbackFunction->function->PushString(this->to.c_str());
