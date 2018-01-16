@@ -144,7 +144,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
-        threader->MakeThread(commandThread);
+        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
         system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[6]));
@@ -199,7 +199,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
-        threader->MakeThread(commandThread);
+        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
         system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[4]));
@@ -221,7 +221,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     ExecuteThread *commandThread = new ExecuteThread(command, params[3], callback);
-    threader->MakeThread(commandThread);
+    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
 
     return 1;
 }
@@ -239,7 +239,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
 
     // Start the thread that executes the command - with data
     ExecuteThread *commandThread = new ExecuteThread(command, params[2], callback);
-    threader->MakeThread(commandThread);
+    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
 
     return 1;
 }

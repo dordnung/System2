@@ -67,5 +67,5 @@ void HTTPRequest::Head() {
 void HTTPRequest::MakeThread(HTTPRequestMethod method) {
     // Make a copy for the thread, so it works independent
     HTTPRequestThread *requestThread = new HTTPRequestThread(new HTTPRequest(*this), method);
-    threader->MakeThread(requestThread);
+    system2Extension.RegisterThread(threader->MakeThread(requestThread, Thread_Default));
 }

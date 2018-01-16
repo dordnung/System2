@@ -88,6 +88,7 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
 
 
 void LegacyPageThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }
 

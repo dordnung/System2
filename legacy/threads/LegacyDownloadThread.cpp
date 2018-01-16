@@ -92,6 +92,7 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
 
 
 void LegacyDownloadThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }
 

@@ -46,5 +46,5 @@ void FTPRequest::MakeRequest() {
 void FTPRequest::MakeThread() {
     // Make a copy for the thread, so it works independent
     FTPRequestThread *requestThread = new FTPRequestThread(new FTPRequest(*this));
-    threader->MakeThread(requestThread);
+    system2Extension.RegisterThread(threader->MakeThread(requestThread, Thread_Default));
 }

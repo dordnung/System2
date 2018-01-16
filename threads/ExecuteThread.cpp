@@ -54,5 +54,6 @@ void ExecuteThread::RunThread(IThreadHandle *pHandle) {
 }
 
 void ExecuteThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }

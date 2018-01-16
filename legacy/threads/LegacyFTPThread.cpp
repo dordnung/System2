@@ -58,9 +58,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Only one process can be connect to FTP
-    if (legacyFTPMutex) {
-        legacyFTPMutex->Lock();
-    }
+    legacyFTPMutex->Lock();
 
     // Init. Curl
     std::string error;
@@ -129,9 +127,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     fclose(localFile);
 
     // We are finished
-    if (legacyFTPMutex) {
-        legacyFTPMutex->Unlock();
-    }
+    legacyFTPMutex->Unlock();
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
@@ -139,6 +135,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
 
 
 void LegacyFTPThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }
 

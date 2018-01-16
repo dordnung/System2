@@ -33,15 +33,14 @@
 
 #include <algorithm>
 
+#if defined _WIN32 || defined _WIN64
+#define sleep_ms(x) Sleep(x);
+#else
+#define sleep_ms(x) usleep(x * 1000);
+#endif
 
-System2Extension::System2Extension() : callbackMutex(NULL), frames(0), isRunning(false) {
-    curl_global_init(CURL_GLOBAL_ALL);
-};
 
-System2Extension::~System2Extension() {
-    curl_global_cleanup();
-};
-
+System2Extension::System2Extension() : threadMutex(NULL), frames(0), isRunning(false) {};
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     this->frames = 0;
@@ -53,7 +52,7 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     sharesys->RegisterLibrary(myself, "system2");
 
     // Creates needed mutexes
-    callbackMutex = threader->MakeMutex();
+    threadMutex = threader->MakeMutex();
     ftpMutex = threader->MakeMutex();
     legacyFTPMutex = threader->MakeMutex();
 
@@ -68,37 +67,54 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     // Add this plugin listener
     plsys->AddPluginsListener(this);
 
+    // Init CURL
+    curl_global_init(CURL_GLOBAL_ALL);
+
     return true;
 }
 
 void System2Extension::SDK_OnUnload() {
-    this->callbackMutex->Lock();
+    this->threadMutex->Lock();
+
+    // Mark that we are not running anymore
+    this->isRunning = false;
 
     // Remove game frame hook so no callback will run anymore
     smutils->RemoveGameFrameHook(&OnGameFrameHit);
 
-    // Remove all callbacks and callback functions
-    this->callbackQueue.clear();
-    this->callbackFunctions.clear();
+    this->threadMutex->Unlock();
+
+    // Wait until all threads are finished
+    if (runningThreads.size() > 0) {
+        rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
+        for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
+            (*it)->WaitForThread();
+        }
+        rootconsole->ConsolePrint("[System2] All threads finished");
+    }
+
+    // Abort callbacks
+    for (auto it = this->callbackQueue.begin(); it != callbackQueue.end(); ++it) {
+        (*it)->Abort();
+    }
 
     // Remove handles
     executeCallbackHandler.Shutdown();
     requestHandler.Shutdown();
     responseCallbackHandler.Shutdown();
 
-    // Disable running state
-    this->isRunning = false;
-    this->callbackMutex->Unlock();
+    // Clear STL stuff
+    this->callbackQueue.clear();
+    this->callbackFunctions.clear();
+    this->runningThreads.clear();
 
-    // Remove created mutex
-    this->callbackMutex->DestroyThis();
+    // Remove created mutexes
+    this->threadMutex->DestroyThis();
     ftpMutex->DestroyThis();
     legacyFTPMutex->DestroyThis();
 
-    // As threads can still use mutex declare them explicit as NULL
-    this->callbackMutex = NULL;
-    ftpMutex = NULL;
-    legacyFTPMutex = NULL;
+    // Finally clean up CURL
+    curl_global_cleanup();
 }
 
 
@@ -119,12 +135,8 @@ void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
 
 void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
     // Lock mutex to gain thread safety
-    while (callbackMutex && !this->callbackMutex->TryLock()) {
-#ifdef _WIN32
-        Sleep(50);
-#else
-        usleep(50000);
-#endif
+    while (!this->threadMutex->TryLock()) {
+        sleep_ms(1);
     }
 
     if (this->isRunning) {
@@ -135,41 +147,63 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
         callback->Abort();
     }
 
-    if (callbackMutex) {
-        this->callbackMutex->Unlock();
+    this->threadMutex->Unlock();
+}
+
+
+void System2Extension::RegisterThread(IThreadHandle *threadHandle) {
+    // Just push to the list of running threads
+    while (!this->threadMutex->TryLock()) {
+        sleep_ms(1);
     }
+    this->runningThreads.push_back(threadHandle);
+    threadMutex->Unlock();
+}
+
+void System2Extension::UnregisterThread(IThreadHandle *threadHandle) {
+    // Just remove from the list of running threads
+    while (!this->threadMutex->TryLock()) {
+        sleep_ms(1);
+    }
+    if (this->isRunning) {
+        this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), threadHandle), this->runningThreads.end());
+    }
+    threadMutex->Unlock();
 }
 
 
 std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction *function) {
     if (!function || !function->IsRunnable()) {
+        // Function is not valid
         return NULL;
     }
 
     auto plugin = plsys->FindPluginByContext(function->GetParentRuntime()->GetDefaultContext()->GetContext());
-    if (plugin) {
-        // Check if we already have the callback function
-        for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
-            if ((*it)->function == function) {
-                auto callbackFunction = (*it);
-                callbackFunction->plugin = plugin;
-                callbackFunction->isValid = true;
-
-                return callbackFunction;
-            }
-        }
-
-        auto callbackFunction = std::make_shared<CallbackFunction_t>();
-        callbackFunction->plugin = plugin;
-        callbackFunction->function = function;
-        callbackFunction->isValid = true;
-
-        // Add to the internal list of callback functions
-        this->callbackFunctions.push_back(callbackFunction);
-        return callbackFunction;
+    if (!plugin) {
+        // Plugin is not valid
+        return NULL;
     }
 
-    return NULL;
+    // Check if we already have the callback function
+    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
+        if ((*it)->function == function) {
+            auto callbackFunction = (*it);
+            callbackFunction->plugin = plugin;
+            callbackFunction->isValid = true;
+
+            // Reuse the callback function
+            return callbackFunction;
+        }
+    }
+
+    auto callbackFunction = std::make_shared<CallbackFunction_t>();
+    callbackFunction->plugin = plugin;
+    callbackFunction->function = function;
+    callbackFunction->isValid = true;
+
+    // Add to the internal list of callback functions
+    this->callbackFunctions.push_back(callbackFunction);
+    return callbackFunction;
 }
 
 
@@ -178,17 +212,19 @@ void System2Extension::GameFrameHit() {
     this->frames++;
 
     // Lock the mutex to gain thread safety
-    if (!this->callbackMutex->TryLock()) {
+    if (!this->threadMutex->TryLock()) {
         // Couldn't lock -> do not wait
         return;
     }
 
     // Are there outstandig callbacks?
-    if (!this->callbackQueue.empty()) {
+    if (this->isRunning && !this->callbackQueue.empty()) {
         auto callback = this->callbackQueue.front();
         if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
             // Fire the callback if the callback function is valid
             callback->Fire();
+        } else {
+            callback->Abort();
         }
 
         // Remove the callback from the queue
@@ -197,7 +233,7 @@ void System2Extension::GameFrameHit() {
     }
 
     // Unlock mutex
-    this->callbackMutex->Unlock();
+    this->threadMutex->Unlock();
 }
 
 uint32_t System2Extension::GetFrames() {

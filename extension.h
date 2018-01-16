@@ -40,17 +40,17 @@
 
 class System2Extension : public SDKExtension, public IPluginsListener {
 private:
-    IMutex * callbackMutex;
+    IMutex * threadMutex;
 
     std::deque<std::shared_ptr<Callback>> callbackQueue;
     std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
+    std::vector<IThreadHandle *> runningThreads;
 
     volatile uint32_t frames;
     bool isRunning;
 
 public:
     System2Extension();
-    ~System2Extension();
 
     virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
     virtual void SDK_OnUnload();
@@ -58,6 +58,10 @@ public:
     virtual void OnPluginUnloaded(IPlugin *plugin);
 
     void AppendCallback(std::shared_ptr<Callback> callback);
+
+    void RegisterThread(IThreadHandle *threadHandle);
+    void UnregisterThread(IThreadHandle *threadHandle);
+
     std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
 
     void GameFrameHit();

@@ -52,7 +52,7 @@ cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that gets the content of the page
     LegacyPageThread *pageThread = new LegacyPageThread(url, post, agent, params[5], callback);
-    threader->MakeThread(pageThread);
+    system2Extension.RegisterThread(threader->MakeThread(pageThread, Thread_Default));
 
     return 1;
 }
@@ -72,7 +72,7 @@ cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that download the content
     LegacyDownloadThread *downloadThread = new LegacyDownloadThread(url, localFile, params[4], callback);
-    threader->MakeThread(downloadThread);
+    system2Extension.RegisterThread(threader->MakeThread(downloadThread, Thread_Default));
 
     return 1;
 }
@@ -98,7 +98,7 @@ cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that downloads a file from FTP
     LegacyFTPThread *ftpThread = new LegacyFTPThread(true, remoteFile, localFile, host, username, password, params[7], params[8], callback);
-    threader->MakeThread(ftpThread);
+    system2Extension.RegisterThread(threader->MakeThread(ftpThread, Thread_Default));
 
     return 1;
 }
@@ -124,7 +124,7 @@ cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that uploads a file to FTP
     LegacyFTPThread *ftpThread = new LegacyFTPThread(false, remoteFile, localFile, host, username, password, params[7], params[8], callback);
-    threader->MakeThread(ftpThread);
+    system2Extension.RegisterThread(threader->MakeThread(ftpThread, Thread_Default));
 
     return 1;
 }
@@ -237,7 +237,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[6], callback);
-        threader->MakeThread(commandThread);
+        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to compress %s", zdir, ldir);
     }
@@ -293,7 +293,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[4], callback);
-        threader->MakeThread(commandThread);
+        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to extract %s", zdir, ldir);
     }
@@ -314,7 +314,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     LegacyCommandThread *commandThread = new LegacyCommandThread(command, 0, callback);
-    threader->MakeThread(commandThread);
+    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
 
     return 1;
 }
@@ -332,7 +332,7 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
 
     // Start the thread that executes the command
     LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[2], callback);
-    threader->MakeThread(commandThread);
+    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
 
     return 1;
 }

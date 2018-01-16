@@ -84,5 +84,6 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
 
 
 void LegacyCommandThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }

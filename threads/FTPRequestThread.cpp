@@ -94,9 +94,7 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Only one process can be connect to FTP
-        if (ftpMutex) {
-            ftpMutex->Lock();
-        }
+        ftpMutex->Lock();
 
         // Perform curl operation and create the callback
         std::shared_ptr<FTPResponseCallback> callback;
@@ -112,9 +110,7 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Only one process can be connect to FTP
-        if (ftpMutex) {
-            ftpMutex->Unlock();
-        }
+        ftpMutex->Unlock();
 
         // Clean up curl
         curl_easy_cleanup(curl);

@@ -83,6 +83,7 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
 }
 
 void RequestThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
+    system2Extension.UnregisterThread(pThread);
     delete this;
 }
 
