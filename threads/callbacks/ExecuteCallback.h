@@ -31,8 +31,6 @@
 
 class ExecuteCallback : public Callback {
 private:
-    IPluginFunction * callback;
-
     bool success;
     int exitStatus;
     std::string output;
@@ -40,7 +38,7 @@ private:
     int data;
 
 public:
-    ExecuteCallback(IPluginFunction *callback, bool success, int exitStatus, std::string output, std::string command, int data);
+    ExecuteCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, int exitStatus, std::string output, std::string command, int data);
 
     const std::string &GetOutput() const;
     int GetExitStatus() const;

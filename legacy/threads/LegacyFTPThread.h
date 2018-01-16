@@ -44,10 +44,11 @@ private:
     int port;
     int data;
 
-    IPluginFunction *callback;
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
 
 public:
-    LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback);
+    LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url,
+                    std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

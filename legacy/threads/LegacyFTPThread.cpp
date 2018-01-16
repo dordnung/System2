@@ -28,12 +28,12 @@
 
 
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-IMutex *legacyFTPMutex;
+IMutex *legacyFTPMutex = NULL;
 
-LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile,
-                                 std::string url, std::string user, std::string pw, int port, int data, IPluginFunction *callback)
+LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url,
+                                 std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : IThread(), download(download), remoteFile(remoteFile), localFile(localFile), host(url),
-    username(user), password(pw), port(port), data(data), callback(callback) {}
+    username(user), password(pw), port(port), data(data), callbackFunction(callbackFunction) {}
 
 
 void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
@@ -53,12 +53,14 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
 
     // Check if local file could be open
     if (!localFile) {
-        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>("Couldn't open locale file", this->data, this->callback));
+        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, "Couldn't open locale file", this->data));
         return;
     }
 
     // Only one process can be connect to FTP
-    legacyFTPMutex->Lock();
+    if (legacyFTPMutex) {
+        legacyFTPMutex->Lock();
+    }
 
     // Init. Curl
     std::string error;
@@ -71,7 +73,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
         {
             0,
             this->data,
-            this->callback
+            this->callbackFunction
         };
 
         // Get whole URL
@@ -127,10 +129,12 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     fclose(localFile);
 
     // We are finished
-    legacyFTPMutex->Unlock();
+    if (legacyFTPMutex) {
+        legacyFTPMutex->Unlock();
+    }
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(error, this->data, this->callback));
+    system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
 }
 
 

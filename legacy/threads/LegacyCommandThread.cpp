@@ -27,8 +27,8 @@
 #include "LegacyCommandState.h"
 
 
-LegacyCommandThread::LegacyCommandThread(std::string command, int data, IPluginFunction *callback)
-    : IThread(), command(command), data(data), callback(callback) {}
+LegacyCommandThread::LegacyCommandThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
+    : IThread(), command(command), data(data), callbackFunction(callbackFunction) {}
 
 
 void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
@@ -56,7 +56,7 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
             // More than MAX_RESULT_LENGTH?
             if (output.length() + strlen(buffer) >= MAX_RESULT_LENGTH) {
                 // We only can push a string with a length of MAX_RESULT_LENGTH
-                system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(output, this->command, this->data, this->callback, CMD_PROGRESS));
+                system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, output, this->command, this->data, CMD_PROGRESS));
                 output.clear();
             }
 
@@ -79,7 +79,7 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(output, this->command, this->data, this->callback, state));
+    system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, output, this->command, this->data, state));
 }
 
 

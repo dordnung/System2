@@ -27,7 +27,7 @@
 
 
  // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-IMutex *ftpMutex;
+IMutex *ftpMutex = NULL;
 
 FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
 
@@ -94,7 +94,9 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Only one process can be connect to FTP
-        ftpMutex->Lock();
+        if (ftpMutex) {
+            ftpMutex->Lock();
+        }
 
         // Perform curl operation and create the callback
         std::shared_ptr<FTPResponseCallback> callback;
@@ -110,7 +112,9 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Only one process can be connect to FTP
-        ftpMutex->Unlock();
+        if (ftpMutex) {
+            ftpMutex->Unlock();
+        }
 
         // Clean up curl
         curl_easy_cleanup(curl);

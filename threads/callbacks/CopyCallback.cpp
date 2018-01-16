@@ -25,15 +25,14 @@
 #include "CopyCallback.h"
 
 
-CopyCallback::CopyCallback(IPluginFunction *callback, bool success, std::string from, std::string to, int data)
-    : callback(callback), success(success), from(from), to(to), data(data) {}
+CopyCallback::CopyCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, std::string from, std::string to, int data)
+    : Callback(callbackFunction), success(success), from(from), to(to), data(data) {}
 
 void CopyCallback::Fire() {
-    if (this->callback->IsRunnable()) {
-        this->callback->PushCell(this->success);
-        this->callback->PushString(this->from.c_str());
-        this->callback->PushString(this->to.c_str());
-        this->callback->PushCell(this->data);
-        this->callback->Execute(NULL);
-    }
+    smutils->LogError(myself, "C: Fire");
+    this->callbackFunction->function->PushCell(this->success);
+    this->callbackFunction->function->PushString(this->from.c_str());
+    this->callbackFunction->function->PushString(this->to.c_str());
+    this->callbackFunction->function->PushCell(this->data);
+    this->callbackFunction->function->Execute(NULL);
 }

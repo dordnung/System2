@@ -36,5 +36,5 @@ HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl,
 
 void HTTPResponseCallback::PreFire() {
     // Push the request method for a HTTP request
-    this->request->responseCallback->PushCell(this->requestMethod);
+    this->request->responseCallbackFunction->function->PushCell(this->requestMethod);
 }

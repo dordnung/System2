@@ -156,15 +156,13 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
     char *url;
     pContext->LocalToString(params[1], &url);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[2]);
         return BAD_HANDLE;
     }
 
-    HTTPRequest *request = new HTTPRequest(url, callback);
-
-    Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(request, pContext->GetIdentity());
+    Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(new HTTPRequest(url, callback), pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
         pContext->ReportError("Couldn't create HTTPRequest handle");
     }
@@ -178,13 +176,13 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
         return 0;
     }
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[2]);
         return 0;
     }
 
-    request->progressCallback = callback;
+    request->progressCallbackFunction = callback;
     return 1;
 }
 
@@ -406,7 +404,7 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
     char *url;
     pContext->LocalToString(params[1], &url);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[2]);
         return BAD_HANDLE;
@@ -428,13 +426,13 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
         return 0;
     }
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[2]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[2]);
         return 0;
     }
 
-    request->progressCallback = callback;
+    request->progressCallbackFunction = callback;
     return 1;
 }
 

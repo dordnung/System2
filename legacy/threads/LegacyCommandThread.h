@@ -43,10 +43,10 @@ class LegacyCommandThread : public IThread {
 private:
     std::string command;
     int data;
-    IPluginFunction *callback;
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
 
 public:
-    LegacyCommandThread(std::string command, int data, IPluginFunction *callback);
+    LegacyCommandThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

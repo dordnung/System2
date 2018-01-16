@@ -38,10 +38,10 @@ public:
     int timeout;
     int data;
 
-    IPluginFunction *responseCallback;
-    IPluginFunction *progressCallback;
+    std::shared_ptr<CallbackFunction_t> responseCallbackFunction;
+    std::shared_ptr<CallbackFunction_t> progressCallbackFunction;
 
-    Request(std::string url, IPluginFunction *responseCallback);
+    Request(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
     Request(const Request &request);
     virtual ~Request() = 0;
 

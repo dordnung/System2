@@ -26,8 +26,8 @@
 #include "LegacyDownloadCallback.h"
 
 
-LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback)
-    : IThread(), url(url), localFile(localFile), data(data), callback(callback) {}
+LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
+    : IThread(), url(url), localFile(localFile), data(data), callbackFunction(callbackFunction) {}
 
 
 void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
@@ -38,7 +38,7 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
     // Could we open the file?
     FILE *stream = fopen(fullLocalPath, "wb");
     if (!stream) {
-        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>("Couldn't create file", this->data, this->callback));
+        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, "Couldn't create file", this->data));
         return;
     }
 
@@ -53,7 +53,7 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
         {
             0,
             this->data,
-            this->callback,
+            this->callbackFunction,
         };
 
         // Set up Curl
@@ -87,7 +87,7 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
     fclose(stream);
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(error, this->data, this->callback));
+    system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
 }
 
 
@@ -107,7 +107,8 @@ int LegacyDownloadThread::ProgressUpdated(void *data, double dltotal, double dln
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != progress->lastFrame)) {
         // Add return status to queue
-        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(false, "", (float)dltotal, (float)dlnow, (float)ultotal, (float)ulnow, progress->data, progress->callback));
+        system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(
+            progress->callbackFunction, false, "", (float)dltotal, (float)dlnow, (float)ultotal, (float)ulnow, progress->data));
     }
 
     // Save current frame

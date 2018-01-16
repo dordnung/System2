@@ -50,7 +50,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[1]);
         return 0;
@@ -147,8 +147,6 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         threader->MakeThread(commandThread);
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
-
-        g_pSM->LogError(myself, error.c_str());
         system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[6]));
     }
 
@@ -167,7 +165,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[1]);
         return 0;
@@ -204,8 +202,6 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         threader->MakeThread(commandThread);
     } else {
         std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
-
-        g_pSM->LogError(myself, error.c_str());
         system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[4]));
     }
 
@@ -217,7 +213,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     char *command;
     pContext->LocalToString(params[2], &command);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[1]);
         return 0;
@@ -235,7 +231,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     char command[MAX_COMMAND_LENGTH + 1];
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[1]);
         return 0;

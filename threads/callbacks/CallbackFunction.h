@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        ExecuteThread.h
+ * File        CallbackFunction.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,33 +22,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _SYSTEM2_EXECUTE_THREAD_H_
-#define _SYSTEM2_EXECUTE_THREAD_H_
+#ifndef _SYSTEM2_CALLBACK_FUNCTION_H_
+#define _SYSTEM2_CALLBACK_FUNCTION_H_
 
-#include "extension.h"
+#include "smsdk_ext.h"
 
- // Define Posix
-#if defined  _WIN32
-#define PosixOpen _popen
-#define PosixClose _pclose
-#else
-#define PosixOpen popen
-#define PosixClose pclose
-#endif
-
-
-class ExecuteThread : public IThread {
-private:
-    std::string command;
-    int data;
-
-    std::shared_ptr<CallbackFunction_t> callbackFunction;
-
-public:
-    ExecuteThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
-
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
-};
+typedef struct {
+    IPlugin * plugin;
+    IPluginFunction * function;
+    bool isValid;
+} CallbackFunction_t;
 
 #endif

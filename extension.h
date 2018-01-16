@@ -32,29 +32,36 @@
 #include <string.h>
 #include <string>
 #include <memory>
-#include <queue>
+#include <deque>
+#include <vector>
 
 #include <curl/curl.h>
 
 
-class System2Extension : public SDKExtension {
+class System2Extension : public SDKExtension, public IPluginsListener {
 private:
-    IMutex * mutex;
-    std::queue<std::shared_ptr<Callback>> callbackQueue;
-    uint32_t frames;
+    IMutex * callbackMutex;
+
+    std::deque<std::shared_ptr<Callback>> callbackQueue;
+    std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
+
+    volatile uint32_t frames;
+    bool isRunning;
 
 public:
     System2Extension();
-
-    void AppendCallback(std::shared_ptr<Callback> callback);
-
-    void GameFrameHit();
-    uint32_t GetFrames() {
-        return this->frames;
-    }
+    ~System2Extension();
 
     virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
     virtual void SDK_OnUnload();
+
+    virtual void OnPluginUnloaded(IPlugin *plugin);
+
+    void AppendCallback(std::shared_ptr<Callback> callback);
+    std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
+
+    void GameFrameHit();
+    uint32_t GetFrames();
 };
 
 

@@ -25,14 +25,15 @@
 #include "LegacyCommandCallback.h"
 
 
-LegacyCommandCallback::LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, LegacyCommandState state)
-    : output(output), command(command), data(data), callback(callback), state(state) {}
+LegacyCommandCallback::LegacyCommandCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string output,
+                                             std::string command, int data, LegacyCommandState state)
+    : Callback(callbackFunction), output(output), command(command), data(data), state(state) {}
 
 void LegacyCommandCallback::Fire() {
-    this->callback->PushString(this->output.c_str());
-    this->callback->PushCell(this->output.length() + 1);
-    this->callback->PushCell(this->state);
-    this->callback->PushCell(this->data);
-    this->callback->PushString(this->command.c_str());
-    this->callback->Execute(NULL);
+    this->callbackFunction->function->PushString(this->output.c_str());
+    this->callbackFunction->function->PushCell(this->output.length() + 1);
+    this->callbackFunction->function->PushCell(this->state);
+    this->callbackFunction->function->PushCell(this->data);
+    this->callbackFunction->function->PushString(this->command.c_str());
+    this->callbackFunction->function->Execute(NULL);
 }

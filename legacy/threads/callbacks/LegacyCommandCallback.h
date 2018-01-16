@@ -36,11 +36,10 @@ private:
     std::string command;
     int data;
 
-    IPluginFunction *callback;
     LegacyCommandState state;
 
 public:
-    LegacyCommandCallback(std::string output, std::string command, int data, IPluginFunction *callback, LegacyCommandState state);
+    LegacyCommandCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string output, std::string command, int data, LegacyCommandState state);
 
     virtual void Fire();
 };

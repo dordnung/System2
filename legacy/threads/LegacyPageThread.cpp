@@ -28,8 +28,8 @@
 #include "LegacyCommandThread.h"
 
 
-LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback)
-    : IThread(), url(url), post(post), useragent(useragent), data(data), callback(callback) {}
+LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
+    : IThread(), url(url), post(post), useragent(useragent), data(data), callbackFunction(callbackFunction) {}
 
 
 void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
@@ -40,7 +40,7 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
     {
         std::string(),
         this->data,
-        this->callback,
+        this->callbackFunction,
     };
 
     CURL *curl = curl_easy_init();
@@ -83,7 +83,7 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Add return status to queue
-    system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(page.result, std::string(), this->data, this->callback, state));
+    system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, page.result, std::string(), this->data, state));
 }
 
 
@@ -102,7 +102,7 @@ size_t LegacyPageThread::GetPage(void *buffer, size_t size, size_t nmemb, void *
     // We only can push a string with a length of MAX_RESULT_LENGTH
     if (page->result.length() + realsize >= MAX_RESULT_LENGTH) {
         // Add return status to queue
-        system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(page->result, std::string(), page->data, page->callback, CMD_PROGRESS));
+        system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(page->callbackFunction, page->result, std::string(), page->data, CMD_PROGRESS));
 
         // Clear result buffer
         page->result.clear();

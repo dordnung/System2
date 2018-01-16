@@ -39,7 +39,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &from);
     pContext->LocalToString(params[3], &to);
 
-    IPluginFunction *callback = pContext->GetFunctionById(params[1]);
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ReportError("Callback ID %x is invalid", params[1]);
         return 0;

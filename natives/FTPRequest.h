@@ -37,7 +37,7 @@ public:
     bool createMissingDirs;
     bool listFilenamesOnly;
 
-    FTPRequest(std::string url, IPluginFunction *responseCallback);
+    FTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
     FTPRequest(const FTPRequest &request);
 
     virtual FTPRequest *Clone() const;

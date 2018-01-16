@@ -35,16 +35,16 @@ private:
     std::string useragent;
     int data;
 
-    IPluginFunction *callback;
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
 
 public:
     typedef struct {
         std::string result;
         int data;
-        IPluginFunction *callback;
+        std::shared_ptr<CallbackFunction_t> callbackFunction;
     } PageInfo;
 
-    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, IPluginFunction *callback);
+    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

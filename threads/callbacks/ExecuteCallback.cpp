@@ -26,8 +26,8 @@
 #include "ExecuteCallbackHandler.h"
 
 
-ExecuteCallback::ExecuteCallback(IPluginFunction *callback, bool success, int exitStatus, std::string output, std::string command, int data)
-    : callback(callback), success(success), exitStatus(exitStatus), output(output), command(command), data(data) {}
+ExecuteCallback::ExecuteCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, int exitStatus, std::string output, std::string command, int data)
+    : Callback(callbackFunction), success(success), exitStatus(exitStatus), output(output), command(command), data(data) {}
 
 
 const std::string &ExecuteCallback::GetOutput() const {
@@ -39,26 +39,26 @@ int ExecuteCallback::GetExitStatus() const {
 }
 
 void ExecuteCallback::Fire() {
-    if (this->callback->IsRunnable()) {
-        IdentityToken_t *owner = this->callback->GetParentContext()->GetIdentity();
-        Handle_t outputHandle = BAD_HANDLE;
+    smutils->LogError(myself, "E: Fire");
 
-        if (this->success) {
-            // Create the output handle
-            outputHandle = executeCallbackHandler.CreateHandle(this, owner);
-        }
+    IdentityToken_t *owner = this->callbackFunction->plugin->GetIdentity();
+    Handle_t outputHandle = BAD_HANDLE;
 
-        // Push every argument to the callback and execute it
-        this->callback->PushCell(this->success);
-        this->callback->PushString(this->command.c_str());
-        this->callback->PushCell(outputHandle);
-        this->callback->PushCell(this->data);
-        this->callback->Execute(NULL);
+    if (this->success) {
+        // Create the output handle
+        outputHandle = executeCallbackHandler.CreateHandle(this, owner);
+    }
 
-        // Delete the output handle when finished
-        if (outputHandle != BAD_HANDLE) {
-            executeCallbackHandler.FreeHandle(outputHandle, owner);
-        }
+    // Push every argument to the callback and execute it
+    this->callbackFunction->function->PushCell(this->success);
+    this->callbackFunction->function->PushString(this->command.c_str());
+    this->callbackFunction->function->PushCell(outputHandle);
+    this->callbackFunction->function->PushCell(this->data);
+    this->callbackFunction->function->Execute(NULL);
+
+    // Delete the output handle when finished
+    if (outputHandle != BAD_HANDLE) {
+        executeCallbackHandler.FreeHandle(outputHandle, owner);
     }
 }
 

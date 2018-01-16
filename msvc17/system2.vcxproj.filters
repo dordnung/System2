@@ -278,5 +278,8 @@
     <ClInclude Include="..\handler\ResponseCallbackHandler.h">
       <Filter>Header Files\handler</Filter>
     </ClInclude>
+    <ClInclude Include="..\threads\callbacks\CallbackFunction.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

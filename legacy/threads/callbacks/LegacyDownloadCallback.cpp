@@ -25,19 +25,21 @@
 #include "LegacyDownloadCallback.h"
 
 
-LegacyDownloadCallback::LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback)
-    : finished(true), curlError(curlError), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f), data(data), callback(callback) {}
+LegacyDownloadCallback::LegacyDownloadCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string curlError, int data)
+    : Callback(callbackFunction), finished(true), curlError(curlError), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f), data(data) {}
 
-LegacyDownloadCallback::LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback)
-    : finished(finished), curlError(curlError), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data), callback(callback) {}
+LegacyDownloadCallback::LegacyDownloadCallback(std::shared_ptr<CallbackFunction_t> callbackFunction,
+                                               bool finished, std::string curlError,
+                                               float dlTotal, float dlNow, float ulTotal, float ulNow, int data)
+    : Callback(callbackFunction), finished(finished), curlError(curlError), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {}
 
 void LegacyDownloadCallback::Fire() {
-    this->callback->PushCell(this->finished);
-    this->callback->PushString(this->curlError.c_str());
-    this->callback->PushFloat(this->dlTotal);
-    this->callback->PushFloat(this->dlNow);
-    this->callback->PushFloat(this->ulTotal);
-    this->callback->PushFloat(this->ulNow);
-    this->callback->PushCell(this->data);
-    this->callback->Execute(NULL);
+    this->callbackFunction->function->PushCell(this->finished);
+    this->callbackFunction->function->PushString(this->curlError.c_str());
+    this->callbackFunction->function->PushFloat(this->dlTotal);
+    this->callbackFunction->function->PushFloat(this->dlNow);
+    this->callbackFunction->function->PushFloat(this->ulTotal);
+    this->callbackFunction->function->PushFloat(this->ulNow);
+    this->callbackFunction->function->PushCell(this->data);
+    this->callbackFunction->function->Execute(NULL);
 }

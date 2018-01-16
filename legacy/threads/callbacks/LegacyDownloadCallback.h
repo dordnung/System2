@@ -39,11 +39,9 @@ private:
     float ulNow;
     int data;
 
-    IPluginFunction *callback;
-
 public:
-    LegacyDownloadCallback(std::string curlError, int data, IPluginFunction *callback);
-    LegacyDownloadCallback(bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data, IPluginFunction *callback);
+    LegacyDownloadCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string curlError, int data);
+    LegacyDownloadCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool finished, std::string curlError, float dlTotal, float dlNow, float ulTotal, float ulNow, int data);
 
     virtual void Fire();
 };

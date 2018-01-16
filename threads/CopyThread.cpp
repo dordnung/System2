@@ -28,8 +28,8 @@
 #include <fstream>
 
 
-CopyThread::CopyThread(std::string from, std::string to, int data, IPluginFunction *callback)
-    : IThread(), from(from), to(to), data(data), callback(callback) {}
+CopyThread::CopyThread(std::string from, std::string to, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
+    : IThread(), from(from), to(to), data(data), callbackFunction(callbackFunction) {}
 
 
 void CopyThread::RunThread(IThreadHandle *pHandle) {
@@ -64,7 +64,7 @@ void CopyThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Add callback to queue
-    system2Extension.AppendCallback(std::make_shared<CopyCallback>(this->callback, success, this->from, this->to, this->data));
+    system2Extension.AppendCallback(std::make_shared<CopyCallback>(this->callbackFunction, success, this->from, this->to, this->data));
 }
 
 

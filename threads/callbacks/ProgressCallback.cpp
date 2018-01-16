@@ -27,29 +27,26 @@
 
 
 ProgressCallback::ProgressCallback(Request *request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data)
-    : request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {};
+    : Callback(request->progressCallbackFunction), request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {};
 
 
 void ProgressCallback::Fire() {
-    if (request->progressCallback->IsRunnable()) {
+    smutils->LogError(myself, "P: Fire");
+
         // Create a temporary request handle, so in the callback the correct request will be used
-        IdentityToken_t *owner = request->progressCallback->GetParentContext()->GetIdentity();
-        Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
+    IdentityToken_t *owner = request->progressCallbackFunction->plugin->GetIdentity();
+    Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
 
-        request->progressCallback->PushCell(requestHandle);
-        request->progressCallback->PushCell(this->dlTotal);
-        request->progressCallback->PushCell(this->dlNow);
-        request->progressCallback->PushCell(this->ulTotal);
-        request->progressCallback->PushCell(this->ulNow);
-        request->progressCallback->Execute(NULL);
+    request->progressCallbackFunction->function->PushCell(requestHandle);
+    request->progressCallbackFunction->function->PushCell(this->dlTotal);
+    request->progressCallbackFunction->function->PushCell(this->dlNow);
+    request->progressCallbackFunction->function->PushCell(this->ulTotal);
+    request->progressCallbackFunction->function->PushCell(this->ulNow);
+    request->progressCallbackFunction->function->Execute(NULL);
 
-        // Delete the request handle when finished
-        if (requestHandle != BAD_HANDLE) {
-            requestHandler.FreeHandle(requestHandle, owner);
-        }
-    } else {
-        // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
-        delete this->request;
+    // Delete the request handle when finished
+    if (requestHandle != BAD_HANDLE) {
+        requestHandler.FreeHandle(requestHandle, owner);
     }
 }
 

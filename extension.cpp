@@ -31,19 +31,29 @@
 #include "LegacyFTPThread.h"
 #include "FTPRequestThread.h"
 
+#include <algorithm>
 
-System2Extension::System2Extension() : mutex(NULL), frames(0) {};
+
+System2Extension::System2Extension() : callbackMutex(NULL), frames(0), isRunning(false) {
+    curl_global_init(CURL_GLOBAL_ALL);
+};
+
+System2Extension::~System2Extension() {
+    curl_global_cleanup();
+};
+
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     this->frames = 0;
+    this->isRunning = true;
 
     // Add natives and register extension
     sharesys->AddNatives(myself, system2_natives);
     sharesys->AddNatives(myself, system2_legacy_natives);
     sharesys->RegisterLibrary(myself, "system2");
 
-    // Create needed mutex
-    mutex = threader->MakeMutex();
+    // Creates needed mutexes
+    callbackMutex = threader->MakeMutex();
     ftpMutex = threader->MakeMutex();
     legacyFTPMutex = threader->MakeMutex();
 
@@ -52,55 +62,59 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     requestHandler.Initialize();
     responseCallbackHandler.Initialize();
 
+    // Add game frame hook
     smutils->AddGameFrameHook(&OnGameFrameHit);
 
-    // CURL needs to be initialized
-    curl_global_init(CURL_GLOBAL_ALL);
+    // Add this plugin listener
+    plsys->AddPluginsListener(this);
 
     return true;
 }
 
 void System2Extension::SDK_OnUnload() {
+    this->callbackMutex->Lock();
+
+    // Remove game frame hook so no callback will run anymore
+    smutils->RemoveGameFrameHook(&OnGameFrameHit);
+
+    // Remove all callbacks and callback functions
+    this->callbackQueue.clear();
+    this->callbackFunctions.clear();
+
     // Remove handles
     executeCallbackHandler.Shutdown();
     requestHandler.Shutdown();
     responseCallbackHandler.Shutdown();
 
-    smutils->RemoveGameFrameHook(&OnGameFrameHit);
-
-    // Remove all callbacks
-    while (!this->mutex->TryLock()) {
-#ifdef _WIN32
-        Sleep(50);
-#else
-        usleep(50000);
-#endif
-    }
-
-    // Are there outstandig callbacks?
-    while (!this->callbackQueue.empty()) {
-        // Abort the callback
-        this->callbackQueue.front()->Abort();
-
-        // Remove the callback from the queue
-        // No deleting needed, as callbacks are shared pointers
-        callbackQueue.pop();
-}
-
-    // Unlock mutex
-    this->mutex->Unlock();
+    // Disable running state
+    this->isRunning = false;
+    this->callbackMutex->Unlock();
 
     // Remove created mutex
-    mutex->DestroyThis();
+    this->callbackMutex->DestroyThis();
     ftpMutex->DestroyThis();
     legacyFTPMutex->DestroyThis();
 
-    curl_global_cleanup();
+    // As threads can still use mutex declare them explicit as NULL
+    this->callbackMutex = NULL;
+    ftpMutex = NULL;
+    legacyFTPMutex = NULL;
 }
+
+
+void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
+    // Search if the plugin has any pending callback functions and invalidate them
+    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
+        if ((*it)->plugin == plugin) {
+            (*it)->isValid = false;
+        }
+    }
+}
+
 
 void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
     // Lock mutex to gain thread safety
-    while (!this->mutex->TryLock()) {
+    while (callbackMutex && !this->callbackMutex->TryLock()) {
 #ifdef _WIN32
         Sleep(50);
 #else
@@ -108,35 +122,88 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
 #endif
     }
 
-    // Add the callback to the queue and unlock mutex again
-    this->callbackQueue.push(callback);
-    this->mutex->Unlock();
+    if (this->isRunning) {
+        // Add the callback to the queue and unlock mutex again
+        this->callbackQueue.push_back(callback);
+    } else {
+        // Abort the callback if we not running anymore
+        callback->Abort();
+    }
+
+    if (callbackMutex) {
+        this->callbackMutex->Unlock();
+    }
 }
+
+
+std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction *function) {
+    if (!function || !function->IsRunnable()) {
+        return NULL;
+    }
+
+    auto plugin = plsys->FindPluginByContext(function->GetParentRuntime()->GetDefaultContext()->GetContext());
+    if (plugin) {
+        // Check if we already have the callback function
+        for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
+            if ((*it)->function == function) {
+                auto callbackFunction = (*it);
+                callbackFunction->plugin = plugin;
+                callbackFunction->isValid = true;
+
+                return callbackFunction;
+            }
+        }
+
+        auto callbackFunction = std::make_shared<CallbackFunction_t>();
+        callbackFunction->plugin = plugin;
+        callbackFunction->function = function;
+        callbackFunction->isValid = true;
+
+        // Add to the internal list of callback functions
+        this->callbackFunctions.push_back(callbackFunction);
+        return callbackFunction;
+    }
+
+    return NULL;
+}
+
 
 void System2Extension::GameFrameHit() {
     // Increase number of frames
     this->frames++;
 
     // Lock the mutex to gain thread safety
-    if (!this->mutex->TryLock()) {
+    if (!this->callbackMutex->TryLock()) {
         // Couldn't lock -> do not wait
         return;
     }
 
     // Are there outstandig callbacks?
     if (!this->callbackQueue.empty()) {
-        // Fire the next callback
-        this->callbackQueue.front()->Fire();
+        auto callback = this->callbackQueue.front();
+
+        if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
+            // Fire the callback
+            callback->Fire();
+        }
+
+        // Delete the callback function when finished with the callback
+        // No deleting needed, as callback functions are shared pointers
+        this->callbackFunctions.erase(
+            std::remove(this->callbackFunctions.begin(), this->callbackFunctions.end(), callback->callbackFunction), this->callbackFunctions.end());
 
         // Remove the callback from the queue
         // No deleting needed, as callbacks are shared pointers
-        callbackQueue.pop();
+        callbackQueue.pop_front();
     }
 
     // Unlock mutex
-    this->mutex->Unlock();
+    this->callbackMutex->Unlock();
 }
 
+uint32_t System2Extension::GetFrames() {
+    return this->frames;
+}
 
 void OnGameFrameHit(bool simulating) {
     system2Extension.GameFrameHit();

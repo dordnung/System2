@@ -26,8 +26,8 @@
 #include "HTTPRequestThread.h"
 
 
-HTTPRequest::HTTPRequest(std::string url, IPluginFunction *responseCallback)
-    : Request(url, responseCallback), followRedirects(true), autoReferer(false) {}
+HTTPRequest::HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction)
+    : Request(url, responseCallbackFunction), followRedirects(true), autoReferer(false) {}
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
     Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),

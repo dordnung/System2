@@ -31,15 +31,13 @@
 
 class CopyCallback : public Callback {
 private:
-    IPluginFunction * callback;
-
     bool success;
     std::string from;
     std::string to;
     int data;
 
 public:
-    CopyCallback(IPluginFunction *callback, bool success, std::string from, std::string to, int data);
+    CopyCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, std::string from, std::string to, int data);
 
     virtual void Fire();
 };

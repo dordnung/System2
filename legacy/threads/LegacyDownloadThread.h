@@ -34,16 +34,16 @@ private:
     std::string localFile;
     int data;
 
-    IPluginFunction *callback;
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
 
 public:
     typedef struct {
         uint32_t lastFrame;
         int data;
-        IPluginFunction *callback;
+        std::shared_ptr<CallbackFunction_t> callbackFunction;
     } ProgressInfo;
 
-    LegacyDownloadThread(std::string url, std::string localFile, int data, IPluginFunction *callback);
+    LegacyDownloadThread(std::string url, std::string localFile, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

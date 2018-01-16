@@ -125,6 +125,7 @@
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
     <ClInclude Include="..\threads\callbacks\Callback.h" />
+    <ClInclude Include="..\threads\callbacks\CallbackFunction.h" />
     <ClInclude Include="..\threads\callbacks\CopyCallback.h" />
     <ClInclude Include="..\threads\callbacks\ExecuteCallback.h" />
     <ClInclude Include="..\threads\callbacks\FTPResponseCallback.h" />

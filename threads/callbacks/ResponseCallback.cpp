@@ -27,9 +27,10 @@
 
 
 ResponseCallback::ResponseCallback(Request *request, std::string error)
-    : request(request), error(error), statusCode(0), totalTime(0.0f) {};
+    : Callback(request->responseCallbackFunction), request(request), error(error), statusCode(0), totalTime(0.0f) {};
 
-ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string content) : request(request), content(content) {
+ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string content)
+    : Callback(request->responseCallbackFunction), request(request), content(content) {
     // Get the response code
     long code;
     if (curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK) {
@@ -55,44 +56,41 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
 
 
 void ResponseCallback::Fire() {
-    if (request->responseCallback->IsRunnable()) {
-        IdentityToken_t *owner = this->request->responseCallback->GetParentContext()->GetIdentity();
-        Handle_t responseHandle = BAD_HANDLE;
+    smutils->LogError(myself, "R: Fire");
 
-        if (this->error.empty()) {
-            // Create a response handle to this callback on success
-            responseHandle = responseCallbackHandler.CreateHandle(this, owner);
-            this->request->responseCallback->PushCell(true);
-            this->request->responseCallback->PushString("");
-        } else {
-            this->request->responseCallback->PushCell(false);
-            this->request->responseCallback->PushString(this->error.c_str());
-        }
+    IdentityToken_t *owner = this->request->responseCallbackFunction->plugin->GetIdentity();
+    Handle_t responseHandle = BAD_HANDLE;
 
-        // Create a temporary request handle, so in the callback the correct request will be used
-        Handle_t requestHandle = requestHandler.CreateLocaleHandle(this->request, owner);
-        this->request->responseCallback->PushCell(requestHandle);
-
-        this->request->responseCallback->PushCell(responseHandle);
-
-        // Fire the PreFire event for subclasses
-        this->PreFire();
-
-        // Finally execute the callback
-        this->request->responseCallback->Execute(NULL);
-
-        // Delete the request handle when finished
-        if (requestHandle != BAD_HANDLE) {
-            requestHandler.FreeHandle(requestHandle, owner);
-        }
-
-        // Delete the response handle when finished
-        if (responseHandle != BAD_HANDLE) {
-            responseCallbackHandler.FreeHandle(responseHandle, owner);
-        }
+    if (this->error.empty()) {
+        // Create a response handle to this callback on success
+        responseHandle = responseCallbackHandler.CreateHandle(this, owner);
+        this->request->responseCallbackFunction->function->PushCell(true);
+        this->request->responseCallbackFunction->function->PushString("");
     } else {
-        // The request will only be deleted by the handle, but as it will not be invoked we have to delete it manually
-        delete this->request;
+        this->request->responseCallbackFunction->function->PushCell(false);
+        this->request->responseCallbackFunction->function->PushString(this->error.c_str());
+    }
+
+    // Create a temporary request handle, so in the callback the correct request will be used
+    Handle_t requestHandle = requestHandler.CreateLocaleHandle(this->request, owner);
+    this->request->responseCallbackFunction->function->PushCell(requestHandle);
+
+    this->request->responseCallbackFunction->function->PushCell(responseHandle);
+
+    // Fire the PreFire event for subclasses
+    this->PreFire();
+
+    // Finally execute the callback
+    this->request->responseCallbackFunction->function->Execute(NULL);
+
+    // Delete the request handle when finished
+    if (requestHandle != BAD_HANDLE) {
+        requestHandler.FreeHandle(requestHandle, owner);
+    }
+
+    // Delete the response handle when finished
+    if (responseHandle != BAD_HANDLE) {
+        responseCallbackHandler.FreeHandle(responseHandle, owner);
     }
 }
 

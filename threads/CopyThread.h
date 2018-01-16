@@ -34,10 +34,10 @@ private:
     std::string to;
     int data;
 
-    IPluginFunction * callback;
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
 
 public:
-    CopyThread(std::string from, std::string to, int data, IPluginFunction *callback);
+    CopyThread(std::string from, std::string to, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
     void RunThread(IThreadHandle *pThread);
     void OnTerminate(IThreadHandle *pThread, bool cancel);

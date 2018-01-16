@@ -25,8 +25,15 @@
 #ifndef _SYSTEM2_CALLBACK_H_
 #define _SYSTEM2_CALLBACK_H_
 
+#include "CallbackFunction.h"
+#include <memory>
+
 class Callback {
 public:
+    std::shared_ptr<CallbackFunction_t> callbackFunction;
+
+    Callback(std::shared_ptr<CallbackFunction_t> callbackFunction) : callbackFunction(callbackFunction) {}
+
     virtual void Fire() = 0;
     virtual void Abort() {};
 };

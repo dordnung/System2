@@ -41,7 +41,7 @@ public:
     bool followRedirects;
     bool autoReferer;
 
-    HTTPRequest(std::string url, IPluginFunction *responseCallback);
+    HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
     HTTPRequest(const HTTPRequest &request);
 
     virtual HTTPRequest *Clone() const;
