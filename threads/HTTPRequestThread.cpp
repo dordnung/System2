@@ -85,7 +85,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         struct curl_slist *headers = NULL;
         if (!this->httpRequest->headers.empty()) {
             std::string header;
-            for (std::map<std::string, std::string>::iterator it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {
+            for (auto it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {
                 if (!it->first.empty()) {
                     header = it->first + ":";
                 }

@@ -101,7 +101,7 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
     char *header;
     pContext->LocalToString(params[2], &header);
 
-    for (std::map<std::string, std::string>::iterator it = response->headers.begin(); it != response->headers.end(); ++it) {
+    for (auto it = response->headers.begin(); it != response->headers.end(); ++it) {
         if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
             pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), NULL);
             return 1;
@@ -122,7 +122,7 @@ cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *
     }
 
     // Map can't be accessed by index
-    std::map<std::string, std::string>::iterator it = response->headers.begin();
+    auto it = response->headers.begin();
     for (int i = 0; i < params[2]; i++) {
         ++it;
     }

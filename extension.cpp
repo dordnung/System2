@@ -103,6 +103,9 @@ void System2Extension::SDK_OnUnload() {
     requestHandler.Shutdown();
     responseCallbackHandler.Shutdown();
 
+    // Remove plugin listener
+    plsys->RemovePluginsListener(this);
+
     // Clear STL stuff
     this->callbackQueue.clear();
     this->callbackFunctions.clear();
@@ -122,9 +125,8 @@ void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
     // Search if the plugin has any pending callback functions and invalidate them
     for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end();) {
         if ((*it)->plugin == plugin) {
+            // Mark it as invalid and remove it from the list
             (*it)->isValid = false;
-
-            // Remove it from the list
             it = this->callbackFunctions.erase(it);
         } else {
             ++it;

@@ -233,7 +233,7 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
     char *header;
     pContext->LocalToString(params[2], &header);
 
-    for (std::map<std::string, std::string>::iterator it = request->headers.begin(); it != request->headers.end(); ++it) {
+    for (auto it = request->headers.begin(); it != request->headers.end(); ++it) {
         if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
             pContext->StringToLocalUTF8(params[3], params[4], request->headers[header].c_str(), NULL);
             return 1;

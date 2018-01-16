@@ -25,7 +25,6 @@
 #ifndef _SYSTEM2_LEGACY_COMMAND_STATE_H_
 #define _SYSTEM2_LEGACY_COMMAND_STATE_H_
 
-
 enum LegacyCommandState {
     CMD_SUCCESS,
     CMD_EMPTY,

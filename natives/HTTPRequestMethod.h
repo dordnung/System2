@@ -25,7 +25,6 @@
 #ifndef _SYSTEM2_HTTP_REQUEST_METHOD_H_
 #define _SYSTEM2_HTTP_REQUEST_METHOD_H_
 
-
 enum HTTPRequestMethod {
     METHOD_GET,
     METHOD_POST,
