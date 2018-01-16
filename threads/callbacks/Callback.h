@@ -32,7 +32,7 @@ class Callback {
 public:
     std::shared_ptr<CallbackFunction_t> callbackFunction;
 
-    Callback(std::shared_ptr<CallbackFunction_t> callbackFunction) : callbackFunction(callbackFunction) {}
+    explicit Callback(std::shared_ptr<CallbackFunction_t> callbackFunction) : callbackFunction(callbackFunction) {}
 
     virtual void Fire() = 0;
     virtual void Abort() {};
