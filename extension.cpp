@@ -155,9 +155,7 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
 
 void System2Extension::RegisterThread(IThreadHandle *threadHandle) {
     // Just push to the list of running threads
-    while (!this->threadMutex->TryLock()) {
-        sleep_ms(1);
-    }
+    this->threadMutex->Lock();
     this->runningThreads.push_back(threadHandle);
     threadMutex->Unlock();
 }
@@ -220,14 +218,9 @@ void System2Extension::GameFrameHit() {
     }
 
     // Are there outstandig callbacks?
+    std::shared_ptr<Callback> callback = NULL;
     if (this->isRunning && !this->callbackQueue.empty()) {
-        auto callback = this->callbackQueue.front();
-        if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
-            // Fire the callback if the callback function is valid
-            callback->Fire();
-        } else {
-            callback->Abort();
-        }
+        callback = this->callbackQueue.front();
 
         // Remove the callback from the queue
         // No deleting needed, as callbacks are shared pointers
@@ -236,6 +229,16 @@ void System2Extension::GameFrameHit() {
 
     // Unlock mutex
     this->threadMutex->Unlock();
+
+    // Proccess callback outside mutex lock to avoid infinite loop
+    if (callback) {
+        if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
+            // Fire the callback if the callback function is valid
+            callback->Fire();
+        } else {
+            callback->Abort();
+        }
+    }
 }
 
 uint32_t System2Extension::GetFrames() {

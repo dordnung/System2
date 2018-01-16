@@ -793,7 +793,7 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertStringEquals("ftp://speedtest.tele2.net/", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(226, response.StatusCode);
-        assertValueEquals(190, response.ContentSize);
+        assertValueNotEquals(0, response.ContentSize);
         assertValueEquals(true, request.ListFilenamesOnly);
     } else if (request.Any == TEST_FTP_DOWNLOAD) {
         PrintToServer("INFO: Got FTP download callback in %.3fs, uploading it again", response.TotalTime);
