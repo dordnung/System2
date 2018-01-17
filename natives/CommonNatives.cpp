@@ -105,14 +105,14 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     std::ifstream file(fullFilePath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
     if (file.bad() || !file.is_open()) {
         pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
-        return 0;
+        return false;
     }
 
     // Get the size of the file and save the content to a var
     int size = (int)file.tellg();
     if (size < 1) {
         pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
-        return 0;
+        return false;
     }
 
     memblock = new char[size];
@@ -131,7 +131,7 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     // Save the MD5 hash to the plugins buffer
     pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), NULL);
 
-    return 1;
+    return true;
 }
 
 
@@ -167,14 +167,14 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
     std::ifstream file(fullFilePath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
     if (file.bad() || !file.is_open()) {
         pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
-        return 0;
+        return false;
     }
 
     // Get the size of the file and save the content to a var
     int size = (int)file.tellg();
     if (size < 1) {
         pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
-        return 0;
+        return false;
     }
 
     memblock = new char[size];
@@ -192,55 +192,55 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
     // Save the CRC32 hash to the plugins buffer
     pContext->StringToLocalUTF8(params[2], params[3], crc32, NULL);
 
-    return 1;
+    return true;
 }
 
 
 cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
     // Get the string to encode
-    char *str;
-    pContext->LocalToString(params[1], &str);
+    char str[2048];
+    smutils->FormatString(str, sizeof(str), pContext, params, 3);
 
     // Use the curl escape method to encode it
     CURL *curl = curl_easy_init();
     if (curl) {
         char *output = curl_easy_escape(curl, str, 0);
         if (output) {
-            pContext->StringToLocalUTF8(params[2], params[3], output, NULL);
+            pContext->StringToLocalUTF8(params[1], params[2], output, NULL);
             curl_free(output);
 
             curl_easy_cleanup(curl);
-            return 1;
+            return true;
         }
 
         curl_easy_cleanup(curl);
-        return 0;
+        return false;
     }
 
-    return 0;
+    return false;
 }
 
 
 cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params) {
     // Get the string to decode
-    char *str;
-    pContext->LocalToString(params[1], &str);
+    char str[2048];
+    smutils->FormatString(str, sizeof(str), pContext, params, 3);
 
     // Use the curl unescape method to decode it
     CURL *curl = curl_easy_init();
     if (curl) {
         char *output = curl_easy_unescape(curl, str, 0, NULL);
         if (output) {
-            pContext->StringToLocalUTF8(params[2], params[3], output, NULL);
+            pContext->StringToLocalUTF8(params[1], params[2], output, NULL);
             curl_free(output);
 
             curl_easy_cleanup(curl);
-            return 1;
+            return true;
         }
 
         curl_easy_cleanup(curl);
-        return 0;
+        return false;
     }
 
-    return 0;
+    return false;
 }

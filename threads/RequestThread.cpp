@@ -34,7 +34,7 @@ RequestThread::RequestThread(Request *request) : request(request) {};
 bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     // Set URL and port
     curl_easy_setopt(curl, CURLOPT_URL, this->request->url.c_str());
-    if (this->request->port > 0) {
+    if (this->request->port >= 0) {
         curl_easy_setopt(curl, CURLOPT_PORT, this->request->port);
     }
 
@@ -69,8 +69,8 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     }
 
     // Set timeout
-    if (this->request->timeout > 0) {
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, this->request->timeout);
+    if (this->request->timeout >= 0) {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, this->request->timeout);
     } else {
         // Set connect timeout to a better default value
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 60);

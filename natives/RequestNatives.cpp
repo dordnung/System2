@@ -35,8 +35,8 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    char *url;
-    pContext->LocalToString(params[2], &url);
+    char url[1024];
+    smutils->FormatString(url, sizeof(url), pContext, params, 2);
 
     request->url = url;
     return 1;
@@ -55,6 +55,11 @@ cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
+        return 0;
+    }
+
+    if (params[2] < 0) {
+        pContext->ReportError("Invalid port number %d", params[2]);
         return 0;
     }
 
@@ -77,8 +82,8 @@ cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *param
         return 0;
     }
 
-    char *outputFile;
-    pContext->LocalToString(params[2], &outputFile);
+    char outputFile[PLATFORM_MAX_PATH + 1];
+    smutils->FormatString(outputFile, sizeof(outputFile), pContext, params, 2);
 
     request->outputFile = outputFile;
     return 1;
@@ -128,6 +133,11 @@ cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
+    if (params[2] < 0) {
+        pContext->ReportError("Invalid timeout %d", params[2]);
+        return 0;
+    }
+
     request->timeout = params[2];
     return 1;
 }
@@ -153,14 +163,14 @@ cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) 
 
 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params) {
-    char *url;
-    pContext->LocalToString(params[1], &url);
-
-    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
         return BAD_HANDLE;
     }
+
+    char url[1024];
+    smutils->FormatString(url, sizeof(url), pContext, params, 2);
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(new HTTPRequest(url, callback), pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
@@ -192,8 +202,8 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
         return 0;
     }
 
-    char *data;
-    pContext->LocalToString(params[2], &data);
+    char data[2048];
+    smutils->FormatString(data, sizeof(data), pContext, params, 2);
 
     request->bodyData = data;
     return 1;
@@ -216,9 +226,10 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
     }
 
     char *header;
-    char *value;
     pContext->LocalToString(params[2], &header);
-    pContext->LocalToString(params[3], &value);
+
+    char value[2048];
+    smutils->FormatString(value, sizeof(value), pContext, params, 3);
 
     request->headers[header] = value;
     return 1;
@@ -227,7 +238,7 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
-        return 0;
+        return false;
     }
 
     char *header;
@@ -236,21 +247,21 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
     for (auto it = request->headers.begin(); it != request->headers.end(); ++it) {
         if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
             pContext->StringToLocalUTF8(params[3], params[4], request->headers[header].c_str(), NULL);
-            return 1;
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
-        return 0;
+        return false;
     }
 
     if (params[2] >= static_cast<int>(request->headers.size())) {
-        return 0;
+        return false;
     }
 
     // Map can't be accessed by index
@@ -260,7 +271,7 @@ cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *p
     }
 
     pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), NULL);
-    return 1;
+    return true;
 }
 
 cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params) {
@@ -278,8 +289,8 @@ cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *pa
         return 0;
     }
 
-    char *userAgent;
-    pContext->LocalToString(params[2], &userAgent);
+    char userAgent[256];
+    smutils->FormatString(userAgent, sizeof(userAgent), pContext, params, 2);
 
     request->userAgent = userAgent;
     return 1;
@@ -382,14 +393,14 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
 
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
-    char *url;
-    pContext->LocalToString(params[1], &url);
-
-    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
+    auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        pContext->ReportError("Callback ID %x is invalid", params[1]);
         return BAD_HANDLE;
     }
+
+    char url[1024];
+    smutils->FormatString(url, sizeof(url), pContext, params, 2);
 
     FTPRequest *request = new FTPRequest(url, callback);
 
@@ -439,8 +450,8 @@ cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *par
         return 0;
     }
 
-    char *inputFile;
-    pContext->LocalToString(params[2], &inputFile);
+    char inputFile[PLATFORM_MAX_PATH + 1];
+    smutils->FormatString(inputFile, sizeof(inputFile), pContext, params, 2);
 
     request->inputFile = inputFile;
     return 1;

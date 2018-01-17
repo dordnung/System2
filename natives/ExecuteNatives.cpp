@@ -315,7 +315,7 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     return length - bytes - offset;
 }
 
-cell_t NativeExecuteOutput_GetSize(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteOutput_GetLength(IPluginContext *pContext, const cell_t *params) {
     // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 

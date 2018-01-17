@@ -166,15 +166,15 @@ void PerformTests() {
     PrintToServer("INFO: Test URL encode a string");
 
     char urlEncodeString[16] = "te st";
-    assertTrue("URL encode should be successful", System2_URLEncode(urlEncodeString, urlEncodeString, sizeof(urlEncodeString)));
-    assertStringEquals("te%20st", urlEncodeString);
+    assertTrue("URL encode should be successful", System2_URLEncode(urlEncodeString, sizeof(urlEncodeString), "%s test", urlEncodeString));
+    assertStringEquals("te%20st%20test", urlEncodeString);
 
     // Test URL decode
     PrintToServer("INFO: Test URL decode a string");
 
     char urlDecodeString[16] = "te%20st";
-    assertTrue("URL decode should be successful", System2_URLDecode(urlDecodeString, urlDecodeString, sizeof(urlDecodeString)));
-    assertStringEquals("te st", urlDecodeString);
+    assertTrue("URL decode should be successful", System2_URLDecode(urlDecodeString, sizeof(urlDecodeString), "%s%%20test", urlDecodeString));
+    assertStringEquals("te st test", urlDecodeString);
 
     // Test copying a file is successful
     PrintToServer("INFO: Test copying a file");
@@ -264,15 +264,16 @@ void PerformTests() {
 void PerformRequestTests() {
     // Test long page
     PrintToServer("INFO: Test getting a long page");
-    System2HTTPRequest httpRequest = new System2HTTPRequest("https://dordnung.de/sourcemod/system2/testPage.php?long", HttpRequestCallback);
+    System2HTTPRequest httpRequest = new System2HTTPRequest(HttpRequestCallback, "https://dordnung.de/sourcemod/system2/testPage.php?%s", "long");
+    httpRequest.Timeout = 60;
     httpRequest.Any = TEST_LONG;
     httpRequest.GET();
 
     // Test body data
     PrintToServer("INFO: Test send body data");
     httpRequest.Any = TEST_BODY;
-    httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?body");
-    httpRequest.SetData("test=testData");
+    httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?%s", "body");
+    httpRequest.SetData("test=%s", "testData");
     httpRequest.POST();
     httpRequest.SetData("");
 
@@ -280,7 +281,7 @@ void PerformRequestTests() {
     PrintToServer("INFO: Test user agent is set");
     httpRequest.Any = TEST_AGENT;
     httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?agent");
-    httpRequest.SetUserAgent("System2TestUserAgent");
+    httpRequest.SetUserAgent("System2Test%s", "UserAgent");
     httpRequest.GET();
     httpRequest.SetUserAgent("");
 
@@ -302,9 +303,9 @@ void PerformRequestTests() {
     PrintToServer("INFO: Test timeout for request");
     httpRequest.Any = TEST_TIMEOUT;
     httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?timeout");
-    httpRequest.Timeout = 2000;
+    httpRequest.Timeout = 2;
     httpRequest.GET();
-    httpRequest.Timeout = 60000;
+    httpRequest.Timeout = 60;
 
     // Test auth
     PrintToServer("INFO: Test basic auth");
@@ -344,7 +345,7 @@ void PerformRequestTests() {
     httpRequest.Any = TEST_HEADER;
     PrintToServer("INFO: Test set header on a request");
     httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?header");
-    httpRequest.SetHeader("System2Test", "ATestHeader");
+    httpRequest.SetHeader("System2Test", "%s", "ATestHeader");
     httpRequest.GET();
     httpRequest.SetHeader("System2Test", "");
 
@@ -374,7 +375,7 @@ void PerformRequestTests() {
     httpRequest.Any = TEST_DOWNLOAD;
     PrintToServer("INFO: Test downloading a file");
     httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testFile.txt");
-    httpRequest.SetOutputFile(testDownloadFilePath);
+    httpRequest.SetOutputFile("%s", testDownloadFilePath);
     httpRequest.SetProgressCallback(HttpProgressCallback);
     httpRequest.GET();
 
@@ -383,7 +384,7 @@ void PerformRequestTests() {
     
     // Test FTP directory listing
     PrintToServer("INFO: Test list a FTP directory");
-    System2FTPRequest ftpRequest = new System2FTPRequest("ftp://speedtest.tele2.net/", ftpRequestCallback);
+    System2FTPRequest ftpRequest = new System2FTPRequest(ftpRequestCallback, "%s://speedtest.tele2.net/", "ftp");
     ftpRequest.Any = TEST_FTP_DIRECTORY;
     ftpRequest.ListFilenamesOnly = true;
     ftpRequest.SetPort(21);
@@ -518,7 +519,7 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
 
         char output2[128];
         assertValueEquals(0, output.GetOutput(output2, sizeof(output2)));
-        assertValueEquals(strlen(output2), output.Size);
+        assertValueEquals(strlen(output2), output.Length);
 
         TrimString(output2);
         assertStringEquals("thisIsATestCommand", output2);
@@ -548,6 +549,12 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
     if (request.Any == TEST_TIMEOUT || request.Any == TEST_VERIFY_SSL) {
         assertFalse("An error was expected", success);
         assertValueNotEquals(0, strlen(error));
+
+        if (request.Any == TEST_TIMEOUT) {
+            assertValueEquals(2, request.Timeout);
+        } else {
+            assertValueEquals(60, request.Timeout);
+        }
 
         return;
     }
@@ -824,7 +831,7 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         request.Any = TEST_FTP_UPLOAD;
         request.SetURL("ftp://speedtest.tele2.net/upload/system2.zip");
         request.SetOutputFile("");
-        request.SetInputFile(testDownloadFtpFile);
+        request.SetInputFile("%s", testDownloadFtpFile);
         request.StartRequest();
     } else if (request.Any == TEST_FTP_UPLOAD) {
         PrintToServer("INFO: Got FTP upload callback in %.3fs", response.TotalTime);

@@ -134,11 +134,11 @@ methodmap System2ExecuteOutput < Handle {
      */
     public native int GetOutput(char[] output, int maxlength, int start = 0, const char[] delimiter = "");
 
-    property int Size {
+    property int Length {
         /**
-         * Returns the size of the complete output.
+         * Returns the length of the complete output.
          *
-         * @return      Size of the output.
+         * @return      Length of the output.
          * @error       Invalid Output.
          */
         public native get();
@@ -160,7 +160,7 @@ methodmap System2ExecuteOutput < Handle {
 /**
  * Copies a file to another location.
  *
- * @param callback      Callback function when finished with copy.
+ * @param callback      Callback function when finished with copying.
  * @param from          Path to the file to copy.
  * @param to            Path to the file to copy to (including filename). File will be replaced if it exists.
  * @param data          Additional data to pass to the callback.
@@ -173,7 +173,8 @@ native void System2_CopyFile(System2CopyCallback callback, const char[] from, co
 /**
  * Checks whether 7-ZIP was found and is executable.
  *
- * @param execPath     Buffer which will store the path to the 7-ZIP executable. Can be used for showing correct error message.
+ * @param execPath     Buffer which will store the path to the 7-ZIP executable.
+ *                     Can be used for example when showing an error message.
  * @param maxlength    Maxlength of the buffer.
  * @param force32Bit   Whether to force using the 32 bit version of 7-ZIP, otherwise the appropriate version will be used.
  *
@@ -205,7 +206,7 @@ native bool System2_Compress(System2ExecuteCallback callback, const char[] path,
  * @param data          Additional data to pass to the callback.
  * @param force32Bit    Whether to force using the 32 bit version of 7-ZIP, otherwise the appropriate version will be used.
  *
- * @return              True if compress command could be fired, false when 7-ZIP executable couldn't be found or is not executable.
+ * @return              True if extract command could be fired, false when 7-ZIP executable couldn't be found or is not executable.
  */
 native bool System2_Extract(System2ExecuteCallback callback, const char[] archive, const char[] extractDir, any data = 0, bool force32Bit = false);
 
@@ -276,7 +277,6 @@ native bool System2_ExecuteFormatted(char[] output, int maxlength, const char[] 
  */
 native void System2_GetGameDir(char[] gamedir, int maxlength);
 
-
 /**
  * Returns the server's operating system.
  *
@@ -289,7 +289,7 @@ native OS System2_GetOS();
 /**
  * Retrieves the MD5 hex hash of a string.
  *
- * @param string        String to create the MD5 hash of.
+ * @param string        String to retrieve the MD5 hash of.
  * @param buffer        Buffer to store MD5 hash in.
  * @param maxlength     Maxlength of the buffer. Should be greater or equal to 33 (32 MD5 + 1 terminator).
  *
@@ -311,9 +311,9 @@ native bool System2_GetFileMD5(const char[] file, char[] buffer, int maxlength);
 /**
  * Retrieves the CRC32 hex hash of a string.
  *
- * @param string        The string to create the CRC32 hash of.
+ * @param string        The string to retrieve the CRC32 hash of.
  * @param buffer        Buffer to store CRC32 hash in.
- * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (9 CRC32 + 1 terminator).
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (8 CRC32 + 1 terminator).
  *
  * @noreturn
  */
@@ -324,7 +324,7 @@ native void System2_GetStringCRC32(const char[] str, char[] buffer, int maxlengt
  *
  * @param file          The path to the file.
  * @param buffer        Buffer to store CRC32 hash in.
- * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (9 CRC32 + 1 terminator).
+ * @param maxlength     Maxlength of the buffer. Should be greater or equal to 9 (8 CRC32 + 1 terminator).
  *
  * @return              True on success, false when file couldn't be opened.
  */
@@ -424,7 +424,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2_ExecuteThreaded");
         MarkNativeAsOptional("System2_ExecuteFormattedThreaded");
         MarkNativeAsOptional("System2ExecuteOutput.GetOutput");
-        MarkNativeAsOptional("System2ExecuteOutput.Size.get");
+        MarkNativeAsOptional("System2ExecuteOutput.Length.get");
         MarkNativeAsOptional("System2ExecuteOutput.ExitStatus.get");
 
         MarkNativeAsOptional("System2_Execute");
