@@ -89,6 +89,7 @@ cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
 
+cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
 
@@ -174,6 +175,7 @@ const sp_nativeinfo_t system2_natives[] =
 
     { "System2_CopyFile", NativeCopyFile },
 
+    { "System2_Check7ZIP", NativeCheck7ZIP },
     { "System2_Compress", NativeCompress },
     { "System2_Extract", NativeExtract },
 

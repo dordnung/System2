@@ -40,6 +40,35 @@
 
 #define MAX_COMMAND_LENGTH 2048
 
+
+cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
+    char binDir[PLATFORM_MAX_PATH + 1];
+
+    // Build the path to the executable, to the path to compress and the archive
+#if defined _WIN32 || defined _WIN64
+    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
+#else
+    struct utsname unameData;
+    uname(&unameData);
+
+    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[3]) {
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
+    } else {
+        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
+    }
+#endif
+
+    // Save bin dir
+    pContext->StringToLocalUTF8(params[1], params[2], binDir, NULL);
+
+    // 7z exists?
+    if (access(binDir, X_OK) != -1) {
+        return true;
+    }
+
+    return false;
+}
+
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     char *path;
     char *archive;
@@ -63,7 +92,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     struct utsname unameData;
     uname(&unameData);
 
-    if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
+    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[7]) {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
@@ -146,11 +175,10 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
         system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
-        std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
-        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[6]));
+        return false;
     }
 
-    return 1;
+    return true;
 }
 
 
@@ -178,7 +206,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
     struct utsname unameData;
     uname(&unameData);
 
-    if (strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) {
+    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[5]) {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
     } else {
         g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
@@ -201,11 +229,10 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
         system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
     } else {
-        std::string error = "ERROR: 7-ZIP executable couldn't be found or is not executable at " + std::string(binDir);
-        system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(callback, false, 1, error, "", params[4]));
+        return false;
     }
 
-    return 1;
+    return true;
 }
 
 

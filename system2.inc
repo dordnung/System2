@@ -925,6 +925,17 @@ native void System2_CopyFile(System2CopyCallback callback, const char[] from, co
 
 
 /**
+ * Checks whether 7-ZIP was found and is executable.
+ *
+ * @param execPath     Buffer which will store the path to the 7-ZIP executable. Can be used for showing correct error message.
+ * @param maxlength    Maxlength of the buffer.
+ * @param force32Bit   Whether to force using the 32 bit version of 7-ZIP, otherwise the appropriate version will be used.
+ *
+ * @return             True if 7-ZIP executable could be found and is executable, otherwise false.
+ */
+native bool System2_Check7ZIP(char[] execPath, int maxlength, bool force32Bit = false);
+
+/**
  * Compresses a file or folder to an archive.
  *
  * @param callback      Callback function when finished with compressing.
@@ -933,11 +944,11 @@ native void System2_CopyFile(System2CopyCallback callback, const char[] from, co
  * @param archiveType   Archive type to use.
  * @param level         Compress level to use.
  * @param data          Additional data to pass to the callback.
+ * @param force32Bit    Whether to force using the 32 bit version of 7-ZIP, otherwise the appropriate version will be used.
  *
- * @noreturn
+ * @return              True if compress command could be fired, false when 7-ZIP executable couldn't be found or is not executable.
  */
-native void System2_Compress(System2ExecuteCallback callback, const char[] path, const char[] archive, CompressArchive archiveType = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = 0);
-
+native bool System2_Compress(System2ExecuteCallback callback, const char[] path, const char[] archive, CompressArchive archiveType = ARCHIVE_ZIP, CompressLevel level = LEVEL_9, any data = 0, bool force32Bit = false);
 
 /**
  * Extracts a lot of archive types with 7zip.
@@ -946,10 +957,11 @@ native void System2_Compress(System2ExecuteCallback callback, const char[] path,
  * @param archive       Path to the archive file to extract.
  * @param extractDir    Path to the directory to extract to.
  * @param data          Additional data to pass to the callback.
+ * @param force32Bit    Whether to force using the 32 bit version of 7-ZIP, otherwise the appropriate version will be used.
  *
- * @noreturn
+ * @return              True if compress command could be fired, false when 7-ZIP executable couldn't be found or is not executable.
  */
-native void System2_Extract(System2ExecuteCallback callback, const char[] archive, const char[] extractDir, any data = 0);
+native bool System2_Extract(System2ExecuteCallback callback, const char[] archive, const char[] extractDir, any data = 0, bool force32Bit = false);
 
 
 
@@ -965,7 +977,6 @@ native void System2_Extract(System2ExecuteCallback callback, const char[] archiv
  */
 native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[] command, any data);
 
-
 /**
  * Executes a threaded system command with support for a formatted command.
  * Note that the maxlength of the command is CMD_MAX_LENGTH, use System2_ExecuteThreaded if you need more.
@@ -980,7 +991,6 @@ native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[
  */
 native void System2_ExecuteFormattedThreaded(System2ExecuteCallback callback, any data, const char[] command, any ...);
 
-
 /**
  * Executes a non threaded system command.
  * Hint: Append 2>&1 to your command to retrieve also output to stderr.
@@ -992,7 +1002,6 @@ native void System2_ExecuteFormattedThreaded(System2ExecuteCallback callback, an
  * @return          True on success, otherwise false.
  */
 native bool System2_Execute(char[] output, int maxlength, const char[] command);
-
 
 /**
  * Executes a non threaded system command with support for a formatted command.
@@ -1167,6 +1176,7 @@ public Extension __ext_system2 =
 
         MarkNativeAsOptional("System2_CopyFile");
 
+        MarkNativeAsOptional("System2_Check7ZIP");
         MarkNativeAsOptional("System2_Compress");
         MarkNativeAsOptional("System2_Extract");
 
