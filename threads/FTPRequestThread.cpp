@@ -49,6 +49,9 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
+        // Use FTP if no scheme is given
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "ftp");
+
         // Set the ftp username
         if (!this->ftpRequest->username.empty()) {
             curl_easy_setopt(curl, CURLOPT_USERNAME, this->ftpRequest->username.c_str());

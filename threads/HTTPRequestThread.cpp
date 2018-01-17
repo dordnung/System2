@@ -50,6 +50,8 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
 
+        // Use HTTP if no scheme is given
+        curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "http");
 
         // Set the http user agent
         if (!this->httpRequest->userAgent.empty()) {
