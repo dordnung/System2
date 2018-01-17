@@ -180,13 +180,24 @@ void PerformTests() {
     PrintToServer("INFO: Test copying a file");
     System2_CopyFile(CopyFileCallback, testFileCopyFromPath, testFileCopyToPath, TEST_COPY);
 
+    // Test 7-zip is available
+    PrintToServer("INFO: Test 7-zip is available");
+
+    char binDir[PLATFORM_MAX_PATH];
+    assertTrue("7-ZIP should be available", System2_Check7ZIP(binDir, sizeof(binDir), true));
+    if (System2_GetOS() == OS_WINDOWS) {
+        assertTrue("7-ZIP bin dir should end with 7z.exe", StrContains(binDir, "data\\system2\\win\\7z.exe") > -1);
+    } else {
+        assertTrue("7-ZIP bin dir should end with 7z", StrContains(binDir, "data/system2/linux/i386/7z") > -1);
+    }
+
     // Test compressing a file does work
     PrintToServer("INFO: Test compressing a file");
 
     File file = OpenFile(testFileToCompressPath, "w");
     file.WriteString("This is a file to compress. Content should be equal.", false);
     file.Close();
-    System2_Compress(ExecuteCallback, testFileToCompressPath, testArchivePath, ARCHIVE_ZIP, LEVEL_9, TEST_COMPRESS);
+    assertTrue("7-ZIP should be available", System2_Compress(ExecuteCallback, testFileToCompressPath, testArchivePath, ARCHIVE_ZIP, LEVEL_9, TEST_COMPRESS));
 
     // Test execute a threaded command
     PrintToServer("INFO: Test execute a threaded command");
@@ -284,10 +295,8 @@ void PerformRequestTests() {
     PrintToServer("INFO: Test follow redirects");
     httpRequest.Any = TEST_FOLLOW;
     httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?follow");
-    httpRequest.AutoReferer = true;
     httpRequest.FollowRedirects = true;
     httpRequest.GET();
-    httpRequest.AutoReferer = false;
 
     // Test timeout
     PrintToServer("INFO: Test timeout for request");
@@ -386,7 +395,7 @@ void PerformRequestTests() {
     ftpRequest.Any = TEST_FTP_DOWNLOAD;
     ftpRequest.AppendToFile = false;
     ftpRequest.CreateMissingDirs = true;
-    ftpRequest.SetURL("ftp://speedtest.tele2.net/1MB.zip");
+    ftpRequest.SetURL("speedtest.tele2.net/1MB.zip");
     ftpRequest.SetPort(21);
     ftpRequest.SetOutputFile(testDownloadFtpFile);
     ftpRequest.SetProgressCallback(ftpProgressCallback);
@@ -483,7 +492,7 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
 
         // Now extract it again
         DeleteFile(testFileToCompressPath);
-        System2_Extract(ExecuteCallback, testArchivePath, path, TEST_EXTRACT);
+        assertTrue("7-ZIP should be available", System2_Extract(ExecuteCallback, testArchivePath, path, TEST_EXTRACT));
     } else if (data == TEST_EXTRACT) {
         PrintToServer("INFO: Got extract callback");
 
@@ -519,6 +528,11 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
         TrimString(output2);
         assertStringEquals("IsATestCommand", output2);
 
+        // Test delimiter
+        assertValueEquals(8, output.GetOutput(output2, sizeof(output2), 4, "Command"));
+        TrimString(output2);
+        assertStringEquals("IsATest", output2);
+
         // Test short offset
         char output3[3];
         assertValueEquals(13, output.GetOutput(output3, sizeof(output3), 4));
@@ -552,7 +566,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         PrintToServer("INFO: Got long callback in %.3fs", response.TotalTime);
 
         char longOutput[4239];
-        assertValueEquals(4238, response.ContentSize);
+        assertValueEquals(4238, response.ContentLength);
         assertValueEquals(0, response.GetContent(longOutput, sizeof(longOutput)));
         assertValueEquals(sizeof(longOutput) - sizeof(output), responseBytes);
 
@@ -576,7 +590,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?body", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("test=testData", output);
     } else if (request.Any == TEST_AGENT) {
         PrintToServer("INFO: Got useragent callback in %.3fs", response.TotalTime);
@@ -586,7 +600,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?agent", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("System2TestUserAgent", output);
     } else if (request.Any == TEST_METHOD) {
         if (method == METHOD_GET) {
@@ -616,7 +630,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?method", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
     } else if (request.Any == TEST_AUTH) {
         PrintToServer("INFO: Got auth callback in %.3fs", response.TotalTime);
 
@@ -625,7 +639,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?auth", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("testUsername:testPassword", output);
     } else if (request.Any == TEST_DEFLATE) {
         PrintToServer("INFO: Got deflate callback in %.3fs", response.TotalTime);
@@ -635,7 +649,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?deflate", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("This is deflated content", output);
 
         char headerValue[32];
@@ -648,11 +662,9 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?followed", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
-        assertStringEquals("http://dordnung.de/sourcemod/system2/testPage.php?followed", output);
+        assertValueEquals(strlen(output), response.ContentLength);
 
         assertTrue("Follow redirect should be enabled", request.FollowRedirects);
-        assertTrue("Auto referer should be enabled", request.AutoReferer);
 
         char headerValue[32];
         assertFalse("There should be no header System2Follow", response.GetHeader("System2Follow", headerValue, sizeof(headerValue)));
@@ -681,10 +693,9 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?follow", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(301, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
 
         assertFalse("Follow redirect should be disabled", request.FollowRedirects);
-        assertFalse("Auto referer should be disabled", request.AutoReferer);
 
         char headerValue[64];
         assertTrue("There should be a header System2Follow", response.GetHeader("System2Follow", headerValue, sizeof(headerValue)));
@@ -699,7 +710,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?header", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("ATestHeader", output);
 
         // Test get header value
@@ -737,7 +748,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertStringEquals("https://dordnung.de/sourcemod/system2/testFile.txt", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("This is a test file. Content should be equal.", output);
 
         // Test correct GetOutputFile
@@ -793,16 +804,16 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertStringEquals("ftp://speedtest.tele2.net/", lastUrl);
         assertValueEquals(0, responseBytes);
         assertValueEquals(226, response.StatusCode);
-        assertValueNotEquals(0, response.ContentSize);
+        assertValueNotEquals(0, response.ContentLength);
         assertValueEquals(true, request.ListFilenamesOnly);
     } else if (request.Any == TEST_FTP_DOWNLOAD) {
         PrintToServer("INFO: Got FTP download callback in %.3fs, uploading it again", response.TotalTime);
    
-        assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", url);
+        assertStringEquals("speedtest.tele2.net/1MB.zip", url);
         assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", lastUrl);
         assertValueEquals(21, request.GetPort());
         assertValueEquals(226, response.StatusCode);
-        assertValueEquals(1048576, response.ContentSize);
+        assertValueEquals(1048576, response.ContentLength);
 
         // Test correct GetOutputFile
         char fileData[64];
@@ -823,7 +834,7 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertValueEquals(21, request.GetPort());
         assertValueEquals(0, responseBytes);
         assertValueEquals(226, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentSize);
+        assertValueEquals(strlen(output), response.ContentLength);
         assertValueEquals(false, request.AppendToFile);
         assertValueEquals(true, request.CreateMissingDirs);
 
@@ -840,7 +851,7 @@ void ftpProgressCallback(System2FTPRequest request, int dlTotal, int dlNow, int 
     request.GetURL(url, sizeof(url));
 
     if (request.Any == TEST_FTP_DOWNLOAD) {
-        assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", url);
+        assertStringEquals("speedtest.tele2.net/1MB.zip", url);
         assertValueEquals(1048576, dlTotal);
         assertValueEquals(0, ulNow);
         assertValueEquals(0, ulTotal);

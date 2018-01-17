@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        system2_legacy.inc
+ * File        legacy.inc
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de

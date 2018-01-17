@@ -282,8 +282,10 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     }
 
     // Get offset and check range
+    std::string output = callback->GetOutput();
+
     int offset = params[4];
-    int length = static_cast<int>(callback->GetOutput().length());
+    int length = static_cast<int>(output.length());
     if (offset < 0) {
         offset = 0;
     }
@@ -292,9 +294,23 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
         offset = length;
     }
 
-    // Copy the output beginning from offset
+    char *delimiter;
+    pContext->LocalToString(params[5], &delimiter);
+
+    if (strlen(delimiter) > 0) {
+        // Find the delimiter
+        size_t delimiterPos = output.find(delimiter, offset);
+        if (delimiterPos != std::string::npos) {
+            output = output.substr(offset, delimiterPos - offset);
+        } else {
+            output = output.substr(offset);
+        }
+    } else {
+        output = output.substr(offset);
+    }
+
     size_t bytes;
-    pContext->StringToLocalUTF8(params[2], params[3], callback->GetOutput().substr(offset).c_str(), &bytes);
+    pContext->StringToLocalUTF8(params[2], params[3], output.c_str(), &bytes);
 
     return length - bytes - offset;
 }

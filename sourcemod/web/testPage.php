@@ -13,7 +13,6 @@ if (isset($_GET["long"])) {
     header("System2Follow: true");
 } else if (isset($_GET["followed"])) {
     header("System2Followed: true");
-    echo $_SERVER["HTTP_REFERER"];
 } else if (isset($_GET["timeout"])) {
     sleep(2);
 } else if (isset($_GET["auth"])) {

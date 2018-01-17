@@ -50,6 +50,7 @@ enum CompressLevel
     LEVEL_9             // Strongest
 }
 
+
 /**
  * A list of possible archive formats for the System2_Compress native.
  */
@@ -126,11 +127,12 @@ methodmap System2ExecuteOutput < Handle {
      * @param maxlength Maxlength of the output buffer.
      * @param start     Start byte to start reading from.
      *                  You can use this to retrieve the output step by step. 
+     * @param delimiter Delimiter until which the content should be retrieved.
      * 
      * @return          Number of unread bytes. 0 if all bytes were read.
      * @error           Invalid Output.
      */
-    public native int GetOutput(char[] output, int maxlength, int start = 0);
+    public native int GetOutput(char[] output, int maxlength, int start = 0, const char[] delimiter = "");
 
     property int Size {
         /**

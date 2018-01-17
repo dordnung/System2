@@ -497,6 +497,7 @@ methodmap System2FTPRequest < System2Request {
      */
     public native void SetProgressCallback(System2FTPProgressCallback callback);
 
+
     /**
      * Sets authentication for the request.
      *
@@ -507,6 +508,7 @@ methodmap System2FTPRequest < System2Request {
      * @error           Invalid Request.
      */
     public native void SetAuthentication(const char[] username, const char[] password);
+
 
     /**
      * Sets the file to upload to a FTP server.
@@ -634,11 +636,12 @@ methodmap System2Response < Handle {
      * @param maxlength Maxlength of the content buffer.
      * @param start     Start byte to start reading from.
      *                  You can use this to retrieve the content step by step.
+     * @param delimiter Delimiter until which the content should be retrieved.
      *
      * @return          Number of unread bytes. 0 if all bytes were read.
      * @error           Invalid Response.
      */
-    public native int GetContent(char[] content, int maxlength, int start = 0);
+    public native int GetContent(char[] content, int maxlength, int start = 0, const char[] delimiter = "");
 
 
     property int ContentLength {
