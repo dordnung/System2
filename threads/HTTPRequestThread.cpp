@@ -71,11 +71,6 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Set the follow redirect property
         if (this->httpRequest->followRedirects) {
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
-            // Set the auto referer property
-            if (this->httpRequest->autoReferer) {
-                curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1L);
-            }
         }
 
         // Set data to send

@@ -76,7 +76,7 @@ cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cel
 
 cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
 
@@ -144,8 +144,6 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.HEAD", NativeHTTPRequest_HEAD },
     { "System2HTTPRequest.FollowRedirects.get", NativeHTTPRequest_GetFollowRedirects },
     { "System2HTTPRequest.FollowRedirects.set", NativeHTTPRequest_SetFollowRedirects },
-    { "System2HTTPRequest.AutoReferer.get", NativeHTTPRequest_GetAutoReferer },
-    { "System2HTTPRequest.AutoReferer.set", NativeHTTPRequest_SetAutoReferer },
 
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },
@@ -162,7 +160,7 @@ const sp_nativeinfo_t system2_natives[] =
 
     { "System2Response.GetLastURL", NativeResponse_GetLastURL },
     { "System2Response.GetContent", NativeResponse_GetContent },
-    { "System2Response.ContentSize.get", NativeResponse_GetContentSize },
+    { "System2Response.ContentLength.get", NativeResponse_GetContentLength },
     { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
     { "System2Response.TotalTime.get", NativeResponse_GetTotalTime },
 

@@ -380,25 +380,6 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
     return 1;
 }
 
-cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    return request->autoReferer;
-}
-
-cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    request->autoReferer = params[2];
-    return 1;
-}
-
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
     char *url;

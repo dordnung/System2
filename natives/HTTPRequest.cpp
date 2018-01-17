@@ -27,11 +27,11 @@
 
 
 HTTPRequest::HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction)
-    : Request(url, responseCallbackFunction), followRedirects(true), autoReferer(false) {}
+    : Request(url, responseCallbackFunction), followRedirects(true) {}
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
     Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),
-    username(request.username), password(request.password), followRedirects(request.followRedirects), autoReferer(request.autoReferer) {}
+    username(request.username), password(request.password), followRedirects(request.followRedirects) {}
 
 
 HTTPRequest * HTTPRequest::Clone() const {

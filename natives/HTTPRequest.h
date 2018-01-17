@@ -39,7 +39,6 @@ public:
     std::string username;
     std::string password;
     bool followRedirects;
-    bool autoReferer;
 
     HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
     HTTPRequest(const HTTPRequest &request);

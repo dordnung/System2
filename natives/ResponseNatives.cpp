@@ -62,7 +62,7 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
 }
 
 
-cell_t NativeResponse_GetContentSize(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;
