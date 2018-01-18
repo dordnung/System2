@@ -74,7 +74,7 @@ enum TestMethods
 
 public void OnPluginStart() {
     BuildPath(Path_SM, path, sizeof(path), "data/system2/temp");
-    RegServerCmd("test_system2", OnTest);
+    RegServerCmd("system2_test", OnTest);
 }
 
 

@@ -274,7 +274,7 @@ cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *p
     return true;
 }
 
-cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
         return 0;

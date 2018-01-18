@@ -129,7 +129,7 @@ methodmap System2ExecuteOutput < Handle {
      *                  You can use this to retrieve the output step by step. 
      * @param delimiter Delimiter until which the content should be retrieved.
      * 
-     * @return          Number of unread bytes. 0 if all bytes were read.
+     * @return          Number of read bytes.
      * @error           Invalid Output.
      */
     public native int GetOutput(char[] output, int maxlength, int start = 0, const char[] delimiter = "");
@@ -377,7 +377,6 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.SetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeader");
         MarkNativeAsOptional("System2HTTPRequest.GetHeaderName");
-        MarkNativeAsOptional("System2HTTPRequest.GetHeadersCount");
         MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
         MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
         MarkNativeAsOptional("System2HTTPRequest.GET");
@@ -388,6 +387,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.HEAD");
         MarkNativeAsOptional("System2HTTPRequest.FollowRedirects.get");
         MarkNativeAsOptional("System2HTTPRequest.FollowRedirects.set");
+        MarkNativeAsOptional("System2HTTPRequest.Headers.get");
         
         MarkNativeAsOptional("System2FTPRequest.System2FTPRequest");
         MarkNativeAsOptional("System2FTPRequest.SetProgressCallback");
@@ -417,6 +417,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPResponse.GetHeaderName");
         MarkNativeAsOptional("System2HTTPResponse.GetHeadersCount");
         MarkNativeAsOptional("System2HTTPResponse.HTTPVersion.get");
+        MarkNativeAsOptional("System2HTTPResponse.Headers.get");
 
         MarkNativeAsOptional("System2_URLEncode");
         MarkNativeAsOptional("System2_URLDecode");

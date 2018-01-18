@@ -371,13 +371,15 @@ methodmap System2HTTPRequest < System2Request {
      */
     public native bool GetHeaderName(int index, char[] name, int maxlength);
 
-    /**
-     * Returns the number of set headers.
-     *
-     * @return          The number of set headers.
-     * @error           Invalid request.
-     */
-    public native int GetHeadersCount();
+    property int Headers {
+        /**
+         * Returns the number of set headers.
+         *
+         * @return      The number of set headers.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
 
     /**
      * Returns all header names of the request as ArrayList.
@@ -392,7 +394,7 @@ methodmap System2HTTPRequest < System2Request {
         ArrayList headers = new ArrayList(maxlength);
 
         char[] headerName = new char[maxlength];
-        for (int i=0; i < this.GetHeadersCount(); i++) {
+        for (int i=0; i < this.Headers; i++) {
             this.GetHeaderName(i, headerName, maxlength);
             headers.PushString(headerName);
         }
@@ -667,7 +669,7 @@ methodmap System2Response < Handle {
      *                  You can use this to retrieve the content step by step.
      * @param delimiter Delimiter until which the content should be retrieved.
      *
-     * @return          Number of unread bytes. 0 if all bytes were read.
+     * @return          Number of read bytes.
      * @error           Invalid response.
      */
     public native int GetContent(char[] content, int maxlength, int start = 0, const char[] delimiter = "");
@@ -785,13 +787,15 @@ methodmap System2HTTPResponse < System2Response {
      */
     public native bool GetHeaderName(int index, char[] name, int maxlength);
 
-    /**
-     * Returns the number of set headers.
-     *
-     * @return          The number of set headers.
-     * @error           Invalid response.
-     */
-    public native int GetHeadersCount();
+    property int Headers {
+        /**
+         * Returns the number of set headers.
+         *
+         * @return      The number of set headers.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
 
     /**
      * Returns all header names of the response as ArrayList.
@@ -806,7 +810,7 @@ methodmap System2HTTPResponse < System2Response {
         ArrayList headers = new ArrayList(maxlength);
 
         char[] headerName = new char[maxlength];
-        for (int i=0; i < this.GetHeadersCount(); i++) {
+        for (int i=0; i < this.Headers; i++) {
             this.GetHeaderName(i, headerName, maxlength);
             headers.PushString(headerName);
         }

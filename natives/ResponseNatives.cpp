@@ -74,7 +74,7 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
     size_t bytes;
     pContext->StringToLocalUTF8(params[2], params[3], output.c_str(), &bytes);
 
-    return length - bytes - offset;
+    return bytes;
 }
 
 cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params) {
@@ -191,7 +191,7 @@ cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *
     return 1;
 }
 
-cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (response == NULL) {
         return 0;

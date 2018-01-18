@@ -47,7 +47,7 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
 cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params);
@@ -58,8 +58,6 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetAutoReferer(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetAutoReferer(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
@@ -87,7 +85,7 @@ cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *par
 cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
@@ -139,7 +137,6 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.SetHeader", NativeHTTPRequest_SetHeader },
     { "System2HTTPRequest.GetHeader", NativeHTTPRequest_GetHeader },
     { "System2HTTPRequest.GetHeaderName", NativeHTTPRequest_GetHeaderName },
-    { "System2HTTPRequest.GetHeadersCount", NativeHTTPRequest_GetHeadersCount },
     { "System2HTTPRequest.SetUserAgent", NativeHTTPRequest_SetUserAgent },
     { "System2HTTPRequest.SetBasicAuthentication", NativeHTTPRequest_SetBasicAuthentication },
     { "System2HTTPRequest.GET", NativeHTTPRequest_GET },
@@ -150,6 +147,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.HEAD", NativeHTTPRequest_HEAD },
     { "System2HTTPRequest.FollowRedirects.get", NativeHTTPRequest_GetFollowRedirects },
     { "System2HTTPRequest.FollowRedirects.set", NativeHTTPRequest_SetFollowRedirects },
+    { "System2HTTPRequest.Headers.get", NativeHTTPRequest_GetHeaders },
 
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },
@@ -177,8 +175,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPResponse.GetContentType", NativeHTTPResponse_GetContentType },
     { "System2HTTPResponse.GetHeader", NativeHTTPResponse_GetHeader },
     { "System2HTTPResponse.GetHeaderName", NativeHTTPResponse_GetHeaderName },
-    { "System2HTTPResponse.GetHeadersCount", NativeHTTPResponse_GetHeadersCount },
     { "System2HTTPResponse.HTTPVersion.get", NativeHTTPResponse_GetHTTPVersion },
+    { "System2HTTPResponse.Headers.get", NativeHTTPResponse_GetHeaders },
 
     { "System2_URLEncode", NativeURLEncode },
     { "System2_URLDecode", NativeURLDecode },

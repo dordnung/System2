@@ -312,7 +312,7 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     size_t bytes;
     pContext->StringToLocalUTF8(params[2], params[3], output.c_str(), &bytes);
 
-    return length - bytes - offset;
+    return bytes;
 }
 
 cell_t NativeExecuteOutput_GetLength(IPluginContext *pContext, const cell_t *params) {
