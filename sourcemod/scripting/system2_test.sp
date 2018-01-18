@@ -833,10 +833,10 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", lastUrl);
         assertValueEquals(21, request.GetPort());
         assertValueEquals(226, response.StatusCode);
-        assertValueEquals(1048576, response.ContentLength);
         assertValueEquals(0, response.UploadSpeed);
         assertValueEquals(0, response.UploadSize);
-        assertValueEquals(1048576, response.DownloadSize);
+        assertValueEquals(response.ContentLength, response.DownloadSize);
+        assertTrue("Download size should be more then 0 bytes", response.DownloadSize > 0);
         assertTrue("Download speed should be more then 0 bytes/s", response.DownloadSpeed > 0);
 
         // Test correct GetOutputFile
@@ -863,7 +863,7 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertValueEquals(true, request.CreateMissingDirs);
         assertValueEquals(0, response.DownloadSpeed);
         assertValueEquals(0, response.DownloadSize);
-        assertValueEquals(1044480, response.UploadSize);
+        assertTrue("Upload size should be more then 0 bytes", response.UploadSize > 0);
         assertTrue("Upload speed should be more then 0 bytes/s", response.UploadSpeed > 0);
 
         // Test correct GetInputFile
@@ -880,7 +880,7 @@ void ftpProgressCallback(System2FTPRequest request, int dlTotal, int dlNow, int 
 
     if (request.Any == TEST_FTP_DOWNLOAD) {
         assertStringEquals("speedtest.tele2.net/1MB.zip", url);
-        assertValueEquals(1048576, dlTotal);
+        assertTrue("Download size should be more then 0 bytes", dlTotal > 0);
         assertValueEquals(0, ulNow);
         assertValueEquals(0, ulTotal);
 
@@ -890,7 +890,7 @@ void ftpProgressCallback(System2FTPRequest request, int dlTotal, int dlNow, int 
         assertStringEquals(testDownloadFtpFile, file);
     } else if (request.Any == TEST_FTP_UPLOAD) {
         assertStringEquals("ftp://speedtest.tele2.net/upload/system2.zip", url);
-        assertValueEquals(1044480, ulTotal);
+        assertTrue("Upload size should be more then 0 bytes", ulTotal > 0);
         assertValueEquals(0, dlNow);
         assertValueEquals(0, dlTotal);
 
