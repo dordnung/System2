@@ -1,9 +1,8 @@
 System2
 =======
 
-System2 extends Sourcemod with usefully internet and server natives.
-
-Binaries and information can be found on alliedmods: [https://forums.alliedmods.net/showthread.php?t=146019](https://forums.alliedmods.net/showthread.php?t=146019)
+System2 extends Sourcemod with a easy HTTP/FTP Request API and also provides some useful system commands, which missing in the Sourcemod API.
+Binaries and more information can be found on [alliedmods.net](https://forums.alliedmods.net/showthread.php?t=146019)
 
 ## How-to build: ##
 
