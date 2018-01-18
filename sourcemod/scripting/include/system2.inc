@@ -222,7 +222,7 @@ native bool System2_Extract(System2ExecuteCallback callback, const char[] archiv
  *
  * @noreturn
  */
-native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[] command, any data);
+native void System2_ExecuteThreaded(System2ExecuteCallback callback, const char[] command, any data = 0);
 
 /**
  * Executes a threaded system command with support for a formatted command.
