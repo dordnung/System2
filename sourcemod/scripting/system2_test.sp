@@ -517,26 +517,26 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
         assertValueEquals(0, output.ExitStatus);
         assertStringEquals("echo thisIsATestCommand", command);
 
-        char output2[128];
-        assertValueEquals(0, output.GetOutput(output2, sizeof(output2)));
+        char output2[32];
+        assertValueEquals(19, output.GetOutput(output2, sizeof(output2)));
         assertValueEquals(strlen(output2), output.Length);
 
         TrimString(output2);
         assertStringEquals("thisIsATestCommand", output2);
 
         // Test offset
-        assertValueEquals(0, output.GetOutput(output2, sizeof(output2), 4));
+        assertValueEquals(15, output.GetOutput(output2, sizeof(output2), 4));
         TrimString(output2);
         assertStringEquals("IsATestCommand", output2);
 
         // Test delimiter
-        assertValueEquals(8, output.GetOutput(output2, sizeof(output2), 4, "Command"));
+        assertValueEquals(7, output.GetOutput(output2, sizeof(output2), 4, "Command"));
         TrimString(output2);
         assertStringEquals("IsATest", output2);
 
         // Test short offset
         char output3[3];
-        assertValueEquals(13, output.GetOutput(output3, sizeof(output3), 4));
+        assertValueEquals(2, output.GetOutput(output3, sizeof(output3), 4));
         TrimString(output3);
         assertStringEquals("Is", output3);
     }
@@ -582,8 +582,8 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
 
         char longOutput[4239];
         assertValueEquals(4238, response.ContentLength);
-        assertValueEquals(0, response.GetContent(longOutput, sizeof(longOutput)));
-        assertValueEquals(sizeof(longOutput) - sizeof(output), responseBytes);
+        assertValueEquals(4238, response.GetContent(longOutput, sizeof(longOutput)));
+        assertValueEquals(255, responseBytes);
 
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?long", url);
@@ -603,7 +603,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_POST), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?body", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?body", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(13, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("test=testData", output);
@@ -613,25 +613,30 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?agent", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?agent", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(20, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("System2TestUserAgent", output);
     } else if (request.Any == TEST_METHOD) {
         if (method == METHOD_GET) {
             PrintToServer("INFO: Got GET method callback in %.3fs", response.TotalTime);
+            assertValueEquals(3, responseBytes);
             assertStringEquals("GET", output);
         } else if (method == METHOD_POST) {
             PrintToServer("INFO: Got POST method callback in %.3fs", response.TotalTime);
+            assertValueEquals(4, responseBytes);
             assertStringEquals("POST", output);
         } else if (method == METHOD_PUT) {
             PrintToServer("INFO: Got PUT method callback in %.3fs", response.TotalTime);
+            assertValueEquals(3, responseBytes);
             assertStringEquals("PUT", output);
         } else if (method == METHOD_DELETE) {
             PrintToServer("INFO: Got DELETE method callback in %.3fs", response.TotalTime);
+            assertValueEquals(6, responseBytes);
             assertStringEquals("DELETE", output);
         } else if (method == METHOD_PATCH) {
             PrintToServer("INFO: Got PATCH method callback in %.3fs", response.TotalTime);
+            assertValueEquals(5, responseBytes);
             assertStringEquals("PATCH", output);
         } else if (method == METHOD_HEAD) {
             PrintToServer("INFO: Got HEAD method callback in %.3fs", response.TotalTime);
@@ -643,7 +648,6 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
 
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?method", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?method", lastUrl);
-        assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
     } else if (request.Any == TEST_AUTH) {
@@ -652,7 +656,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?auth", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?auth", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(25, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("testUsername:testPassword", output);
@@ -662,7 +666,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?deflate", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?deflate", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(24, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("This is deflated content", output);
@@ -723,7 +727,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?header", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?header", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(11, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("ATestHeader", output);
@@ -761,7 +765,7 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testFile.txt", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testFile.txt", lastUrl);
-        assertValueEquals(0, responseBytes);
+        assertValueEquals(45, responseBytes);
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("This is a test file. Content should be equal.", output);
@@ -819,7 +823,6 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
 
         assertStringEquals("ftp://speedtest.tele2.net/", url);
         assertStringEquals("ftp://speedtest.tele2.net/", lastUrl);
-        assertValueEquals(0, responseBytes);
         assertValueEquals(226, response.StatusCode);
         assertValueNotEquals(0, response.ContentLength);
         assertValueEquals(true, request.ListFilenamesOnly);
