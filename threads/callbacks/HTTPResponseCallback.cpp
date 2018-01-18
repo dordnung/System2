@@ -26,12 +26,24 @@
 
 
 HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, std::string error, HTTPRequestMethod requestMethod)
-    : ResponseCallback(httpRequest, error), requestMethod(requestMethod) {}
+    : ResponseCallback(httpRequest, error), requestMethod(requestMethod), httpVersion(CURL_HTTP_VERSION_NONE) {}
 
 
 HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl, std::string content,
                                            HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers)
-    : ResponseCallback(httpRequest, curl, content), requestMethod(requestMethod), headers(headers) {}
+    : ResponseCallback(httpRequest, curl, content), requestMethod(requestMethod), headers(headers), httpVersion(CURL_HTTP_VERSION_NONE) {
+    // Get the http version
+    long version;
+    if (curl_easy_getinfo(curl, CURLINFO_HTTP_VERSION, &version) == CURLE_OK) {
+        this->httpVersion = static_cast<int>(version);
+    }
+
+    // Get the content type
+    char *contentType = NULL;
+    if (curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &contentType) == CURLE_OK && contentType) {
+        this->contentType = contentType;
+    }
+}
 
 
 void HTTPResponseCallback::PreFire() {

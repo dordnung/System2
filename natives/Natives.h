@@ -79,10 +79,16 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
 cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *params);
 
+cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPResponse_GetHeadersCount(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
 cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
@@ -163,10 +169,16 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2Response.ContentLength.get", NativeResponse_GetContentLength },
     { "System2Response.StatusCode.get", NativeResponse_GetStatusCode },
     { "System2Response.TotalTime.get", NativeResponse_GetTotalTime },
+    { "System2Response.DownloadSize.get", NativeResponse_GetDownloadSize },
+    { "System2Response.UploadSize.get", NativeResponse_GetUploadSize },
+    { "System2Response.DownloadSpeed.get", NativeResponse_GetDownloadSpeed },
+    { "System2Response.UploadSpeed.get", NativeResponse_GetUploadSpeed },
 
+    { "System2HTTPResponse.GetContentType", NativeHTTPResponse_GetContentType },
     { "System2HTTPResponse.GetHeader", NativeHTTPResponse_GetHeader },
     { "System2HTTPResponse.GetHeaderName", NativeHTTPResponse_GetHeaderName },
     { "System2HTTPResponse.GetHeadersCount", NativeHTTPResponse_GetHeadersCount },
+    { "System2HTTPResponse.HTTPVersion.get", NativeHTTPResponse_GetHTTPVersion },
 
     { "System2_URLEncode", NativeURLEncode },
     { "System2_URLDecode", NativeURLDecode },

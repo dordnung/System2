@@ -49,6 +49,17 @@ enum HTTPRequestMethod
     METHOD_HEAD
 }
 
+/**
+ * A list of possible HTTP versions.
+ */
+enum HTTPVersion
+{
+    VERSION_NONE,
+    VERSION_1_0,
+    VERSION_1_1,
+    VERSION_2_0
+}
+
 
 /**
  * Called when a HTTP request was finished.
@@ -356,7 +367,7 @@ methodmap System2HTTPRequest < System2Request {
      * @param maxlength Maxlength of the buffer.
      *
      * @return          True if header was found, otherwise false.
-     * @error           Invalid Response.
+     * @error           Invalid request.
      */
     public native bool GetHeaderName(int index, char[] name, int maxlength);
 
@@ -642,7 +653,7 @@ methodmap System2Response < Handle {
      * @param maxlength Maxlength of the URL buffer.
      *
      * @noreturn
-     * @error           Invalid Response.
+     * @error           Invalid response.
      */
     public native void GetLastURL(char[] url, int maxlength);
 
@@ -657,7 +668,7 @@ methodmap System2Response < Handle {
      * @param delimiter Delimiter until which the content should be retrieved.
      *
      * @return          Number of unread bytes. 0 if all bytes were read.
-     * @error           Invalid Response.
+     * @error           Invalid response.
      */
     public native int GetContent(char[] content, int maxlength, int start = 0, const char[] delimiter = "");
 
@@ -667,7 +678,7 @@ methodmap System2Response < Handle {
          * Returns the length of the complete content.
          *
          * @return      Length of the content.
-         * @error       Invalid Response.
+         * @error       Invalid response.
          */
         public native get();
     }
@@ -677,7 +688,7 @@ methodmap System2Response < Handle {
          * Returns the status code of the response.
          *
          * @return      The status code.
-         * @error       Invalid Response.
+         * @error       Invalid response.
          */
         public native get();
     }
@@ -687,7 +698,47 @@ methodmap System2Response < Handle {
          * Returns the total time from the request until the response in seconds.
          *
          * @return      Total time from the request until the response in seconds.
-         * @error       Invalid Response.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
+
+    property int DownloadSize {
+        /**
+         * Returns the total amount of bytes that were downloaded.
+         *
+         * @return      Total amount of bytes that were downloaded.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
+
+    property int UploadSize {
+        /**
+         * Returns the total amount of bytes that were uploaded.
+         *
+         * @return      Total amount of bytes that were uploaded.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
+
+    property int DownloadSpeed {
+        /**
+         * Returns the average download speed in bytes per second.
+         *
+         * @return      Average download speed in bytes per second.
+         * @error       Invalid response.
+         */
+        public native get();
+    }
+
+    property int UploadSpeed {
+        /**
+         * Returns the average upload speed in bytes per second.
+         *
+         * @return      Average upload speed in bytes per second.
+         * @error       Invalid response.
          */
         public native get();
     }
@@ -699,6 +750,17 @@ methodmap System2Response < Handle {
  */
 methodmap System2HTTPResponse < System2Response {
     /**
+     * Retrieves the content type of the response.
+     *
+     * @param type      Buffer to store content type in.
+     * @param maxlength Maxlength of the buffer.
+     *
+     * @noreturn
+     * @error           Invalid response.
+     */
+    public native void GetContentType(const char[] type, int maxlength);
+
+    /**
      * Retrieves a HTTP response header
      *
      * @param name      Name of the header to retrieve.
@@ -706,7 +768,7 @@ methodmap System2HTTPResponse < System2Response {
      * @param maxlength Maxlength of the buffer.
      *
      * @return          True if header was set, otherwise false.
-     * @error           Invalid Response.
+     * @error           Invalid response.
      */
     public native bool GetHeader(const char[] name, char[] value, int maxlength);
 
@@ -719,7 +781,7 @@ methodmap System2HTTPResponse < System2Response {
      * @param maxlength Maxlength of the buffer.
      *
      * @return          True if header was found, otherwise false.
-     * @error           Invalid Response.
+     * @error           Invalid response.
      */
     public native bool GetHeaderName(int index, char[] name, int maxlength);
 
@@ -727,7 +789,7 @@ methodmap System2HTTPResponse < System2Response {
      * Returns the number of set headers.
      *
      * @return          The number of set headers.
-     * @error           Invalid Response.
+     * @error           Invalid response.
      */
     public native int GetHeadersCount();
 
@@ -750,6 +812,17 @@ methodmap System2HTTPResponse < System2Response {
         }
 
         return headers;
+    }
+
+
+    property HTTPVersion HTTPVersion {
+        /**
+         * Returns the HTTP version of the response.
+         *
+         * @return      The HTTP version.
+         * @error       Invalid response.
+         */
+        public native get();
     }
 }
 

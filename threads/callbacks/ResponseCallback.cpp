@@ -27,16 +27,16 @@
 
 
 ResponseCallback::ResponseCallback(Request *request, std::string error)
-    : Callback(request->responseCallbackFunction), request(request), error(error), statusCode(0), totalTime(0.0f) {};
+    : Callback(request->responseCallbackFunction), request(request), error(error),
+    statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {};
 
 ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string content)
-    : Callback(request->responseCallbackFunction), request(request), content(content) {
+    : Callback(request->responseCallbackFunction), request(request), content(content),
+    statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {
     // Get the response code
     long code;
     if (curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK) {
         this->statusCode = static_cast<int>(code);
-    } else {
-        this->statusCode = 0;
     }
 
     // Get the last url
@@ -49,8 +49,30 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
     double total;
     if (curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total) == CURLE_OK) {
         this->totalTime = static_cast<float>(total);
-    } else {
-        this->totalTime = 0.0f;
+    }
+
+    // Get the download size
+    curl_off_t downloadSize;
+    if (curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &downloadSize) == CURLE_OK) {
+        this->downloadSize = static_cast<int>(downloadSize);
+    }
+
+    // Get the upload size
+    curl_off_t uploadSize;
+    if (curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD_T, &uploadSize) == CURLE_OK) {
+        this->uploadSize = static_cast<int>(uploadSize);
+    }
+
+    // Get the download speed
+    curl_off_t downloadSpeed;
+    if (curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD_T, &downloadSpeed) == CURLE_OK) {
+        this->downloadSpeed = static_cast<int>(downloadSpeed);
+    }
+
+    // Get the upload speed
+    curl_off_t uploadSpeed;
+    if (curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD_T, &uploadSpeed) == CURLE_OK) {
+        this->uploadSpeed = static_cast<int>(uploadSpeed);
     }
 }
 

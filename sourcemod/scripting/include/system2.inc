@@ -407,10 +407,16 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Response.ContentLength.get");
         MarkNativeAsOptional("System2Response.StatusCode.get");
         MarkNativeAsOptional("System2Response.TotalTime.get");
+        MarkNativeAsOptional("System2Response.DownloadSize.get");
+        MarkNativeAsOptional("System2Response.UploadSize.get");
+        MarkNativeAsOptional("System2Response.DownloadSpeed.get");
+        MarkNativeAsOptional("System2Response.UploadSpeed.get");
         
+        MarkNativeAsOptional("System2HTTPResponse.GetContentType");
         MarkNativeAsOptional("System2HTTPResponse.GetHeader");
         MarkNativeAsOptional("System2HTTPResponse.GetHeaderName");
         MarkNativeAsOptional("System2HTTPResponse.GetHeadersCount");
+        MarkNativeAsOptional("System2HTTPResponse.HTTPVersion.get");
 
         MarkNativeAsOptional("System2_URLEncode");
         MarkNativeAsOptional("System2_URLDecode");

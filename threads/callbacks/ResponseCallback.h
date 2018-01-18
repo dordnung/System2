@@ -40,6 +40,10 @@ public:
     std::string lastURL;
     int statusCode;
     float totalTime;
+    int downloadSize;
+    int uploadSize;
+    int downloadSpeed;
+    int uploadSpeed;
 
     ResponseCallback(Request *request, std::string error);
     ResponseCallback(Request *request, CURL *curl, std::string content);

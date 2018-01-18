@@ -561,13 +561,21 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
 
     assertTrue("Callback should be successful", success);
     assertStringEquals("", error);
+    assertValueEquals(view_as<int>(VERSION_1_1), view_as<int>(response.HTTPVersion));
 
     char url[64];
     char lastUrl[64];
     char output[256];
+    char contentType[64];
+
     request.GetURL(url, sizeof(url));
     response.GetLastURL(lastUrl, sizeof(lastUrl));
+    response.GetContentType(contentType, sizeof(contentType));
     int responseBytes = response.GetContent(output, sizeof(output));
+
+    if (request.Any != TEST_DOWNLOAD) {
+        assertValueEquals(0, StrContains(contentType, "text/html"));
+    }
 
     if (request.Any == TEST_LONG) {
         PrintToServer("INFO: Got long callback in %.3fs", response.TotalTime);
@@ -757,6 +765,8 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         assertValueEquals(200, response.StatusCode);
         assertValueEquals(strlen(output), response.ContentLength);
         assertStringEquals("This is a test file. Content should be equal.", output);
+        assertValueEquals(45, response.DownloadSize);
+        assertTrue("Download speed should be more then 0 bytes/s", response.DownloadSpeed > 0);
 
         // Test correct GetOutputFile
         char fileData[64];
@@ -821,6 +831,10 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertValueEquals(21, request.GetPort());
         assertValueEquals(226, response.StatusCode);
         assertValueEquals(1048576, response.ContentLength);
+        assertValueEquals(0, response.UploadSpeed);
+        assertValueEquals(0, response.UploadSize);
+        assertValueEquals(1048576, response.DownloadSize);
+        assertTrue("Download speed should be more then 0 bytes/s", response.DownloadSpeed > 0);
 
         // Test correct GetOutputFile
         char fileData[64];
@@ -844,6 +858,10 @@ void ftpRequestCallback(bool success, const char[] error, System2FTPRequest requ
         assertValueEquals(strlen(output), response.ContentLength);
         assertValueEquals(false, request.AppendToFile);
         assertValueEquals(true, request.CreateMissingDirs);
+        assertValueEquals(0, response.DownloadSpeed);
+        assertValueEquals(0, response.DownloadSize);
+        assertValueEquals(1044480, response.UploadSize);
+        assertTrue("Upload speed should be more then 0 bytes/s", response.UploadSpeed > 0);
 
         // Test correct GetInputFile
         char file[64];

@@ -35,6 +35,8 @@ private:
 
 public:
     std::map<std::string, std::string> headers;
+    std::string contentType;
+    int httpVersion;
 
     HTTPResponseCallback(HTTPRequest *httpRequest, std::string error, HTTPRequestMethod requestMethod);
     HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl, std::string content, HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers);
