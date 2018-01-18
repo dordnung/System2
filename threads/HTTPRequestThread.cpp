@@ -194,7 +194,11 @@ size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, v
 
         Trim(name);
         Trim(value);
-        headerInfo->headers[name] = value;
+
+        // Only append if one of the two values is set
+        if (name.length() > 0 || value.length() > 0) {
+            headerInfo->headers[name] = value;
+        }
     }
 
     return realsize;
