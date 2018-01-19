@@ -22,6 +22,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
+/**
+ * This example will retrieve an URL and print information of the server's response.
+ * 
+ * Usage: system2_http <URL>
+ */
+
 #include <sourcemod>
 #include <system2>
 
