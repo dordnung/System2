@@ -530,9 +530,14 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
         assertStringEquals("IsATestCommand", output2);
 
         // Test delimiter
-        assertValueEquals(7, output.GetOutput(output2, sizeof(output2), 4, "Command"));
+        assertValueEquals(7, output.GetOutput(output2, sizeof(output2), 4, "Command", false));
         TrimString(output2);
         assertStringEquals("IsATest", output2);
+
+        // Test delimiter with include
+        assertValueEquals(14, output.GetOutput(output2, sizeof(output2), 4, "Command"));
+        TrimString(output2);
+        assertStringEquals("IsATestCommand", output2);
 
         // Test short offset
         char output3[3];
@@ -593,6 +598,18 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
         for (int i = 0; i < 4238; i++) {
             asserCharEquals((i % 26) + 97, longOutput[i]);
         }
+
+        // Test delimiter
+        assertValueEquals(25, response.GetContent(longOutput, sizeof(longOutput), 0, "z", false));
+        assertStringEquals("abcdefghijklmnopqrstuvwxy", longOutput);
+
+        // Test delimiter with include
+        assertValueEquals(26, response.GetContent(longOutput, sizeof(longOutput), 0, "z"));
+        assertStringEquals("abcdefghijklmnopqrstuvwxyz", longOutput);
+
+        // Test offset
+        assertValueEquals(3, response.GetContent(longOutput, sizeof(longOutput), 23, "z"));
+        assertStringEquals("xyz", longOutput);
     } else if (request.Any == TEST_BODY) {
         PrintToServer("INFO: Got body callback in %.3fs", response.TotalTime);
 

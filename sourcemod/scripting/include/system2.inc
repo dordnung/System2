@@ -126,13 +126,14 @@ methodmap System2ExecuteOutput < Handle {
      * @param output    Buffer to store the output in.
      * @param maxlength Maxlength of the output buffer.
      * @param start     Start byte to start reading from.
-     *                  You can use this to retrieve the output step by step. 
+     *                  You can use this to retrieve the output step by step.
      * @param delimiter Delimiter until which the content should be retrieved.
+     * @param include   Whether the delimiter should be included or not.
      * 
      * @return          Number of read bytes.
      * @error           Invalid Output.
      */
-    public native int GetOutput(char[] output, int maxlength, int start = 0, const char[] delimiter = "");
+    public native int GetOutput(char[] output, int maxlength, int start = 0, const char[] delimiter = "", bool include = true);
 
     property int Length {
         /**

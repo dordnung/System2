@@ -301,6 +301,12 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
         // Find the delimiter
         size_t delimiterPos = output.find(delimiter, offset);
         if (delimiterPos != std::string::npos) {
+            bool includeDelimiter = params[6];
+            if (includeDelimiter) {
+                // Include the delimiter in the response
+                delimiterPos += strlen(delimiter);
+            }
+
             output = output.substr(offset, delimiterPos - offset);
         } else {
             output = output.substr(offset);

@@ -668,11 +668,12 @@ methodmap System2Response < Handle {
      * @param start     Start byte to start reading from.
      *                  You can use this to retrieve the content step by step.
      * @param delimiter Delimiter until which the content should be retrieved.
+     * @param include   Whether the delimiter should be included or not.
      *
      * @return          Number of read bytes.
      * @error           Invalid response.
      */
-    public native int GetContent(char[] content, int maxlength, int start = 0, const char[] delimiter = "");
+    public native int GetContent(char[] content, int maxlength, int start = 0, const char[] delimiter = "", bool include = true);
 
 
     property int ContentLength {
