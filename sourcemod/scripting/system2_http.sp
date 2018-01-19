@@ -71,7 +71,6 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
     }
 
     response.GetLastURL(url, sizeof(url));
-    ArrayList headers = response.GetHeaders();
 
     PrintToServer("INFO: Successfully retrieved URL %s in %.0f milliseconds", url, response.TotalTime * 1000.0);
     PrintToServer("");
@@ -84,6 +83,8 @@ void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest re
 
     char name[128];
     char value[128];
+    ArrayList headers = response.GetHeaders();
+
     for (int i = 0; i < headers.Length; i++) {
         headers.GetString(i, name, sizeof(name));
         response.GetHeader(name, value, sizeof(value));
