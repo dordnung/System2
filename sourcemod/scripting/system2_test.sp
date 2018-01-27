@@ -264,7 +264,7 @@ void PerformTests() {
 void PerformRequestTests() {
     // Test long page
     PrintToServer("INFO: Test getting a long page");
-    System2HTTPRequest httpRequest = new System2HTTPRequest(HttpRequestCallback, "https://dordnung.de/sourcemod/system2/testPage.php?%s", "long");
+    System2HTTPRequest httpRequest = new System2HTTPRequest(HttpResponseCallback, "https://dordnung.de/sourcemod/system2/testPage.php?%s", "long");
     httpRequest.Timeout = 60;
     httpRequest.Any = TEST_LONG;
     httpRequest.GET();
@@ -384,7 +384,7 @@ void PerformRequestTests() {
     
     // Test FTP directory listing
     PrintToServer("INFO: Test list a FTP directory");
-    System2FTPRequest ftpRequest = new System2FTPRequest(ftpRequestCallback, "%s://speedtest.tele2.net/", "ftp");
+    System2FTPRequest ftpRequest = new System2FTPRequest(ftpResponseCallback, "%s://speedtest.tele2.net/", "ftp");
     ftpRequest.Any = TEST_FTP_DIRECTORY;
     ftpRequest.ListFilenamesOnly = true;
     ftpRequest.SetPort(21);
@@ -547,7 +547,7 @@ void ExecuteCallback(bool success, const char[] command, System2ExecuteOutput ou
     }
 }
 
-void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method) {
+void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method) {
     finishedCallbacks++;
 
     // Timeout and verifiy SSL requests should fail
@@ -822,7 +822,7 @@ void HttpProgressCallback(System2HTTPRequest request, int dlTotal, int dlNow, in
 }
 
 
-void ftpRequestCallback(bool success, const char[] error, System2FTPRequest request, System2FTPResponse response) {
+void ftpResponseCallback(bool success, const char[] error, System2FTPRequest request, System2FTPResponse response) {
     finishedCallbacks++;
 
     assertTrue("Callback should be successful", success);

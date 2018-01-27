@@ -49,7 +49,7 @@ public Action OnCommand(int args) {
     PrintToServer("");
     PrintToServer("INFO: Retrieve URL %s", url);
 
-    System2HTTPRequest httpRequest = new System2HTTPRequest(HttpRequestCallback, url);
+    System2HTTPRequest httpRequest = new System2HTTPRequest(HttpResponseCallback, url);
     httpRequest.GET();
     delete httpRequest;
 
@@ -57,7 +57,7 @@ public Action OnCommand(int args) {
 }
 
 
-void HttpRequestCallback(bool success, const char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method) {
+void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest request, System2HTTPResponse response, HTTPRequestMethod method) {
     char url[256];
     request.GetURL(url, sizeof(url));
 
