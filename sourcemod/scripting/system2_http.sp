@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        system2_http.inc
+ * File        system2_http.sp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de

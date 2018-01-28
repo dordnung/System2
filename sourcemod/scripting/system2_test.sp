@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        system2_test.inc
+ * File        system2_test.sp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
