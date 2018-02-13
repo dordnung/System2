@@ -169,9 +169,6 @@ bool System2Extension::RegisterAndStartThread(IThread *thread) {
 }
 
 void System2Extension::UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle) {
-    // Destroy the thread handle to free resources
-    threadHandle->DestroyThis();
-
     while (!this->threadMutex->TryLock()) {
         sleep_ms(1);
     }
@@ -180,6 +177,9 @@ void System2Extension::UnregisterAndDeleteThreadHandle(IThreadHandle *threadHand
     if (this->isRunning) {
         this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), threadHandle), this->runningThreads.end());
     }
+
+    // Destroy the thread handle to free resources
+    threadHandle->DestroyThis();
 
     this->threadMutex->Unlock();
 }
