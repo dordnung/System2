@@ -59,8 +59,8 @@ public:
 
     void AppendCallback(std::shared_ptr<Callback> callback);
 
-    void RegisterThread(IThreadHandle *threadHandle);
-    void UnregisterThread(IThreadHandle *threadHandle);
+    bool RegisterAndStartThread(IThread *thread);
+    void UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle);
 
     std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
 

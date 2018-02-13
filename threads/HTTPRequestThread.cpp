@@ -28,7 +28,7 @@
 
 
 HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod)
-    : RequestThread(httpRequest), httpRequest(httpRequest), requestMethod(requestMethod) {};
+    : RequestThread(httpRequest), requestMethod(requestMethod), httpRequest(httpRequest) {};
 
 
 void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {

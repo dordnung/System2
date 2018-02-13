@@ -153,22 +153,35 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
 }
 
 
-void System2Extension::RegisterThread(IThreadHandle *threadHandle) {
-    // Just push to the list of running threads
+bool System2Extension::RegisterAndStartThread(IThread *thread) {
+    // Create the thread suspended, add it to the list and then start it
+    IThreadHandle *handle = threader->MakeThread(thread, Thread_CreateSuspended);
+    if (!handle) {
+        return false;
+    }
+
     this->threadMutex->Lock();
-    this->runningThreads.push_back(threadHandle);
-    threadMutex->Unlock();
+    this->runningThreads.push_back(handle);
+    this->threadMutex->Unlock();
+
+    handle->Unpause();
+    return true;
 }
 
-void System2Extension::UnregisterThread(IThreadHandle *threadHandle) {
-    // Just remove from the list of running threads
+void System2Extension::UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle) {
+    // Destroy the thread handle to free resources
+    threadHandle->DestroyThis();
+
     while (!this->threadMutex->TryLock()) {
         sleep_ms(1);
     }
+
+    // Just remove from the list of running threads
     if (this->isRunning) {
         this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), threadHandle), this->runningThreads.end());
     }
-    threadMutex->Unlock();
+
+    this->threadMutex->Unlock();
 }
 
 

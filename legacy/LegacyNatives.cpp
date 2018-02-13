@@ -52,7 +52,12 @@ cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that gets the content of the page
     LegacyPageThread *pageThread = new LegacyPageThread(url, post, agent, params[5], callback);
-    system2Extension.RegisterThread(threader->MakeThread(pageThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(pageThread)) {
+        delete pageThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }
@@ -72,7 +77,12 @@ cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that download the content
     LegacyDownloadThread *downloadThread = new LegacyDownloadThread(url, localFile, params[4], callback);
-    system2Extension.RegisterThread(threader->MakeThread(downloadThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(downloadThread)) {
+        delete downloadThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }
@@ -98,7 +108,12 @@ cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that downloads a file from FTP
     LegacyFTPThread *ftpThread = new LegacyFTPThread(true, remoteFile, localFile, host, username, password, params[7], params[8], callback);
-    system2Extension.RegisterThread(threader->MakeThread(ftpThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(ftpThread)) {
+        delete ftpThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }
@@ -124,7 +139,12 @@ cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that uploads a file to FTP
     LegacyFTPThread *ftpThread = new LegacyFTPThread(false, remoteFile, localFile, host, username, password, params[7], params[8], callback);
-    system2Extension.RegisterThread(threader->MakeThread(ftpThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(ftpThread)) {
+        delete ftpThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }
@@ -237,7 +257,12 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[6], callback);
-        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
+        if (!system2Extension.RegisterAndStartThread(commandThread)) {
+            delete commandThread;
+
+            pContext->ReportError("Couldn't create a new thread");
+            return 0;
+        }
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to compress %s", zdir, ldir);
     }
@@ -293,7 +318,12 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 
         // Start the thread that executes the command
         LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[4], callback);
-        system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
+        if (!system2Extension.RegisterAndStartThread(commandThread)) {
+            delete commandThread;
+
+            pContext->ReportError("Couldn't create a new thread");
+            return 0;
+        }
     } else {
         g_pSM->LogError(myself, "ERROR: Coulnd't find 7-ZIP at %s to extract %s", zdir, ldir);
     }
@@ -314,7 +344,12 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     LegacyCommandThread *commandThread = new LegacyCommandThread(command, 0, callback);
-    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(commandThread)) {
+        delete commandThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }
@@ -332,7 +367,12 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
 
     // Start the thread that executes the command
     LegacyCommandThread *commandThread = new LegacyCommandThread(command, params[2], callback);
-    system2Extension.RegisterThread(threader->MakeThread(commandThread, Thread_Default));
+    if (!system2Extension.RegisterAndStartThread(commandThread)) {
+        delete commandThread;
+
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
 
     return 1;
 }

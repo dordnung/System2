@@ -31,10 +31,11 @@
 
 class HTTPRequestThread : public RequestThread {
 private:
-    HTTPRequest * httpRequest;
     HTTPRequestMethod requestMethod;
 
 public:
+    HTTPRequest * httpRequest;
+
     typedef struct {
         CURL *curl;
         std::map<std::string, std::string> headers;

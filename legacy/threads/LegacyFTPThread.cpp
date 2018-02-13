@@ -135,7 +135,7 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
 
 
 void LegacyFTPThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterThread(pThread);
+    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
     delete this;
 }
 

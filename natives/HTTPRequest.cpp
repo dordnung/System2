@@ -34,38 +34,45 @@ HTTPRequest::HTTPRequest(const HTTPRequest &request) :
     username(request.username), password(request.password), followRedirects(request.followRedirects) {}
 
 
-HTTPRequest * HTTPRequest::Clone() const {
+HTTPRequest *HTTPRequest::Clone() const {
     return new HTTPRequest(*this);
 }
 
 
-void HTTPRequest::Get() {
-    this->MakeThread(METHOD_GET);
+bool HTTPRequest::Get() {
+    return this->MakeThread(METHOD_GET);
 }
 
-void HTTPRequest::Post() {
-    this->MakeThread(METHOD_POST);
+bool HTTPRequest::Post() {
+    return this->MakeThread(METHOD_POST);
 }
 
-void HTTPRequest::Put() {
-    this->MakeThread(METHOD_PUT);
+bool HTTPRequest::Put() {
+    return this->MakeThread(METHOD_PUT);
 }
 
-void HTTPRequest::Patch() {
-    this->MakeThread(METHOD_PATCH);
+bool HTTPRequest::Patch() {
+    return this->MakeThread(METHOD_PATCH);
 }
 
-void HTTPRequest::Delete() {
-    this->MakeThread(METHOD_DELETE);
+bool HTTPRequest::Delete() {
+    return this->MakeThread(METHOD_DELETE);
 }
 
-void HTTPRequest::Head() {
-    this->MakeThread(METHOD_HEAD);
+bool HTTPRequest::Head() {
+    return this->MakeThread(METHOD_HEAD);
 }
 
 
-void HTTPRequest::MakeThread(HTTPRequestMethod method) {
+bool HTTPRequest::MakeThread(HTTPRequestMethod method) {
     // Make a copy for the thread, so it works independent
-    HTTPRequestThread *requestThread = new HTTPRequestThread(new HTTPRequest(*this), method);
-    system2Extension.RegisterThread(threader->MakeThread(requestThread, Thread_Default));
+    HTTPRequestThread *requestThread = new HTTPRequestThread(this->Clone(), method);
+    if (!system2Extension.RegisterAndStartThread(requestThread)) {
+        delete requestThread->httpRequest;
+        delete requestThread;
+
+        return false;
+    }
+
+    return true;
 }

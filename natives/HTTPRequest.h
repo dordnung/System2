@@ -45,15 +45,15 @@ public:
 
     virtual HTTPRequest *Clone() const;
 
-    void Get();
-    void Post();
-    void Put();
-    void Patch();
-    void Delete();
-    void Head();
+    bool Get();
+    bool Post();
+    bool Put();
+    bool Patch();
+    bool Delete();
+    bool Head();
 
 private:
-    void MakeThread(HTTPRequestMethod method);
+    bool MakeThread(HTTPRequestMethod method);
 };
 
 

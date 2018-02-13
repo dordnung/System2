@@ -34,17 +34,24 @@ FTPRequest::FTPRequest(const FTPRequest &request) :
     appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs), listFilenamesOnly(request.listFilenamesOnly) {}
 
 
-FTPRequest * FTPRequest::Clone() const {
+FTPRequest *FTPRequest::Clone() const {
     return new FTPRequest(*this);
 }
 
-void FTPRequest::MakeRequest() {
-    this->MakeThread();
+bool FTPRequest::MakeRequest() {
+    return this->MakeThread();
 }
 
 
-void FTPRequest::MakeThread() {
+bool FTPRequest::MakeThread() {
     // Make a copy for the thread, so it works independent
-    FTPRequestThread *requestThread = new FTPRequestThread(new FTPRequest(*this));
-    system2Extension.RegisterThread(threader->MakeThread(requestThread, Thread_Default));
+    FTPRequestThread *requestThread = new FTPRequestThread(this->Clone());
+    if (!system2Extension.RegisterAndStartThread(requestThread)) {
+        delete requestThread->ftpRequest;
+        delete requestThread;
+
+        return false;
+    }
+
+    return true;
 }

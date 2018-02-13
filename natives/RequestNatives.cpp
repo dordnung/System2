@@ -318,7 +318,11 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Get();
+    if (!request->Get()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -328,7 +332,11 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Post();
+    if (!request->Post()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -338,7 +346,11 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Put();
+    if (!request->Put()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -348,7 +360,11 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Patch();
+    if (!request->Patch()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -358,7 +374,11 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
-    request->Delete();
+    if (!request->Delete()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -368,7 +388,11 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    request->Head();
+    if (!request->Head()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -473,7 +497,11 @@ cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *par
         return 0;
     }
 
-    request->MakeRequest();
+    if (!request->MakeRequest()) {
+        pContext->ReportError("Couldn't create a new thread");
+        return 0;
+    }
+
     return 1;
 }
 
