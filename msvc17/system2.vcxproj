@@ -37,7 +37,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;..\sdk;..\handler;..\threads;..\threads\callbacks;..\legacy\threads\callbacks;..\legacy\threads;..\legacy;..\natives;..\3rdparty\;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\sdk;..\handler;..\threads;..\threads\callbacks;..\legacy\threads\callbacks;..\legacy\threads;..\legacy;..\natives;..\3rdparty\;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\public\sourcepawn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>

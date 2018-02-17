@@ -59,7 +59,7 @@ cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (params[2] < 0) {
-        pContext->ReportError("Invalid port number %d", params[2]);
+        pContext->ThrowNativeError("Invalid port number %d", params[2]);
         return 0;
     }
 
@@ -134,7 +134,7 @@ cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) 
     }
 
     if (params[2] < 0) {
-        pContext->ReportError("Invalid timeout %d", params[2]);
+        pContext->ThrowNativeError("Invalid timeout %d", params[2]);
         return 0;
     }
 
@@ -165,7 +165,7 @@ cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return BAD_HANDLE;
     }
 
@@ -174,7 +174,7 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<HTTPRequest>(new HTTPRequest(url, callback), pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
-        pContext->ReportError("Couldn't create HTTPRequest handle");
+        pContext->ThrowNativeError("Couldn't create HTTPRequest handle");
     }
 
     return hndl;
@@ -188,7 +188,7 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[2]);
         return 0;
     }
 
@@ -319,7 +319,7 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (!request->Get()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -333,7 +333,7 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (!request->Post()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -347,7 +347,7 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (!request->Put()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -361,7 +361,7 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (!request->Patch()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -375,7 +375,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
     }
 
     if (!request->Delete()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -389,7 +389,7 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
     }
 
     if (!request->Head()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -419,7 +419,7 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return BAD_HANDLE;
     }
 
@@ -430,7 +430,7 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
-        pContext->ReportError("Couldn't create FTPRequest handle");
+        pContext->ThrowNativeError("Couldn't create FTPRequest handle");
     }
 
     return hndl;
@@ -444,7 +444,7 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[2]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[2]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[2]);
         return 0;
     }
 
@@ -498,7 +498,7 @@ cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *par
     }
 
     if (!request->MakeRequest()) {
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 

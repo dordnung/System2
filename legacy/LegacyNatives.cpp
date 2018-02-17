@@ -55,7 +55,7 @@ cell_t NativeGetPage(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(pageThread)) {
         delete pageThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -80,7 +80,7 @@ cell_t NativeDownloadFileUrl(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(downloadThread)) {
         delete downloadThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -111,7 +111,7 @@ cell_t NativeDownloadFile(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(ftpThread)) {
         delete ftpThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -142,7 +142,7 @@ cell_t NativeUploadFile(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(ftpThread)) {
         delete ftpThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -260,7 +260,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
         if (!system2Extension.RegisterAndStartThread(commandThread)) {
             delete commandThread;
 
-            pContext->ReportError("Couldn't create a new thread");
+            pContext->ThrowNativeError("Couldn't create a new thread");
             return 0;
         }
     } else {
@@ -321,7 +321,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
         if (!system2Extension.RegisterAndStartThread(commandThread)) {
             delete commandThread;
 
-            pContext->ReportError("Couldn't create a new thread");
+            pContext->ThrowNativeError("Couldn't create a new thread");
             return 0;
         }
     } else {
@@ -347,7 +347,7 @@ cell_t NativeRunThreadCommand(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(commandThread)) {
         delete commandThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -370,7 +370,7 @@ cell_t NativeRunThreadCommandWithData(IPluginContext *pContext, const cell_t *pa
     if (!system2Extension.RegisterAndStartThread(commandThread)) {
         delete commandThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 

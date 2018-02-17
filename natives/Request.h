@@ -53,7 +53,7 @@ public:
 
         RequestClass *request = NULL;
         if ((err = requestHandler.ReadHandle<RequestClass>(hndl, pContext->GetIdentity(), &request)) != HandleError_None) {
-            pContext->ReportError("Invalid request handle %x (error %d)", hndl, err);
+            pContext->ThrowNativeError("Invalid request handle %x (error %d)", hndl, err);
             return NULL;
         }
 

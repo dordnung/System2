@@ -56,7 +56,7 @@ public:
 
         ResponseCallbackClass *response = NULL;
         if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &response)) != HandleError_None) {
-            pContext->ReportError("Invalid response handle %x (error %d)", hndl, err);
+            pContext->ThrowNativeError("Invalid response handle %x (error %d)", hndl, err);
             return NULL;
         }
 

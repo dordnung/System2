@@ -65,7 +65,7 @@ ExecuteCallback *ExecuteCallback::ConvertExecuteCallback(Handle_t hndl, IPluginC
 
     ExecuteCallback *executeCallback = NULL;
     if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &executeCallback)) != HandleError_None) {
-        pContext->ReportError("Invalid execute output handle %x (error %d)", hndl, err);
+        pContext->ThrowNativeError("Invalid execute output handle %x (error %d)", hndl, err);
         return NULL;
     }
 

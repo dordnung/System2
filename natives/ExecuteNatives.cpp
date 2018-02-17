@@ -81,7 +81,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return 0;
     }
 
@@ -176,7 +176,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         if (!system2Extension.RegisterAndStartThread(commandThread)) {
             delete commandThread;
 
-            pContext->ReportError("Couldn't create a new thread");
+            pContext->ThrowNativeError("Couldn't create a new thread");
             return 0;
         }
     } else {
@@ -200,7 +200,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return 0;
     }
 
@@ -235,7 +235,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         if (!system2Extension.RegisterAndStartThread(commandThread)) {
             delete commandThread;
 
-            pContext->ReportError("Couldn't create a new thread");
+            pContext->ThrowNativeError("Couldn't create a new thread");
             return 0;
         }
     } else {
@@ -252,7 +252,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return 0;
     }
 
@@ -261,7 +261,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     if (!system2Extension.RegisterAndStartThread(commandThread)) {
         delete commandThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
@@ -275,7 +275,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
-        pContext->ReportError("Callback ID %x is invalid", params[1]);
+        pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
         return 0;
     }
 
@@ -284,7 +284,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     if (!system2Extension.RegisterAndStartThread(commandThread)) {
         delete commandThread;
 
-        pContext->ReportError("Couldn't create a new thread");
+        pContext->ThrowNativeError("Couldn't create a new thread");
         return 0;
     }
 
