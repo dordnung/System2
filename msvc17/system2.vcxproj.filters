@@ -16,11 +16,53 @@
     <Filter Include="SourceMod SDK">
       <UniqueIdentifier>{31958233-BB2D-4e41-A8F9-CE8A4684F436}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\hash">
+    <Filter Include="Header Files\legacy">
+      <UniqueIdentifier>{c842e8ef-abb3-4293-aa60-1c1d58e80c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy">
+      <UniqueIdentifier>{c97a9616-be1c-4020-8420-e7aef26a0c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\legacy\threads">
+      <UniqueIdentifier>{62647c78-ce6f-47c5-b3f9-f483254251ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy\threads">
+      <UniqueIdentifier>{87aa63e8-b211-4f76-b134-eb240b06d72d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\threads">
+      <UniqueIdentifier>{6263b2d3-fbdd-42dc-b37d-7d5c822fae9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\threads">
+      <UniqueIdentifier>{2cf009ca-5f75-4f3b-b677-313eab58c5ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\natives">
+      <UniqueIdentifier>{5dbb95e6-3bee-43a5-b3af-3d41759cb7d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\natives">
+      <UniqueIdentifier>{e803c7fd-c256-4e3f-96ac-ac7e6637ce9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\handler">
+      <UniqueIdentifier>{861e5915-9287-4b95-8dd6-6a003ba4a622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\handler">
+      <UniqueIdentifier>{84198319-73ca-434e-acf9-0032fd55905a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3rdparty">
       <UniqueIdentifier>{fed95fab-255e-4843-913e-b089f62327f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\hash">
+    <Filter Include="Source Files\3rdparty">
       <UniqueIdentifier>{6259f88e-ae7c-473e-ae0a-041471c10152}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\threads\callbacks">
+      <UniqueIdentifier>{210fee87-b5fb-4eaa-b976-ee405bd92cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\threads\callbacks">
+      <UniqueIdentifier>{d335452e-7402-4981-9901-92bb12702d61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\legacy\threads\callbacks">
+      <UniqueIdentifier>{d8a4fe79-d5a8-47f8-a887-12204867f39a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy\threads\callbacks">
+      <UniqueIdentifier>{8b010fbb-a617-4c2e-9104-ecffd9f90a56}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,29 +72,98 @@
     <ClCompile Include="..\sdk\smsdk_ext.cpp">
       <Filter>SourceMod SDK</Filter>
     </ClCompile>
-    <ClCompile Include="..\natives.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\handler\RequestHandler.cpp">
+      <Filter>Source Files\handler</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\command.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\3rdparty\crc\crc32.cpp">
+      <Filter>Source Files\3rdparty</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\copy.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\3rdparty\md5\md5.cpp">
+      <Filter>Source Files\3rdparty</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\download.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\threads\RequestThread.cpp">
+      <Filter>Source Files\threads</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\ftp.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\threads\FTPRequestThread.cpp">
+      <Filter>Source Files\threads</Filter>
     </ClCompile>
-    <ClCompile Include="..\threads\page.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\threads\HTTPRequestThread.cpp">
+      <Filter>Source Files\threads</Filter>
     </ClCompile>
-    <ClCompile Include="..\hash\md5.cpp">
-      <Filter>Source Files\hash</Filter>
+    <ClCompile Include="..\natives\Request.cpp">
+      <Filter>Source Files\natives</Filter>
     </ClCompile>
-    <ClCompile Include="..\hash\crc32.cpp">
-      <Filter>Source Files\hash</Filter>
+    <ClCompile Include="..\natives\FTPRequest.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives\HTTPRequest.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives\ExecuteNatives.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives\RequestNatives.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives\ResponseNatives.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\natives\CommonNatives.cpp">
+      <Filter>Source Files\natives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\ResponseCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\HTTPResponseCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\ProgressCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\ExecuteCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\ExecuteThread.cpp">
+      <Filter>Source Files\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\CopyCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\CopyThread.cpp">
+      <Filter>Source Files\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\LegacyNatives.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\LegacyPageThread.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\LegacyFTPThread.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\LegacyCommandThread.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\callbacks\LegacyDownloadCallback.cpp">
+      <Filter>Source Files\legacy\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\callbacks\LegacyCommandCallback.cpp">
+      <Filter>Source Files\legacy\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\legacy\threads\LegacyDownloadThread.cpp">
+      <Filter>Source Files\legacy\threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\threads\callbacks\FTPResponseCallback.cpp">
+      <Filter>Source Files\threads\callbacks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\ExecuteCallbackHandler.cpp">
+      <Filter>Source Files\handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\ResponseCallbackHandler.cpp">
+      <Filter>Source Files\handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\handler\Handler.cpp">
+      <Filter>Source Files\handler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,29 +176,110 @@
     <ClInclude Include="..\sdk\smsdk_ext.h">
       <Filter>SourceMod SDK</Filter>
     </ClInclude>
-    <ClInclude Include="..\natives.h">
+    <ClInclude Include="..\handler\Handler.h">
+      <Filter>Header Files\handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handler\RequestHandler.h">
+      <Filter>Header Files\handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\crc\crc.h">
+      <Filter>Header Files\3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\md5\md5.h">
+      <Filter>Header Files\3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\ftp.h">
+    <ClInclude Include="..\CompressArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\page.h">
+    <ClInclude Include="..\CompressLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\command.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\threads\RequestThread.h">
+      <Filter>Header Files\threads</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\copy.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\threads\HTTPRequestThread.h">
+      <Filter>Header Files\threads</Filter>
     </ClInclude>
-    <ClInclude Include="..\threads\download.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\threads\FTPRequestThread.h">
+      <Filter>Header Files\threads</Filter>
     </ClInclude>
-    <ClInclude Include="..\hash\md5.h">
-      <Filter>Header Files\hash</Filter>
+    <ClInclude Include="..\natives\Request.h">
+      <Filter>Header Files\natives</Filter>
     </ClInclude>
-    <ClInclude Include="..\hash\crc.h">
-      <Filter>Header Files\hash</Filter>
+    <ClInclude Include="..\natives\FTPRequest.h">
+      <Filter>Header Files\natives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\natives\HTTPRequest.h">
+      <Filter>Header Files\natives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\natives\HTTPRequestMethod.h">
+      <Filter>Header Files\natives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\natives\Natives.h">
+      <Filter>Header Files\natives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\ResponseCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\Callback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\FTPResponseCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\HTTPResponseCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\ProgressCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\ExecuteCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\ExecuteThread.h">
+      <Filter>Header Files\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\CopyCallback.h">
+      <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\CopyThread.h">
+      <Filter>Header Files\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\LegacyNatives.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\LegacyPageThread.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\LegacyCommandState.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\LegacyFTPThread.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\LegacyDownloadThread.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\LegacyCommandThread.h">
+      <Filter>Header Files\legacy\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\callbacks\LegacyDownloadCallback.h">
+      <Filter>Header Files\legacy\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\legacy\threads\callbacks\LegacyCommandCallback.h">
+      <Filter>Header Files\legacy\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handler\ExecuteCallbackHandler.h">
+      <Filter>Header Files\handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\handler\ResponseCallbackHandler.h">
+      <Filter>Header Files\handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\callbacks\CallbackFunction.h">
+      <Filter>Header Files\threads\callbacks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

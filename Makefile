@@ -5,7 +5,7 @@
 ### EDIT THESE PATHS FOR YOUR OWN SETUP ###
 ###########################################
 
-SMSDK = ../sourcemod-central
+SMSDK = ../sourcemod-1.7
 OPENSSL = ../openssl
 ZLIB = ../zlib
 CURL = ../curl
@@ -19,7 +19,16 @@ PROJECT = system2
 #Uncomment for Metamod: Source enabled extension
 #USEMETA = true
 
-OBJECTS = sdk/smsdk_ext.cpp threads/command.cpp threads/copy.cpp threads/download.cpp threads/ftp.cpp threads/page.cpp natives.cpp extension.cpp hash/md5.cpp hash/crc32.cpp
+OBJECTS = 3rdparty/crc/crc32.cpp 3rdparty/md5/md5.cpp
+OBJECTS += handler/ExecuteCallbackHandler.cpp handler/Handler.cpp handler/RequestHandler.cpp handler/ResponseCallbackHandler.cpp
+OBJECTS += legacy/LegacyNatives.cpp
+OBJECTS += legacy/threads/LegacyCommandThread.cpp legacy/threads/LegacyDownloadThread.cpp legacy/threads/LegacyFTPThread.cpp legacy/threads/LegacyPageThread.cpp
+OBJECTS += legacy/threads/callbacks/LegacyCommandCallback.cpp legacy/threads/callbacks/LegacyDownloadCallback.cpp
+OBJECTS += natives/CommonNatives.cpp natives/ExecuteNatives.cpp natives/FTPRequest.cpp natives/HTTPRequest.cpp natives/Request.cpp natives/RequestNatives.cpp natives/ResponseNatives.cpp
+OBJECTS += sdk/smsdk_ext.cpp
+OBJECTS += threads/CopyThread.cpp threads/ExecuteThread.cpp threads/FTPRequestThread.cpp threads/HTTPRequestThread.cpp threads/RequestThread.cpp
+OBJECTS += threads/callbacks/CopyCallback.cpp threads/callbacks/ExecuteCallback.cpp threads/callbacks/FTPResponseCallback.cpp threads/callbacks/HTTPResponseCallback.cpp threads/callbacks/ProgressCallback.cpp threads/callbacks/ResponseCallback.cpp
+OBJECTS += extension.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
@@ -36,7 +45,8 @@ CPP_OSX = clang
 ### SDK CONFIGURATIONS ###
 ##########################
 
-INCLUDE += -I. -I.. -Isdk -Ithreads -Ihash -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include
+INCLUDE += -I. -I.. -I3rdparty -Ihandler -Ilegacy -Ilegacy/threads -Ilegacy/threads/callbacks -Inatives -Isdk -Ithreads -Ithreads/callbacks
+INCLUDE += -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include -I$(SMSDK)/public/sourcepawn
 LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a $(ZLIB)/libz.a
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
@@ -111,9 +121,16 @@ $(BIN_DIR)/%.o: %.cpp
 	$(CPP) $(INCLUDE) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 all: check
+	mkdir -p $(BIN_DIR)/3rdparty/crc
+	mkdir -p $(BIN_DIR)/3rdparty/md5
+	mkdir -p $(BIN_DIR)/handler
+	mkdir -p $(BIN_DIR)/legacy
+	mkdir -p $(BIN_DIR)/legacy/threads
+	mkdir -p $(BIN_DIR)/legacy/threads/callbacks
+	mkdir -p $(BIN_DIR)/natives
 	mkdir -p $(BIN_DIR)/sdk
 	mkdir -p $(BIN_DIR)/threads
-	mkdir -p $(BIN_DIR)/hash
+	mkdir -p $(BIN_DIR)/threads/callbacks
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -128,8 +145,15 @@ default: all
 
 clean: check
 	rm -rf $(BIN_DIR)/*.o
+	rm -rf $(BIN_DIR)/3rdparty/crc/*.o
+	rm -rf $(BIN_DIR)/3rdparty/md5/*.o
+	rm -rf $(BIN_DIR)/handler/*.o
+	rm -rf $(BIN_DIR)/legacy/*.o
+	rm -rf $(BIN_DIR)/legacy/threads/*.o
+	rm -rf $(BIN_DIR)/legacy/threads/callbacks/*.o
+	rm -rf $(BIN_DIR)/natives/*.o
 	rm -rf $(BIN_DIR)/sdk/*.o
 	rm -rf $(BIN_DIR)/threads/*.o
-	rm -rf $(BIN_DIR)/hash/*.o
+	rm -rf $(BIN_DIR)/threads/callbacks/*.o
 	rm -rf $(BIN_DIR)/$(BINARY)
 

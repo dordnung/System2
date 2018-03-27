@@ -37,7 +37,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;..\sdk;..\threads;..\hash;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\sdk;..\handler;..\threads;..\threads\callbacks;..\legacy\threads\callbacks;..\legacy\threads;..\legacy;..\natives;..\3rdparty\;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;$(SOURCEMOD)\public\sourcepawn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -51,7 +51,7 @@
     <Link>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -64,29 +64,79 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdparty\crc\crc32.cpp" />
+    <ClCompile Include="..\3rdparty\md5\md5.cpp" />
     <ClCompile Include="..\extension.cpp" />
-    <ClCompile Include="..\hash\crc32.cpp" />
-    <ClCompile Include="..\hash\md5.cpp" />
-    <ClCompile Include="..\natives.cpp" />
+    <ClCompile Include="..\handler\ExecuteCallbackHandler.cpp" />
+    <ClCompile Include="..\handler\Handler.cpp" />
+    <ClCompile Include="..\handler\RequestHandler.cpp" />
+    <ClCompile Include="..\handler\ResponseCallbackHandler.cpp" />
+    <ClCompile Include="..\legacy\LegacyNatives.cpp" />
+    <ClCompile Include="..\legacy\threads\callbacks\LegacyCommandCallback.cpp" />
+    <ClCompile Include="..\legacy\threads\callbacks\LegacyDownloadCallback.cpp" />
+    <ClCompile Include="..\legacy\threads\LegacyCommandThread.cpp" />
+    <ClCompile Include="..\legacy\threads\LegacyDownloadThread.cpp" />
+    <ClCompile Include="..\legacy\threads\LegacyFTPThread.cpp" />
+    <ClCompile Include="..\legacy\threads\LegacyPageThread.cpp" />
+    <ClCompile Include="..\natives\CommonNatives.cpp" />
+    <ClCompile Include="..\natives\ExecuteNatives.cpp" />
+    <ClCompile Include="..\natives\FTPRequest.cpp" />
+    <ClCompile Include="..\natives\HTTPRequest.cpp" />
+    <ClCompile Include="..\natives\Request.cpp" />
+    <ClCompile Include="..\natives\RequestNatives.cpp" />
+    <ClCompile Include="..\natives\ResponseNatives.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
-    <ClCompile Include="..\threads\command.cpp" />
-    <ClCompile Include="..\threads\copy.cpp" />
-    <ClCompile Include="..\threads\download.cpp" />
-    <ClCompile Include="..\threads\ftp.cpp" />
-    <ClCompile Include="..\threads\page.cpp" />
+    <ClCompile Include="..\threads\callbacks\CopyCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\ExecuteCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\FTPResponseCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\HTTPResponseCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\ProgressCallback.cpp" />
+    <ClCompile Include="..\threads\callbacks\ResponseCallback.cpp" />
+    <ClCompile Include="..\threads\CopyThread.cpp" />
+    <ClCompile Include="..\threads\ExecuteThread.cpp" />
+    <ClCompile Include="..\threads\FTPRequestThread.cpp" />
+    <ClCompile Include="..\threads\HTTPRequestThread.cpp" />
+    <ClCompile Include="..\threads\RequestThread.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdparty\crc\crc.h" />
+    <ClInclude Include="..\3rdparty\md5\md5.h" />
+    <ClInclude Include="..\CompressArchive.h" />
+    <ClInclude Include="..\CompressLevel.h" />
     <ClInclude Include="..\extension.h" />
-    <ClInclude Include="..\hash\crc.h" />
-    <ClInclude Include="..\hash\md5.h" />
-    <ClInclude Include="..\natives.h" />
+    <ClInclude Include="..\handler\ExecuteCallbackHandler.h" />
+    <ClInclude Include="..\handler\Handler.h" />
+    <ClInclude Include="..\handler\RequestHandler.h" />
+    <ClInclude Include="..\handler\ResponseCallbackHandler.h" />
+    <ClInclude Include="..\legacy\LegacyNatives.h" />
+    <ClInclude Include="..\legacy\threads\callbacks\LegacyCommandCallback.h" />
+    <ClInclude Include="..\legacy\threads\callbacks\LegacyDownloadCallback.h" />
+    <ClInclude Include="..\legacy\threads\LegacyCommandState.h" />
+    <ClInclude Include="..\legacy\threads\LegacyCommandThread.h" />
+    <ClInclude Include="..\legacy\threads\LegacyDownloadThread.h" />
+    <ClInclude Include="..\legacy\threads\LegacyFTPThread.h" />
+    <ClInclude Include="..\legacy\threads\LegacyPageThread.h" />
+    <ClInclude Include="..\natives\FTPRequest.h" />
+    <ClInclude Include="..\natives\HTTPRequest.h" />
+    <ClInclude Include="..\natives\HTTPRequestMethod.h" />
+    <ClInclude Include="..\natives\Natives.h" />
+    <ClInclude Include="..\natives\Request.h" />
+    <ClInclude Include="..\OS.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
-    <ClInclude Include="..\threads\command.h" />
-    <ClInclude Include="..\threads\copy.h" />
-    <ClInclude Include="..\threads\download.h" />
-    <ClInclude Include="..\threads\ftp.h" />
-    <ClInclude Include="..\threads\page.h" />
+    <ClInclude Include="..\threads\callbacks\Callback.h" />
+    <ClInclude Include="..\threads\callbacks\CallbackFunction.h" />
+    <ClInclude Include="..\threads\callbacks\CopyCallback.h" />
+    <ClInclude Include="..\threads\callbacks\ExecuteCallback.h" />
+    <ClInclude Include="..\threads\callbacks\FTPResponseCallback.h" />
+    <ClInclude Include="..\threads\callbacks\HTTPResponseCallback.h" />
+    <ClInclude Include="..\threads\callbacks\ProgressCallback.h" />
+    <ClInclude Include="..\threads\callbacks\ResponseCallback.h" />
+    <ClInclude Include="..\threads\CopyThread.h" />
+    <ClInclude Include="..\threads\ExecuteThread.h" />
+    <ClInclude Include="..\threads\FTPRequestThread.h" />
+    <ClInclude Include="..\threads\HTTPRequestThread.h" />
+    <ClInclude Include="..\threads\RequestThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

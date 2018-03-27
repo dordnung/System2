@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,108 +23,243 @@
  */
 
 #include "extension.h"
-#include "natives.h"
-#include "ftp.h"
+#include "Natives.h"
+#include "ExecuteCallbackHandler.h"
+#include "RequestHandler.h"
+#include "ResponseCallbackHandler.h"
+#include "LegacyNatives.h"
+#include "LegacyFTPThread.h"
+#include "FTPRequestThread.h"
 
+#include <algorithm>
+
+#if defined _WIN32 || defined _WIN64
+#define sleep_ms(x) Sleep(x);
+#else
+#define sleep_ms(x) usleep(x * 1000);
+#endif
+
+
+System2Extension::System2Extension() : threadMutex(NULL), frames(0), isRunning(false) {};
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
-	this->frames = 0;
+    this->frames = 0;
+    this->isRunning = true;
 
-	// Add natives and register extension
-	sharesys->AddNatives(myself, system2_natives);
-	sharesys->RegisterLibrary(myself, "system2");
+    // Add natives and register extension
+    sharesys->AddNatives(myself, system2_natives);
+    sharesys->AddNatives(myself, system2_legacy_natives);
+    sharesys->RegisterLibrary(myself, "system2");
 
-	// Add mutex and init curl
-	mutex = threader->MakeMutex();
-	ftpMutex = threader->MakeMutex();
+    // Creates needed mutexes
+    threadMutex = threader->MakeMutex();
+    ftpMutex = threader->MakeMutex();
+    legacyFTPMutex = threader->MakeMutex();
 
-	curl_global_init(CURL_GLOBAL_ALL);
+    // Create handles
+    executeCallbackHandler.Initialize();
+    requestHandler.Initialize();
+    responseCallbackHandler.Initialize();
 
-	smutils->AddGameFrameHook(&OnGameFrameHit);
+    // Add game frame hook
+    smutils->AddGameFrameHook(&OnGameFrameHit);
 
-	return true;
+    // Add this plugin listener
+    plsys->AddPluginsListener(this);
+
+    // Init CURL
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    return true;
 }
 
 void System2Extension::SDK_OnUnload() {
-	smutils->RemoveGameFrameHook(&OnGameFrameHit);
-	mutex->DestroyThis();
-	ftpMutex->DestroyThis();
+    this->threadMutex->Lock();
 
-	curl_global_cleanup();
+    // Mark that we are not running anymore
+    this->isRunning = false;
+
+    // Remove game frame hook so no callback will run anymore
+    smutils->RemoveGameFrameHook(&OnGameFrameHit);
+
+    this->threadMutex->Unlock();
+
+    // Wait until all threads are finished
+    if (runningThreads.size() > 0) {
+        rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
+        for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
+            (*it)->WaitForThread();
+        }
+        rootconsole->ConsolePrint("[System2] All threads finished");
+    }
+
+    // Abort callbacks
+    for (auto it = this->callbackQueue.begin(); it != callbackQueue.end(); ++it) {
+        (*it)->Abort();
+    }
+
+    // Remove handles
+    executeCallbackHandler.Shutdown();
+    requestHandler.Shutdown();
+    responseCallbackHandler.Shutdown();
+
+    // Remove plugin listener
+    plsys->RemovePluginsListener(this);
+
+    // Clear STL stuff
+    this->callbackQueue.clear();
+    this->callbackFunctions.clear();
+    this->runningThreads.clear();
+
+    // Remove created mutexes
+    this->threadMutex->DestroyThis();
+    ftpMutex->DestroyThis();
+    legacyFTPMutex->DestroyThis();
+
+    // Finally clean up CURL
+    curl_global_cleanup();
 }
 
-void System2Extension::addToQueue(ThreadReturn *threadReturn) {
-	// Lock mutex to gain thread safety
-	while (!this->mutex->TryLock()) {
-#ifdef _WIN32
-		Sleep(50);
-#else
-		usleep(50000);
-#endif
-	}
 
-	// Add the thread return to the front of the queue
-	this->forwardQueue.push(threadReturn);
-	this->mutex->Unlock();
+void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
+    // Search if the plugin has any pending callback functions and invalidate them
+    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end();) {
+        if ((*it)->plugin == plugin) {
+            // Mark it as invalid and remove it from the list
+            (*it)->isValid = false;
+            it = this->callbackFunctions.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
+
+
+void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
+    // Lock mutex to gain thread safety
+    while (!this->threadMutex->TryLock()) {
+        sleep_ms(1);
+    }
+
+    if (this->isRunning) {
+        // Add the callback to the queue and unlock mutex again
+        this->callbackQueue.push_back(callback);
+    } else {
+        // Abort the callback if we not running anymore
+        callback->Abort();
+    }
+
+    this->threadMutex->Unlock();
+}
+
+
+bool System2Extension::RegisterAndStartThread(IThread *thread) {
+    // Create the thread suspended, add it to the list and then start it
+    IThreadHandle *handle = threader->MakeThread(thread, Thread_CreateSuspended);
+    if (!handle) {
+        return false;
+    }
+
+    this->threadMutex->Lock();
+    this->runningThreads.push_back(handle);
+    this->threadMutex->Unlock();
+
+    handle->Unpause();
+    return true;
+}
+
+void System2Extension::UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle) {
+    while (!this->threadMutex->TryLock()) {
+        sleep_ms(1);
+    }
+
+    // Just remove from the list of running threads
+    if (this->isRunning) {
+        this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), threadHandle), this->runningThreads.end());
+    }
+
+    // Destroy the thread handle to free resources
+    threadHandle->DestroyThis();
+
+    this->threadMutex->Unlock();
+}
+
+
+std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction *function) {
+    if (!function || !function->IsRunnable()) {
+        // Function is not valid
+        return NULL;
+    }
+
+    auto plugin = plsys->FindPluginByContext(function->GetParentRuntime()->GetDefaultContext()->GetContext());
+    if (!plugin) {
+        // Plugin is not valid
+        return NULL;
+    }
+
+    // Check if we already have the callback function
+    for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end(); ++it) {
+        if ((*it)->function == function) {
+            auto callbackFunction = (*it);
+            callbackFunction->plugin = plugin;
+            callbackFunction->isValid = true;
+
+            // Reuse the callback function
+            return callbackFunction;
+        }
+    }
+
+    auto callbackFunction = std::make_shared<CallbackFunction_t>();
+    callbackFunction->plugin = plugin;
+    callbackFunction->function = function;
+    callbackFunction->isValid = true;
+
+    // Add to the internal list of callback functions
+    this->callbackFunctions.push_back(callbackFunction);
+    return callbackFunction;
+}
+
 
 void System2Extension::GameFrameHit() {
-	// Increase frame number which will be needed for progress update
-	this->frames++;
+    // Increase number of frames
+    this->frames++;
 
-	// Lock the mutex to gain thread safety
-	if (!this->mutex->TryLock()) {
-		// Couldn't lock
-		return;
-	}
+    // Lock the mutex to gain thread safety
+    if (!this->threadMutex->TryLock()) {
+        // Couldn't lock -> do not wait
+        return;
+    }
 
-	// Are there outstandig forwards?
-	if (!this->forwardQueue.empty()) {
-		// Get the last forward if so
-		ThreadReturn *threadReturn = this->forwardQueue.front();
-		IPluginFunction *function = threadReturn->function;
+    // Are there outstandig callbacks?
+    std::shared_ptr<Callback> callback = NULL;
+    if (this->isRunning && !this->callbackQueue.empty()) {
+        callback = this->callbackQueue.front();
 
-		// Set function params
-		if (threadReturn->mode == MODE_COMMAND || threadReturn->mode == MODE_GET) {
-			// ... for a command callback
-			function->PushString(threadReturn->resultString);
-			function->PushCell(strlen(threadReturn->resultString) + 1);
-			function->PushCell(threadReturn->result);
-			function->PushCell(threadReturn->data);
-			function->PushString(threadReturn->command);
-		} else if (threadReturn->mode != MODE_COPY) {
-			// ... for a progress callback
-			function->PushCell(threadReturn->finished);
-			function->PushString(threadReturn->curlError);
+        // Remove the callback from the queue
+        // No deleting needed, as callbacks are shared pointers
+        callbackQueue.pop_front();
+    }
 
-			function->PushFloat((float)threadReturn->dltotal);
-			function->PushFloat((float)threadReturn->dlnow);
-			function->PushFloat((float)threadReturn->ultotal);
-			function->PushFloat((float)threadReturn->ulnow);
-			function->PushCell(threadReturn->data);
-		} else {
-			// ... for a result for a copy
-			function->PushCell((threadReturn->result == CMD_ERROR) ? 0 : 1);
-			function->PushString(threadReturn->copyFrom);
-			function->PushString(threadReturn->copyTo);
-			function->PushCell(threadReturn->data);
-		}
+    // Unlock mutex
+    this->threadMutex->Unlock();
 
-		// Finally execute the forward
-		function->Execute(NULL);
-
-		// Delete it and remove it from the queue
-		delete threadReturn;
-		forwardQueue.pop();
-	}
-
-	// Unlock mutex
-	this->mutex->Unlock();
+    // Proccess callback outside mutex lock to avoid infinite loop
+    if (callback) {
+        if (callback->callbackFunction->isValid && callback->callbackFunction->function->IsRunnable()) {
+            // Fire the callback if the callback function is valid
+            callback->Fire();
+        } else {
+            callback->Abort();
+        }
+    }
 }
 
+uint32_t System2Extension::GetFrames() {
+    return this->frames;
+}
 
 void OnGameFrameHit(bool simulating) {
-	system2Extension.GameFrameHit();
+    system2Extension.GameFrameHit();
 }
 
 

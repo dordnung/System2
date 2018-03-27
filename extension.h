@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2017 David Ordnung
+ * Copyright (C) 2013-2018 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,85 +22,50 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _EXTENSION_H_
-#define _EXTENSION_H_
+#ifndef _SYSTEM2_EXTENSION_H_
+#define _SYSTEM2_EXTENSION_H_
 
 #include "smsdk_ext.h"
+#include "Callback.h"
 
 #include <stdio.h>
 #include <string.h>
-#include <fstream>
+#include <string>
+#include <memory>
+#include <deque>
+#include <vector>
 
-#include <queue>
 #include <curl/curl.h>
 
-#define MAX_RESULT_LENGTH 4096
-#define MAX_COMMAND_LENGTH 2048
 
-
-enum OS {
-	OS_UNKNOWN,
-	OS_WIN,
-	OS_UNIX,
-	OS_MAC
-};
-
-enum Mode {
-	MODE_COMMAND,
-	MODE_DOWNLOAD,
-	MODE_UPLOAD,
-	MODE_COPY,
-	MODE_GET
-};
-
-enum ReturnState {
-	CMD_SUCCESS,
-	CMD_EMPTY,
-	CMD_ERROR,
-	CMD_PROGRESS
-};
-
-
-typedef struct {
-	char command[MAX_COMMAND_LENGTH + 1];
-
-	char resultString[MAX_RESULT_LENGTH + 1];
-	char curlError[CURL_ERROR_SIZE + 1];
-
-	char copyFrom[PLATFORM_MAX_PATH + 1];
-	char copyTo[PLATFORM_MAX_PATH + 1];
-
-	int finished;
-	int data;
-
-	double dltotal;
-	double dlnow;
-	double ultotal;
-	double ulnow;
-
-	Mode mode;
-
-	IPluginFunction *function;
-	cell_t result;
-} ThreadReturn;
-
-
-class System2Extension : public SDKExtension {
+class System2Extension : public SDKExtension, public IPluginsListener {
 private:
-	IMutex *mutex;
-	std::queue<ThreadReturn *> forwardQueue;
-	uint32_t frames;
+    IMutex * threadMutex;
+
+    std::deque<std::shared_ptr<Callback>> callbackQueue;
+    std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
+    std::vector<IThreadHandle *> runningThreads;
+
+    volatile uint32_t frames;
+    bool isRunning;
 
 public:
-	void addToQueue(ThreadReturn *threadReturn);
+    System2Extension();
 
-	void GameFrameHit();
-	uint32_t GetFrames() {
-		return this->frames;
-	}
+    virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
+    virtual void SDK_OnUnload();
 
-	virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
-	virtual void SDK_OnUnload();
+    virtual void OnPluginUnloaded(IPlugin *plugin);
+
+    void AppendCallback(std::shared_ptr<Callback> callback);
+
+    bool RegisterAndStartThread(IThread *thread);
+    void UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle);
+
+    std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
+
+    void GameFrameHit();
+    uint32_t GetFrames();
 };
 
 
