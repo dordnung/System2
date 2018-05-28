@@ -38,6 +38,8 @@ public:
     std::string userAgent;
     std::string username;
     std::string password;
+    std::string proxy;
+    std::string proxyAuth;
     bool followRedirects;
 
     HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
