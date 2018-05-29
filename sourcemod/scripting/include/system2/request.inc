@@ -360,7 +360,7 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Retrieves the name of a header at a given index.
-     * Use GetHeadersCount to retrieve the maximum index.
+     * Use Headers property to retrieve the maximum index.
      *
      * @param index     Index of the header name.
      * @param name      Buffer to store name in.
@@ -777,7 +777,7 @@ methodmap System2HTTPResponse < System2Response {
 
     /**
      * Retrieves the name of a header at a given index.
-     * Use GetHeadersCount to retrieve the maximum index.
+     * Use Headers property to retrieve the maximum index.
      *
      * @param index     Index of the header name.
      * @param name      Buffer to store name in.
