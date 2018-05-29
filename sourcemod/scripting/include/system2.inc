@@ -380,6 +380,7 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.GetHeaderName");
         MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
         MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
+        MarkNativeAsOptional("System2HTTPRequest.SetProxy");
         MarkNativeAsOptional("System2HTTPRequest.GET");
         MarkNativeAsOptional("System2HTTPRequest.POST");
         MarkNativeAsOptional("System2HTTPRequest.PUT");

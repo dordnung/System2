@@ -425,6 +425,16 @@ methodmap System2HTTPRequest < System2Request {
      */
     public native void SetBasicAuthentication(const char[] username, const char[] password);
 
+    /**
+     * Sets proxy (authentication) for the request.
+     *
+     * @param proxy     proxy to use for HTTP request.
+     * @param userpwd   authentication for proxy.
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void SetProxy(const char[] proxy, const char[] userpwd);
 
     /**
      * Sends the request with the HTTP GET method.
