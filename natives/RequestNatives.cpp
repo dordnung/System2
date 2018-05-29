@@ -312,6 +312,22 @@ cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const 
     return 1;
 }
 
+cell_t NativeHTTPRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *proxy;
+    char *userpswd;
+    pContext->LocalToString(params[2], &proxy);
+    pContext->LocalToString(params[3], &userpswd);
+
+    request->proxy = proxy;
+    request->proxyAuth = userpswd;
+    return 1;
+}
+
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (request == NULL) {
@@ -414,7 +430,6 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
     request->followRedirects = params[2];
     return 1;
 }
-
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));

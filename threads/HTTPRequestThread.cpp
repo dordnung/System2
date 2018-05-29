@@ -68,6 +68,17 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
             curl_easy_setopt(curl, CURLOPT_PASSWORD, this->httpRequest->password.c_str());
         }
 
+        // Set the proxy
+        if (!this->httpRequest->proxy.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXY, this->httpRequest->proxy.c_str());
+            //curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+        }
+
+        // Set the user and password of proxy
+        if (!this->httpRequest->proxyAuth.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, this->httpRequest->proxyAuth.c_str());
+        }
+
         // Set the follow redirect property
         if (this->httpRequest->followRedirects) {
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
