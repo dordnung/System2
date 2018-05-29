@@ -9,6 +9,7 @@ SMSDK = ../sourcemod-1.7
 OPENSSL = ../openssl
 ZLIB = ../zlib
 CURL = ../curl
+IDN = ../idn
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -47,7 +48,7 @@ CPP_OSX = clang
 
 INCLUDE += -I. -I.. -I3rdparty -Ihandler -Ilegacy -Ilegacy/threads -Ilegacy/threads/callbacks -Inatives -Isdk -Ithreads -Ithreads/callbacks
 INCLUDE += -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include -I$(SMSDK)/public/sourcepawn
-LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a $(ZLIB)/libz.a
+LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a $(ZLIB)/libz.a $(IDN)/lib/libidn2.a
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \

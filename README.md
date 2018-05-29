@@ -8,13 +8,13 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 ## How-to build: ##
 
 ### On Linux: ###
-- **Set path to build**
+- **Set build path**
   1. `export BUILD_DIR=$HOME`
   2. `cd $BUILD_DIR`
 
 - **Build openssl**
-  1. `wget https://www.openssl.org/source/openssl-1.1.0e.tar.gz && tar -xvzf openssl-1.1.0e.tar.gz`
-  2. `cd openssl-1.1.0e`
+  1. `wget https://www.openssl.org/source/openssl-1.1.0h.tar.gz && tar -xvzf openssl-1.1.0h.tar.gz`
+  2. `cd openssl-1.1.0h`
   3. `setarch i386 ./config -m32 no-shared && make`
   4. `cd $BUILD_DIR`
 
@@ -24,10 +24,17 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   3. `CFLAGS=-m32 ./configure -static && make`
   4. `cd $BUILD_DIR`
 
+- **Build libidn**
+  1. `wget https://ftp.gnu.org/gnu/libidn/libidn2-2.0.5.tar.gz && tar -xvzf libidn2-2.0.5.tar.gz`
+  2. `cd libidn2-2.0.5`
+  3. `CFLAGS=-m32 ./configure --disable-shared --enable-static --disable-doc && make`
+  4. `mkdir include && cp lib/*.h include/ && cp lib/.libs/libidn2.a lib`
+  5. `cd $BUILD_DIR`
+
 - **Build libcurl**
-  1. `wget https://curl.haxx.se/download/curl-7.58.0.zip && unzip curl-7.58.0.zip`
-  2. `cd curl-7.58.0`
-  3. `env LIBS="-ldl" CPPFLAGS="-I$BUILD_DIR/zlib-1.2.11" LDFLAGS="-L$BUILD_DIR/openssl-1.1.0e -L$BUILD_DIR/zlib-1.2.11" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0e --with-zlib=$BUILD_DIR/zlib-1.2.11 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-sspi --disable-tls-srp --disable-manual --disable-proxy --disable-libcurl-option --without-librtmp --without-libidn --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 CC=/usr/bin/gcc && make`
+  1. `wget https://curl.haxx.se/download/curl-7.60.0.zip && unzip curl-7.60.0.zip`
+  2. `cd curl-7.60.0`
+  3. `LIBS="-ldl" ./configure --with-ssl=$BUILD_DIR/openssl-1.1.0h --with-zlib=$BUILD_DIR/zlib-1.2.11 --with-libidn2=$BUILD_DIR/libidn2-2.0.5 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 && make`
   4. **DO NOT INSTALL IT!**
   4. `cd $BUILD_DIR`
 
@@ -36,8 +43,8 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 
 - **Build system2**
   1. `git clone https://github.com/dordnung/System2`
-  2. `cd system2`
-  3. `make SMSDK=$BUILD_DIR/sourcemod-1.7 OPENSSL=$BUILD_DIR/openssl-1.1.0e ZLIB=$BUILD_DIR/zlib-1.2.11 CURL=$BUILD_DIR/curl-7.58.0`
+  2. `cd System2`
+  3. `make SMSDK=$BUILD_DIR/sourcemod-1.7 OPENSSL=$BUILD_DIR/openssl-1.1.0h ZLIB=$BUILD_DIR/zlib-1.2.11 IDN=$BUILD_DIR/libidn2-2.0.5 CURL=$BUILD_DIR/curl-7.60.0`
 
 ### On Windows (Visual Studio 2015/2017): ###
 - **Build zlib**
