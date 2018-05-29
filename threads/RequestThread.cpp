@@ -44,6 +44,21 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     }
 
+    // Set the proxy if given
+    if (!this->request->proxy.empty()) {
+        curl_easy_setopt(curl, CURLOPT_PROXY, this->request->proxy.c_str());
+    }
+
+    // Set the username for the proxy
+    if (!this->request->proxyUsername.empty()) {
+        curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, this->request->proxyUsername.c_str());
+    }
+
+    // Set the password for the proxy
+    if (!this->request->proxyPassword.empty()) {
+        curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, this->request->proxyPassword.c_str());
+    }
+
     // Check if also write to an output file
     if (!this->request->outputFile.empty()) {
         // Get the full path to the file

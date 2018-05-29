@@ -235,6 +235,41 @@ methodmap System2Request < Handle {
      */
     public native bool GetVerifySSL();
 
+    /**
+     * Sets proxy for the request.
+     *
+     * @param proxy     Hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *                  To specify port number in this string, append :[port] to the end of the host name (default: 1080).
+     *                  The proxy string may be prefixed with [scheme]:// to specify which kind of proxy is used.
+     *                  http://
+     *                  HTTP Proxy. Default when no scheme is specified.
+     *                  https://
+     *                  HTTPS Proxy.
+     *                  socks4://
+     *                  SOCKS4 Proxy.
+     *                  socks4a://
+     *                  SOCKS4a Proxy. Proxy resolves URL hostname.
+     *                  socks5://
+     *                  SOCKS5 Proxy.
+     *                  socks5h://
+     *                  SOCKS5 Proxy. Proxy resolves URL hostname.
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void SetProxy(const char[] proxy);
+
+    /**
+     * Sets proxy authentication for the proxy request.
+     *
+     * @param username  Username to use for proxy authentication.
+     * @param password  Password to use for proxy authentication.
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void SetProxyAuthentication(const char[] username, const char[] password)
+
 
     property int Timeout {
         /**
@@ -424,17 +459,6 @@ methodmap System2HTTPRequest < System2Request {
      * @error           Invalid request.
      */
     public native void SetBasicAuthentication(const char[] username, const char[] password);
-
-    /**
-     * Sets proxy (authentication) for the request.
-     *
-     * @param proxy     proxy to use for HTTP request.
-     * @param userpwd   authentication for proxy.
-     *
-     * @noreturn
-     * @error           Invalid request.
-     */
-    public native void SetProxy(const char[] proxy, const char[] userpwd);
 
     /**
      * Sends the request with the HTTP GET method.

@@ -366,6 +366,8 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2Request.GetOutputFile");
         MarkNativeAsOptional("System2Request.SetVerifySSL");
         MarkNativeAsOptional("System2Request.GetVerifySSL");
+        MarkNativeAsOptional("System2Request.SetProxy");
+        MarkNativeAsOptional("System2Request.SetProxyAuthentication");
         MarkNativeAsOptional("System2Request.Timeout.get");
         MarkNativeAsOptional("System2Request.Timeout.set");
         MarkNativeAsOptional("System2Request.Any.get");
@@ -380,7 +382,6 @@ public Extension __ext_system2 =
         MarkNativeAsOptional("System2HTTPRequest.GetHeaderName");
         MarkNativeAsOptional("System2HTTPRequest.SetUserAgent");
         MarkNativeAsOptional("System2HTTPRequest.SetBasicAuthentication");
-        MarkNativeAsOptional("System2HTTPRequest.SetProxy");
         MarkNativeAsOptional("System2HTTPRequest.GET");
         MarkNativeAsOptional("System2HTTPRequest.POST");
         MarkNativeAsOptional("System2HTTPRequest.PUT");

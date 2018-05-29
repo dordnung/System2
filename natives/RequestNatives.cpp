@@ -118,6 +118,35 @@ cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params
     return request->verifySSL;
 }
 
+cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *proxy;
+    pContext->LocalToString(params[2], &proxy);
+
+    request->proxy = proxy;
+    return 1;
+}
+
+cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell_t *params) {
+    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *username;
+    char *password;
+    pContext->LocalToString(params[2], &username);
+    pContext->LocalToString(params[3], &password);
+
+    request->proxyUsername = username;
+    request->proxyPassword = password;
+    return 1;
+}
+
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
     if (request == NULL) {
@@ -309,22 +338,6 @@ cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const 
 
     request->username = username;
     request->password = password;
-    return 1;
-}
-
-cell_t NativeHTTPRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == NULL) {
-        return 0;
-    }
-
-    char *proxy;
-    char *userpswd;
-    pContext->LocalToString(params[2], &proxy);
-    pContext->LocalToString(params[3], &userpswd);
-
-    request->proxy = proxy;
-    request->proxyAuth = userpswd;
     return 1;
 }
 

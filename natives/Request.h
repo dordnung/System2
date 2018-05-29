@@ -35,6 +35,9 @@ public:
     int port;
     std::string outputFile;
     bool verifySSL;
+    std::string proxy;
+    std::string proxyUsername;
+    std::string proxyPassword;
     int timeout;
     int data;
 
