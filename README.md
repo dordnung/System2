@@ -42,24 +42,28 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 ### On Windows (Visual Studio 2015/2017): ###
 - **Build zlib**
   1. Download zlib from `https://zlib.net/zlib1211.zip` and unzip to some folder
-  2. Open the "Developer Command Prompt for VS 2015/2017" at `zlib-1.2.11`
+  2. Open the `Developer Command Prompt for VS 2017` or `Developer Command Prompt for VS 2015` at the `zlib-1.2.11` folder
   3. Type `vcvarsall.bat x86 8.1` and press ENTER
   3. Type `nmake /f win32/Makefile.msc LOC=-MT` and press ENTER
-  4. Type `md ..\deps\lib ..\deps\include` and press ENTER
-  5. Type `copy /Y zlib.lib ..\deps\lib\zlib_a.lib` and press ENTER
-  6. Type `copy /Y *h ..\deps\include` and press ENTER
+  4. Type `md lib include` and press ENTER
+  5. Type `copy /Y zlib.lib lib` and press ENTER
+  6. Type `copy /Y *h include` and press ENTER
+  7. Add a new system variable named `ZLIB` pointing to the `zlib-1.2.11` folder
 
 - **Build libcurl**
-  1. Download curl from `https://curl.haxx.se/download/curl-7.59.0.zip` and unzip to same folder
-  2. Type `cd ../curl-7.59.0/winbuild` in the Visual Studio Command Prompt and press ENTER
-  3. Type `nmake /f Makefile.vc mode=static WITH_ZLIB=static RTLIBCFG=static VC=15 MACHINE=x86` and press ENTER
-  4. Add a new system variable named `CURL` pointing to the `curl-7.59.0/builds/libcurl-vc15-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
+  1. Download curl from `https://curl.haxx.se/download/curl-7.60.0.zip` and unzip to some folder
+  2. Reopen the `Developer Command Prompt for VS 2017` or `Developer Command Prompt for VS 2015` at the `curl-7.60.0` folder
+  3. Type `vcvarsall.bat x86 8.1` and press ENTER
+  4. Type `cd winbuild` and press ENTER
+  5. Type `nmake /f Makefile.vc mode=static WITH_ZLIB=static ZLIB_PATH=%ZLIB% RTLIBCFG=static VC=15 MACHINE=x86` and press ENTER
+  6. Add a new system variable named `CURL` pointing to the `curl-7.60.0/builds/libcurl-vc15-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
 
-- **Get Sourcemod**
-  1. `git clone https://github.com/alliedmodders/sourcemod --recursive --branch 1.7-dev --single-branch sourcemod-1.7`
-  2. Add a new system variable named `SOURCEMOD` with the path to sourcemod-1.7
+- **Get Sourcemod 1.7**
+  1. Retrieve Sourcemod 1.7 with: `git clone https://github.com/alliedmodders/sourcemod --recursive --branch 1.7-dev --single-branch sourcemod-1.7`
+  2. Add a new system variable named `SOURCEMOD17` with the path to the sourcemod-1.7 folder
 
-- **Build system2**
-  1. `git clone https://github.com/dordnung/System2`
-  2. Open `system2/msvc17/system2.sln`
-  3. Build the project.
+- **Build System2**
+  1. Retrieve System2 with: `git clone https://github.com/dordnung/System2`
+  2. Reopen the `Developer Command Prompt for VS 2017` or `Developer Command Prompt for VS 2015` at the `system2` folder
+  3. Type `vcvarsall.bat x86 8.1` and press ENTER
+  4. Type `msbuild msvc17/system2.sln /p:Platform="win32"` and press ENTER
