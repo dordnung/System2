@@ -26,11 +26,12 @@
 
 
 Request::Request(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction) :
-    url(url), port(0), verifySSL(true), timeout(0), data(0), responseCallbackFunction(responseCallbackFunction), progressCallbackFunction(NULL) {}
+    url(url), port(0), verifySSL(true), proxyHttpTunnel(false), timeout(0), data(0),
+    responseCallbackFunction(responseCallbackFunction), progressCallbackFunction(NULL) {}
 
 Request::Request(const Request &request) :
-    url(request.url), port(request.port), outputFile(request.outputFile), verifySSL(request.verifySSL),
-    proxy(request.proxy), proxyUsername(request.proxyUsername), proxyPassword(request.proxyPassword), timeout(request.timeout),
+    url(request.url), port(request.port), outputFile(request.outputFile), verifySSL(request.verifySSL), proxy(request.proxy),
+    proxyHttpTunnel(request.proxyHttpTunnel), proxyUsername(request.proxyUsername), proxyPassword(request.proxyPassword), timeout(request.timeout),
     data(request.data), responseCallbackFunction(request.responseCallbackFunction), progressCallbackFunction(request.progressCallbackFunction) {}
 
 Request::~Request() {}

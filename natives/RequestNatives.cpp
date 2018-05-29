@@ -128,6 +128,7 @@ cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
     pContext->LocalToString(params[2], &proxy);
 
     request->proxy = proxy;
+    request->proxyHttpTunnel = params[3];
     return 1;
 }
 

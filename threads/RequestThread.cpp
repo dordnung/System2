@@ -44,19 +44,25 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
     }
 
-    // Set the proxy if given
+    // Set proxy with username and password
     if (!this->request->proxy.empty()) {
         curl_easy_setopt(curl, CURLOPT_PROXY, this->request->proxy.c_str());
-    }
 
-    // Set the username for the proxy
-    if (!this->request->proxyUsername.empty()) {
-        curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, this->request->proxyUsername.c_str());
-    }
+        // Set the username for the proxy
+        if (!this->request->proxyUsername.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, this->request->proxyUsername.c_str());
+        }
 
-    // Set the password for the proxy
-    if (!this->request->proxyPassword.empty()) {
-        curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, this->request->proxyPassword.c_str());
+        // Set the password for the proxy
+        if (!this->request->proxyPassword.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, this->request->proxyPassword.c_str());
+        }
+
+        // Set http tunneling
+        if (this->request->proxyHttpTunnel) {
+            curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1L);
+            curl_easy_setopt(curl, CURLOPT_SUPPRESS_CONNECT_HEADERS, 1L);
+        }
     }
 
     // Check if also write to an output file

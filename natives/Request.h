@@ -36,6 +36,7 @@ public:
     std::string outputFile;
     bool verifySSL;
     std::string proxy;
+    bool proxyHttpTunnel;
     std::string proxyUsername;
     std::string proxyPassword;
     int timeout;

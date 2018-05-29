@@ -238,26 +238,30 @@ methodmap System2Request < Handle {
     /**
      * Sets proxy for the request.
      *
-     * @param proxy     Hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
-     *                  To specify port number in this string, append :[port] to the end of the host name (default: 1080).
-     *                  The proxy string may be prefixed with [scheme]:// to specify which kind of proxy is used.
-     *                  http://
-     *                  HTTP Proxy. Default when no scheme is specified.
-     *                  https://
-     *                  HTTPS Proxy.
-     *                  socks4://
-     *                  SOCKS4 Proxy.
-     *                  socks4a://
-     *                  SOCKS4a Proxy. Proxy resolves URL hostname.
-     *                  socks5://
-     *                  SOCKS5 Proxy.
-     *                  socks5h://
-     *                  SOCKS5 Proxy. Proxy resolves URL hostname.
+     * @param proxy         Hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *                      To specify port number in this string, append :[port] to the end of the host name (default: 1080).
+     *                      The proxy string may be prefixed with [scheme]:// to specify which kind of proxy is used.
+     *                      http://
+     *                      HTTP Proxy. Default when no scheme is specified.
+     *                      https://
+     *                      HTTPS Proxy.
+     *                      socks4://
+     *                      SOCKS4 Proxy.
+     *                      socks4a://
+     *                      SOCKS4a Proxy. Proxy resolves URL hostname.
+     *                      socks5://
+     *                      SOCKS5 Proxy.
+     *                      socks5h://
+     *                      SOCKS5 Proxy. Proxy resolves URL hostname.
+     * @param useHttpTunnel Tunnel all operations through the HTTP proxy (use http or https)-
+     *                      Tunneling means that an HTTP CONNECT request is sent to the proxy, asking it to connect to a remote host
+     *                      on a specific port number and then the traffic is just passed through the proxy. Proxies tend to white-list
+    *                       specific port numbers it allows CONNECT requests to and often only port 80 and 443 are allowed.
      *
      * @noreturn
      * @error           Invalid request.
      */
-    public native void SetProxy(const char[] proxy);
+    public native void SetProxy(const char[] proxy, bool useHttpTunnel = false);
 
     /**
      * Sets proxy authentication for the proxy request.
