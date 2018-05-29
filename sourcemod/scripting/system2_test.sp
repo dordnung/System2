@@ -61,6 +61,7 @@ enum TestMethods
     TEST_VERIFY_SSL,
     TEST_NOT_VERIFY_SSL,
     TEST_DOWNLOAD,
+    TEST_PROXY,
     
     TEST_FTP_DIRECTORY,
     TEST_FTP_DOWNLOAD,
@@ -370,6 +371,14 @@ void PerformRequestTests() {
     httpRequest.SetVerifySSL(false);
     httpRequest.GET();
     httpRequest.SetVerifySSL(true);
+
+    // Test Proxy
+    httpRequest.Any = TEST_PROXY;
+    PrintToServer("INFO: Test using a proxy");
+    httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?method");
+    httpRequest.SetProxy("http://dordnung.de:8888");
+    httpRequest.SetProxyAuthentication("system2", "test");
+    httpRequest.GET();
 
     // Test Download
     httpRequest.Any = TEST_DOWNLOAD;
@@ -776,6 +785,15 @@ void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest r
         assertStringEquals("https://www.wiki.com/", lastUrl);
         assertValueEquals(200, response.StatusCode);
         assertFalse("SSL verifying should be disabled", request.GetVerifySSL());
+    } else if (request.Any == TEST_PROXY) {
+        PrintToServer("INFO: Got proxy GET method callback in %.3fs", response.TotalTime);
+        assertValueEquals(3, responseBytes);
+        assertStringEquals("GET", output);
+
+        assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?method", url);
+        assertStringEquals("https://dordnung.de/sourcemod/system2/testPage.php?method", lastUrl);
+        assertValueEquals(200, response.StatusCode);
+        assertValueEquals(strlen(output), response.ContentLength);
     } else if (request.Any == TEST_DOWNLOAD) {
         PrintToServer("INFO: Got download callback in %.3fs", response.TotalTime);
 
@@ -1043,7 +1061,7 @@ void CheckLegacyCallbacksCalled() {
 }
 
 public Action OnCheckCallbacks(Handle timer, any isLegacy) {
-    int callbacks = isLegacy ? 9 : 26;
+    int callbacks = isLegacy ? 9 : 27;
 
     // Wait max. 20 seconds for all callbacks
     if (timesTimerCalled >= 20) {
