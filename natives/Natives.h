@@ -98,6 +98,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
+bool Get7ZIPExecutable(bool force32Bit, std::string &binDir);
 
 cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params);
