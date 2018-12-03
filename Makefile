@@ -132,6 +132,7 @@ all: check
 	mkdir -p $(BIN_DIR)/sdk
 	mkdir -p $(BIN_DIR)/threads
 	mkdir -p $(BIN_DIR)/threads/callbacks
+	cp -f $(OPENSSL)/lib/ca-bundle.crt $(BIN_DIR)/sourcemod/data/system2/ca-bundle.crt
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -156,5 +157,6 @@ clean: check
 	rm -rf $(BIN_DIR)/sdk/*.o
 	rm -rf $(BIN_DIR)/threads/*.o
 	rm -rf $(BIN_DIR)/threads/callbacks/*.o
+	rm -rf $(BIN_DIR)/sourcemod/data/system2/ca-bundle.crt
 	rm -rf $(BIN_DIR)/$(BINARY)
 
