@@ -67,7 +67,7 @@ cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
 cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 #if defined __WIN32__ || defined _MSC_VER || defined __CYGWIN32__ || defined _Windows || defined __MSDOS__ || defined _WIN64 || defined _WIN32
     return OS_WIN;
-#elif defined __unix__ || defined __linux__ || defined __unix
+#elif defined unix || defined __unix__ || defined __linux__ || defined __unix
     return OS_UNIX;
 #elif defined __APPLE__ || defined __darwin__
     return OS_MAC;

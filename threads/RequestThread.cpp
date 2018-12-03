@@ -42,6 +42,14 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     if (!this->request->verifySSL) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    } else {
+#if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
+        // Use our own ca-bundle on unix like systems
+        char caPath[PLATFORM_MAX_PATH + 1];
+        smutils->BuildPath(Path_SM, caPath, sizeof(caPath), "data/system2/ca-bundle.crt");
+
+        curl_easy_setopt(curl, CURLOPT_CAINFO, caPath);
+#endif
     }
 
     // Set proxy with username and password
