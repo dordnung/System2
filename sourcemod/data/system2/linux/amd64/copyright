@@ -1,0 +1,81 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Igor Pavlov
+Source: https://sourceforge.net/projects/p7zip/
+
+Files: *
+Copyright: 1999-2015, Igor Pavlov
+License: LGPL-2.1+
+
+Files: CPP/7zip/Compress/Rar*
+       DOC/unRarLicense.txt
+Copyright: 1999-2015, Igor Pavlov
+License:  LGPL-2.1+ and unRAR
+
+Files: contrib/*
+Copyright: 2004, Sergiy Niskorodov (sgh at mail dot zp dot ua)
+License: GPL-2+
+
+Files: debian/*
+Copyright: 2016, Robert Luberda <robert@debian.org>
+           2004-2012, Mohammed Adnè Trojette <adn+deb@diwi.org>
+License: GPL-2+
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 2 dated June, 1991, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of version 2 of the GNU General
+ Public License can be found in '/usr/share/common-licenses/GPL-2'.
+
+License: LGPL-2.1+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by the
+ Free Software Foundation; version 2.1 of the License, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of version 2.1 of the GNU Lesser
+ General Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.
+
+License: unRAR
+ ******    *****   ******   unRAR - free utility for RAR archives
+ **   **  **   **  **   **  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ******   *******  ******    License for use and distribution of
+ **   **  **   **  **   **   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ **   **  **   **  **   **         FREE portable version
+                                   ~~~~~~~~~~~~~~~~~~~~~
+ .
+      The source code of unRAR utility is freeware. This means:
+ .
+   1. All copyrights to RAR and the utility unRAR are exclusively
+      owned by the author - Alexander Roshal.
+ .
+   2. The unRAR sources may be used in any software to handle RAR
+      archives without limitations free of charge, but cannot be used
+      to re-create the RAR compression algorithm, which is proprietary.
+      Distribution of modified unRAR sources in separate form or as a
+      part of other software is permitted, provided that it is clearly
+      stated in the documentation and source comments that the code may
+      not be used to develop a RAR (WinRAR) compatible archiver.
+ .
+   3. The unRAR utility may be freely distributed. No person or company 
+      may charge a fee for the distribution of unRAR without written
+      permission from the copyright holder.
+ .
+   4. THE RAR ARCHIVER AND THE UNRAR UTILITY ARE DISTRIBUTED "AS IS".
+      NO WARRANTY OF ANY KIND IS EXPRESSED OR IMPLIED.  YOU USE AT 
+      YOUR OWN RISK. THE AUTHOR WILL NOT BE LIABLE FOR DATA LOSS, 
+      DAMAGES, LOSS OF PROFITS OR ANY OTHER KIND OF LOSS WHILE USING
+      OR MISUSING THIS SOFTWARE.
+ .
+   5. Installing and using the unRAR utility signifies acceptance of
+      these terms and conditions of the license.
+ .
+   6. If you don't agree with terms of the license you must remove
+      unRAR files from your storage devices and cease to use the
+      utility.
+ .
+      Thank you for your interest in RAR and unRAR.
+ .
+                                            Alexander L. Roshal
