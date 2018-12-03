@@ -361,7 +361,7 @@ void PerformRequestTests() {
     // Test verify ssl
     PrintToServer("INFO: Test verifying ssl");
     httpRequest.Any = TEST_VERIFY_SSL;
-    httpRequest.SetURL("https://www.wiki.com/");
+    httpRequest.SetURL("https://www.unsecure.com/");
     httpRequest.GET();
 
     // Test not verify ssl

@@ -85,7 +85,15 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, LegacyDownloadThread::ProgressUpdated);
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
+        
+#if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
+        // Use our own ca-bundle on unix like systems
+        char caPath[PLATFORM_MAX_PATH + 1];
+        smutils->BuildPath(Path_SM, caPath, sizeof(caPath), "data/system2/ca-bundle.crt");
 
+        curl_easy_setopt(curl, CURLOPT_CAINFO, caPath);
+#endif
+        
         // Login?
         if (!this->username.empty()) {
             std::string loginData = this->username + ":" + this->password;
