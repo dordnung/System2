@@ -1,0 +1,51 @@
+language: cpp
+
+os:
+    - linux
+    - windows
+
+sudo: required
+
+services:
+    - docker
+  
+addons:
+    apt:
+        packages:
+            - docker-ce
+
+env:
+    matrix:
+        - SMBRANCH=1.7-dev
+        - SMBRANCH=1.8-dev
+        - SMBRANCH=1.9-dev
+        - SMBRANCH=master
+    global:
+        - CACHE_DIR=build-$TRAVIS_OS_NAME
+        
+before_script:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t system2 . ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install -y visualstudio2017buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Win81 --add Microsoft.VisualStudio.Component.WinXP" ; fi
+
+script:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -w /build --env SMBRANCH=$SMBRANCH -v $(pwd):/build system2 bash build.sh ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./build.bat ; fi
+
+cache:
+    directories:
+        - $CACHE_DIR
+    
+deploy:
+    - provider: releases
+      skip_cleanup: true
+      api_key:
+          secure: T45bcGBTW+nVEZ4AKd7Fnc1+FBlTYrrWD2vgB1tTBP7sM+qTUTxYjUG92yS1KwuqJCu7beuQzn59zn6S3M2P1ktaN+kfpRjPhQBvgn9DdkfijoSyLHSFWEd7gKk4RCN5XP4Ja4h57aFYoZBKKW/OSBOs6QV76Tgvq2zDa9aOLpI2pk3tCY09Bv4S6PkQlvOd+lpR6bFLkfFh80HIeIhlrVCGCsyhyugNjc04zPpVWxMic8H/K8YYlfi7Zo6qaqg6LspgDCDOladOI$
+      file:
+          - Release/system2.ext.so
+          - msvc17/Release/system2.ext.dll
+          - sourcemod/data/system2/ca-bundle.crt
+      on:
+          condition: "$SMBRANCH = 1.7-dev"
+          repo: dordnung/System2
+          all_branches: true
+          tags: true
