@@ -64,7 +64,7 @@ if not exist "sourcemod-%SMBRANCH%" (
 )
 
 cd sourcemod-%SMBRANCH%
-set SOURCEMOD19=%cd%
+set SOURCEMOD17=%cd%
 
 cd %BUILD_DIR%
 
