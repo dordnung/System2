@@ -1,6 +1,8 @@
 System2
 =======
 
+[![Build Status](https://api.travis-ci.com/dordnung/System2.svg)](https://travis-ci.com/dordnung/System2)
+
 System2 extends Sourcemod with a easy HTTP/FTP Request API and also provides some useful system commands, which missing in the Sourcemod API.
 
 Binaries and more information can be found on [alliedmods.net](https://forums.alliedmods.net/showthread.php?t=146019)
