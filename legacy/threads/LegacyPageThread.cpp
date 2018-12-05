@@ -57,15 +57,15 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &page);
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
         curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, MAX_RESULT_LENGTH);
-        
+
 #if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
         // Use our own ca-bundle on unix like systems
-        char caPath[PLATFORM_MAX_PATH + 1];
-        smutils->BuildPath(Path_SM, caPath, sizeof(caPath), "data/system2/ca-bundle.crt");
-
-        curl_easy_setopt(curl, CURLOPT_CAINFO, caPath);
+        std::string caFile = system2Extension.GetCertificateFile();
+        if (!caFile.empty()) {
+            curl_easy_setopt(curl, CURLOPT_CAINFO, caFile.c_str());
+        }
 #endif
-        
+
         if (!this->post.empty()) {
             curl_easy_setopt(curl, CURLOPT_POST, 1L);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, this->post.c_str());

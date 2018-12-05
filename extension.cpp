@@ -32,6 +32,7 @@
 #include "FTPRequestThread.h"
 
 #include <algorithm>
+#include <fstream>
 
 #if defined _WIN32 || defined _WIN64
 #define sleep_ms(x) Sleep(x);
@@ -217,6 +218,26 @@ std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPl
     // Add to the internal list of callback functions
     this->callbackFunctions.push_back(callbackFunction);
     return callbackFunction;
+}
+
+
+std::string System2Extension::GetCertificateFile() {
+    static bool caErrorReported = false;
+
+    // Use our own ca-bundle on unix like systems
+    char caPath[PLATFORM_MAX_PATH + 1];
+    smutils->BuildPath(Path_SM, caPath, sizeof(caPath), "data/system2/ca-bundle.crt");
+
+    if (std::ifstream(caPath).good()) {
+        return caPath;
+    }
+
+    if (!caErrorReported) {
+        smutils->LogError(myself, "File 'ca-bundle.crt' is missing in 'sourcemod/data/system2/' folder, please install it");
+        caErrorReported = true;
+    }
+
+    return std::string();
 }
 
 
