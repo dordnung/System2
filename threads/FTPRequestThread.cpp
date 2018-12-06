@@ -62,33 +62,38 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
             curl_easy_setopt(curl, CURLOPT_PASSWORD, this->ftpRequest->password.c_str());
         }
 
-        FILE *file = NULL;
+        FILE *inputFile = NULL;
         if (!this->ftpRequest->inputFile.empty()) {
             // Get the full path to the file
             char filePath[PLATFORM_MAX_PATH + 1];
             smutils->BuildPath(Path_Game, filePath, sizeof(filePath), this->ftpRequest->inputFile.c_str());
 
             // Open the file readable
-            file = fopen(filePath, "rb");
-            if (!file) {
+            inputFile = fopen(filePath, "rb");
+            if (!inputFile) {
                 // Create error callback and clean up curl
                 system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open file to upload"));
                 curl_easy_cleanup(curl);
+
+                // Close output file if opened
+                if (writeData.file) {
+                    fclose(writeData.file);
+                }
 
                 return;
             }
 
             // Get the size of the file
-            fseek(file, 0L, SEEK_END);
-            curl_off_t fsize = (curl_off_t)ftell(file);
-            fseek(file, 0L, SEEK_SET);
+            fseek(inputFile, 0L, SEEK_END);
+            curl_off_t fsize = (curl_off_t)ftell(inputFile);
+            fseek(inputFile, 0L, SEEK_SET);
 
             // Set CURL to upload a file
             curl_easy_setopt(curl, CURLOPT_READFUNCTION, RequestThread::ReadFile);
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
             curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS, this->ftpRequest->createMissingDirs ? CURLFTP_CREATE_DIR : CURLFTP_CREATE_DIR_NONE);
             curl_easy_setopt(curl, CURLOPT_APPEND, this->ftpRequest->appendToFile ? 1L : 0L);
-            curl_easy_setopt(curl, CURLOPT_READDATA, file);
+            curl_easy_setopt(curl, CURLOPT_READDATA, inputFile);
             curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
         } else {
             if (this->ftpRequest->listFilenamesOnly) {
@@ -118,9 +123,14 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         // Clean up curl
         curl_easy_cleanup(curl);
 
-        // Also close locale file if opened
-        if (file) {
-            fclose(file);
+        // Close input file if opened
+        if (inputFile) {
+            fclose(inputFile);
+        }
+
+        // Also close output file if opened
+        if (writeData.file) {
+            fclose(writeData.file);
         }
 
         // Append callback so it can be fired
