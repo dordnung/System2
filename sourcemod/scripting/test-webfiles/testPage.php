@@ -13,6 +13,7 @@ if (isset($_GET["long"])) {
     header("System2Follow: true");
 } else if (isset($_GET["followed"])) {
     header("System2Followed: true");
+    echo $_SERVER["HTTP_REFERER"];
 } else if (isset($_GET["timeout"])) {
     sleep(2);
 } else if (isset($_GET["auth"])) {
@@ -24,8 +25,8 @@ if (isset($_GET["long"])) {
         echo $_SERVER["REQUEST_METHOD"];
     }
 } else if (isset($_GET["header"])) {
-    foreach (getallheaders() as $name => $value) {
-        if (strcasecmp($name, "System2Test") == 0) {
+    foreach ($_SERVER as $name => $value) {
+        if (strcasecmp($name, "HTTP_SYSTEM2TEST") == 0 || strcasecmp($name, "System2Test") == 0) {
             echo $value;
         }
     }

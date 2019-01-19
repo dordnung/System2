@@ -9,6 +9,7 @@ SMSDK = ../sourcemod-1.7
 OPENSSL = ../openssl
 ZLIB = ../zlib
 CURL = ../curl
+IDN = ../idn
 
 #####################################
 ### EDIT BELOW FOR OTHER PROJECTS ###
@@ -46,8 +47,8 @@ CPP_OSX = clang
 ##########################
 
 INCLUDE += -I. -I.. -I3rdparty -Ihandler -Ilegacy -Ilegacy/threads -Ilegacy/threads/callbacks -Inatives -Isdk -Ithreads -Ithreads/callbacks
-INCLUDE += -I$(SMSDK)/public -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include -I$(SMSDK)/public/sourcepawn
-LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/libssl.a $(OPENSSL)/libcrypto.a $(ZLIB)/libz.a
+INCLUDE += -I$(SMSDK)/public -I$(SMSDK)/public/amtl  -I$(SMSDK)/public/amtl/amtl -I$(SMSDK)/sourcepawn/include -I$(SMSDK)/core -I$(CURL)/include -I$(SMSDK)/public/sourcepawn
+LINK += -m32 -lm -ldl -lrt -lstdc++ $(CURL)/lib/.libs/libcurl.a $(OPENSSL)/lib/libssl.a $(OPENSSL)/lib/libcrypto.a $(ZLIB)/lib/libz.a $(IDN)/lib/libidn2.a
 
 CFLAGS += -std=c++0x -DPOSIX -DCURL_STATICLIB -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp \
 	-D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DCOMPILER_GCC -Wall -Werror \
@@ -131,6 +132,7 @@ all: check
 	mkdir -p $(BIN_DIR)/sdk
 	mkdir -p $(BIN_DIR)/threads
 	mkdir -p $(BIN_DIR)/threads/callbacks
+	cp -f $(CURL)/lib/ca-bundle.crt sourcemod/data/system2/ca-bundle.crt
 	$(MAKE) -f $(MAKEFILE_NAME) extension
 
 check:
@@ -155,5 +157,6 @@ clean: check
 	rm -rf $(BIN_DIR)/sdk/*.o
 	rm -rf $(BIN_DIR)/threads/*.o
 	rm -rf $(BIN_DIR)/threads/callbacks/*.o
+	rm -rf $(BIN_DIR)/sourcemod/data/system2/ca-bundle.crt
 	rm -rf $(BIN_DIR)/$(BINARY)
 

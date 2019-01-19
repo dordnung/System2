@@ -40,41 +40,83 @@
 
 #define MAX_COMMAND_LENGTH 2048
 
+bool Get7ZIPExecutable(bool force32Bit, std::string &binDir) {
+    static std::string sBinDir64;
+    static std::string sBinDir32;
 
-cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
-    char binDir[PLATFORM_MAX_PATH + 1];
-
-    // Build the path to the executable, to the path to compress and the archive
-#if defined _WIN32 || defined _WIN64
-    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
-#else
-    struct utsname unameData;
-    uname(&unameData);
-
-    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[3]) {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
-    } else {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
+    // 64-bit has a higher priority (when not forcing 32-bit)
+    if (!force32Bit && !sBinDir64.empty()) {
+        binDir = sBinDir64;
+        return true;
+    } else if (!sBinDir32.empty()) {
+        binDir = sBinDir32;
+        return true;
     }
-#endif
 
-    // Save bin dir
-    pContext->StringToLocalUTF8(params[1], params[2], binDir, NULL);
+#if defined _WIN32 || defined _WIN64
+    char binDir32[PLATFORM_MAX_PATH + 1];
 
-    // 7z exists?
-    if (access(binDir, X_OK) != -1) {
+    g_pSM->BuildPath(Path_SM, binDir32, sizeof(binDir32), "data/system2/win/7z.exe");
+    binDir = binDir32;
+
+    // Check if bin dir can be executed
+    if (access(binDir32, X_OK) != -1) {
+        sBinDir32 = binDir32;
+        sBinDir64 = binDir32;
+
         return true;
     }
 
     return false;
+#else
+    struct utsname unameData;
+    uname(&unameData);
+
+    char binDir32[PLATFORM_MAX_PATH + 1];
+    char binDir64[PLATFORM_MAX_PATH + 1];
+
+    bool is64BitMachine = !strcmp(unameData.machine, "x86_64") || !strcmp(unameData.machine, "amd64");
+    if (is64BitMachine) {
+        g_pSM->BuildPath(Path_SM, binDir64, sizeof(binDir64), "data/system2/linux/amd64/7z");
+        if (access(binDir64, X_OK) != -1) {
+            sBinDir64 = binDir64;
+        }
+    }
+
+    g_pSM->BuildPath(Path_SM, binDir32, sizeof(binDir32), "data/system2/linux/i386/7z");
+    if (access(binDir32, X_OK) != -1) {
+        sBinDir32 = binDir32;
+    }
+
+    if (!is64BitMachine || force32Bit) {
+        binDir = binDir32;
+        return !sBinDir32.empty();
+    }
+
+    binDir = binDir64;
+    return !sBinDir64.empty();
+#endif
+}
+
+cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
+    std::string binDir;
+    bool valid = Get7ZIPExecutable(params[3], binDir);
+
+    pContext->StringToLocalUTF8(params[1], params[2], binDir.c_str(), NULL);
+
+    return valid;
 }
 
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
     char *path;
     char *archive;
-    char binDir[PLATFORM_MAX_PATH + 1];
     char fullPath[PLATFORM_MAX_PATH + 1];
     char fullArchivePath[PLATFORM_MAX_PATH + 1];
+
+    std::string binDir;
+    if (!Get7ZIPExecutable(params[7], binDir)) {
+        return 0;
+    }
 
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
@@ -85,19 +127,6 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    // Build the path to the executable, to the path to compress and the archive
-#if defined _WIN32 || defined _WIN64
-    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
-#else
-    struct utsname unameData;
-    uname(&unameData);
-
-    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[7]) {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
-    } else {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
-    }
-#endif
     g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), path);
     g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), archive);
 
@@ -161,39 +190,38 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
         }
     }
 
-    // 7z exists?
-    if (access(binDir, X_OK) != -1) {
-        // Create the compress command
-        std::string command;
+    // Create the compress command
+    std::string command;
 #if defined _WIN32 || defined _WIN64
-        command = "\"\"" + std::string(binDir) + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + "\"";
+    command = "\"\"" + binDir + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + "\"";
 #else
-        command = "\"" + std::string(binDir) + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + " 2>&1";
+    command = "\"" + binDir + "\" a " + archiveType + " \"" + std::string(fullArchivePath) + "\" \"" + std::string(fullPath) + "\" -mmt " + level + " 2>&1";
 #endif
 
-        // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
-        if (!system2Extension.RegisterAndStartThread(commandThread)) {
-            delete commandThread;
+    // Start the thread that executes the command
+    ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
+    if (!system2Extension.RegisterAndStartThread(commandThread)) {
+        delete commandThread;
 
-            pContext->ThrowNativeError("Couldn't create a new thread");
-            return 0;
-        }
-    } else {
-        return false;
+        pContext->ThrowNativeError("Couldn't create a new thread");
+        return 0;
     }
 
-    return true;
+
+    return 1;
 }
 
 
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
     char *path;
     char *archive;
-
-    char binDir[PLATFORM_MAX_PATH + 1];
     char fullArchivePath[PLATFORM_MAX_PATH + 1];
     char fullPath[PLATFORM_MAX_PATH + 1];
+
+    std::string binDir;
+    if (!Get7ZIPExecutable(params[5], binDir)) {
+        return 0;
+    }
 
     pContext->LocalToString(params[2], &path);
     pContext->LocalToString(params[3], &archive);
@@ -204,45 +232,28 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    // Build the path to the executable, to the path to extract to and the archive
-#if defined _WIN32 || defined _WIN64
-    g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/win/7z.exe");
-#else
-    struct utsname unameData;
-    uname(&unameData);
-
-    if ((strcmp(unameData.machine, "x86_64") == 0 || strcmp(unameData.machine, "amd64") == 0) && !params[5]) {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/amd64/7z");
-    } else {
-        g_pSM->BuildPath(Path_SM, binDir, sizeof(binDir), "data/system2/linux/i386/7z");
-    }
-#endif
     g_pSM->BuildPath(Path_Game, fullArchivePath, sizeof(fullArchivePath), path);
     g_pSM->BuildPath(Path_Game, fullPath, sizeof(fullPath), archive);
 
-    // Test if the local file exists
-    if (access(binDir, X_OK) != -1) {
-        // Create the extract command
-        std::string command;
+    // Create the extract command
+    std::string command;
 #if defined _WIN32
-        command = "\"\"" + std::string(binDir) + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa\"";
+    command = "\"\"" + binDir + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa\"";
 #else
-        command = "\"" + std::string(binDir) + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa 2>&1";
+    command = "\"" + binDir + "\" x \"" + std::string(fullArchivePath) + "\" -o\"" + std::string(fullPath) + "\" -mmt -aoa 2>&1";
 #endif
 
-        // Start the thread that executes the command
-        ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
-        if (!system2Extension.RegisterAndStartThread(commandThread)) {
-            delete commandThread;
+    // Start the thread that executes the command
+    ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
+    if (!system2Extension.RegisterAndStartThread(commandThread)) {
+        delete commandThread;
 
-            pContext->ThrowNativeError("Couldn't create a new thread");
-            return 0;
-        }
-    } else {
-        return false;
+        pContext->ThrowNativeError("Couldn't create a new thread");
+        return 0;
     }
 
-    return true;
+
+    return 1;
 }
 
 
@@ -392,7 +403,7 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
     // Was there an error?
     if (!commandFile) {
         pContext->StringToLocal(params[1], params[2], "");
-        return false;
+        return 0;
     }
 
     // Read the result
@@ -409,5 +420,5 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
 
     // Set the result output
     pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
-    return true;
+    return 1;
 }

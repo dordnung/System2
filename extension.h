@@ -64,6 +64,8 @@ public:
 
     std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
 
+    std::string GetCertificateFile();
+
     void GameFrameHit();
     uint32_t GetFrames();
 };

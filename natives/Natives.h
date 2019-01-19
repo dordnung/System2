@@ -35,6 +35,8 @@ cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *param
 cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params);
 cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params);
@@ -58,7 +60,6 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetProxy(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
@@ -97,6 +98,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params);
 cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
+bool Get7ZIPExecutable(bool force32Bit, std::string &binDir);
 
 cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
 cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params);
@@ -126,6 +128,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2Request.GetOutputFile", NativeRequest_GetOutputFile },
     { "System2Request.SetVerifySSL", NativeRequest_SetVerifySSL },
     { "System2Request.GetVerifySSL", NativeRequest_GetVerifySSL },
+    { "System2Request.SetProxy", NativeRequest_SetProxy },
+    { "System2Request.SetProxyAuthentication", NativeRequest_SetProxyAuthentication },
     { "System2Request.Timeout.get", NativeRequest_GetTimeout },
     { "System2Request.Timeout.set", NativeRequest_SetTimeout },
     { "System2Request.Any.get", NativeRequest_GetAnyData },
@@ -149,7 +153,6 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.FollowRedirects.get", NativeHTTPRequest_GetFollowRedirects },
     { "System2HTTPRequest.FollowRedirects.set", NativeHTTPRequest_SetFollowRedirects },
     { "System2HTTPRequest.Headers.get", NativeHTTPRequest_GetHeaders },
-    { "System2HTTPRequest.SetProxy", NativeHTTPRequest_SetProxy },
 
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },

@@ -153,7 +153,14 @@ methodmap System2Request < Handle {
     /**
      * Sets the URL of the request.
      * Query parameters have to be given directly in the URL.
-     * Use System2_URLEncode to encode the URL or query parameters.
+     *
+     * Must be URL-encoded (use System2_URLEncode) in the following format:
+     * scheme://host:port/path
+     *
+     * Host is a hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *
+     * If the given URL is missing a scheme name (such as "http://" or "ftp://" etc)
+     * then system2 will make a guess based on the host.
      *
      * @param url       URL to use for the request.
      * @param ...       URL format arguments.
@@ -175,7 +182,8 @@ methodmap System2Request < Handle {
     public native void GetURL(char[] url, int maxlength);
 
     /**
-     * Sets the port of the request.
+     * Sets the remote port number to connect to,
+     * instead of the one specified in the URL or the default port for the used protocol
      *
      * @param port      Port to use for the request.
      *
@@ -217,10 +225,10 @@ methodmap System2Request < Handle {
     public native void GetOutputFile(char[] file, int maxlength);
 
     /**
-     * Sets whether to verify SSL certificates on connections using SSL.
+     * Sets whether to verify authenticity of the peer's certificate and server cert is for the server it is known as.
      * Only disable this, when you know what you do!
      *
-     * @param verify    True to verify SSL certificate, otherwise false.
+     * @param verify    True to verify SSL certificates, otherwise false.
      *
      * @noreturn
      * @error           Invalid request.
@@ -235,6 +243,45 @@ methodmap System2Request < Handle {
      */
     public native bool GetVerifySSL();
 
+    /**
+     * Sets proxy for the request.
+     *
+     * @param proxy         Hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *                      To specify port number in this string, append :[port] to the end of the host name (default: 1080).
+     *                      The proxy string may be prefixed with [scheme]:// to specify which kind of proxy is used.
+     *                      http://
+     *                      HTTP Proxy. Default when no scheme is specified.
+     *                      https://
+     *                      HTTPS Proxy.
+     *                      socks4://
+     *                      SOCKS4 Proxy.
+     *                      socks4a://
+     *                      SOCKS4a Proxy. Proxy resolves URL hostname.
+     *                      socks5://
+     *                      SOCKS5 Proxy.
+     *                      socks5h://
+     *                      SOCKS5 Proxy. Proxy resolves URL hostname.
+     * @param useHttpTunnel Tunnel all operations through the HTTP proxy (use http or https)-
+     *                      Tunneling means that an HTTP CONNECT request is sent to the proxy, asking it to connect to a remote host
+     *                      on a specific port number and then the traffic is just passed through the proxy. Proxies tend to white-list
+    *                       specific port numbers it allows CONNECT requests to and often only port 80 and 443 are allowed.
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void SetProxy(const char[] proxy, bool useHttpTunnel = false);
+
+    /**
+     * Sets the username and password to be used in protocol authentication with the proxy.
+     *
+     * @param username  Username to use for proxy authentication.
+     * @param password  Password to use for proxy authentication.
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void SetProxyAuthentication(const char[] username, const char[] password)
+
 
     property int Timeout {
         /**
@@ -247,7 +294,7 @@ methodmap System2Request < Handle {
         public native get();
 
         /**
-         * Sets the timeout for the request.
+         * Sets the timeout for the request in seconds.
          * By default, there is no timeout.
          *
          * @param seconds   The timeout for the request in seconds. 0 to disable.
@@ -269,7 +316,7 @@ methodmap System2Request < Handle {
         public native get();
 
         /**
-         * Sets any data to bind to the request.
+         * Sets any data to bind to the request (which you can then use in callbacks).
          *
          * @param Any       The any data to bind.
          *
@@ -290,6 +337,13 @@ methodmap System2HTTPRequest < System2Request {
      *
      * @param callback  Response callback to call when the request is finished.
      * @param url       URL to use for the request.
+     *                  Query parameters have to be given directly in the URL.
+     *
+     *                  Must be URL-encoded (use System2_URLEncode) in the following format:
+     *                  scheme://host:port/path
+     *
+     *                  Host is a hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *                  If no scheme is given, HTTP will be used.
      * @param ...       URL format arguments.
      *
      * @noreturn
@@ -299,6 +353,7 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Sets the progress callback for the transfer of the request.
+     * This will be called frequently while data is being transferred.
      * This is useful when downloading or uploading stuff.
      *
      * @param callback  Progress callback to call for the transfer.
@@ -311,7 +366,11 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Sets the body data to send with the request.
+     * You must make sure that the data is formatted the way you want the server to receive it.
      * Use System2_URLEncode to encode the data.
+     *
+     * For example:  parameter=value&parameter2=value2
+     * Or with JSON: {"parameter": "value", "parameter2": "value2"}
      *
      * @param data      Body data to send with the request.
      * @param ...       Data format arguments.
@@ -360,7 +419,7 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Retrieves the name of a header at a given index.
-     * Use GetHeadersCount to retrieve the maximum index.
+     * Use Headers property to retrieve the maximum index.
      *
      * @param index     Index of the header name.
      * @param name      Buffer to store name in.
@@ -382,12 +441,12 @@ methodmap System2HTTPRequest < System2Request {
     }
 
     /**
-     * Returns all header names of the request as ArrayList.
+     * Returns all set header names of the request as ArrayList.
      * Attention: ArrayList has to be deleted after use!
 
      * @param maxlength Maxlength of a header.
      *
-     * @return          ArrayList with all request header names. Must be deleted!
+     * @return          ArrayList with all set request header names. Must be deleted afterwards!
      * @error           Invalid request.
      */
     public ArrayList GetHeaders(int maxlength = 256) {
@@ -405,6 +464,7 @@ methodmap System2HTTPRequest < System2Request {
 
     /**
      * Sets the user agent for the request.
+     * This will set the User-Agent header to the given value.
      *
      * @param userAgent User agent to use.
      * @param ...       User agent format arguments.
@@ -415,7 +475,8 @@ methodmap System2HTTPRequest < System2Request {
     public native void SetUserAgent(const char[] userAgent, any ...);
 
     /**
-     * Sets basic authentication for the request.
+     * Sets basic authentication username and passowrd for the request.
+     * This will set the Authorization header to the given values.
      *
      * @param username  Username to use for basic authentication.
      * @param password  Password to use for basic authentication.
@@ -424,17 +485,6 @@ methodmap System2HTTPRequest < System2Request {
      * @error           Invalid request.
      */
     public native void SetBasicAuthentication(const char[] username, const char[] password);
-
-    /**
-     * Sets proxy (authentication) for the request.
-     *
-     * @param proxy     proxy to use for HTTP request.
-     * @param userpwd   authentication for proxy.
-     *
-     * @noreturn
-     * @error           Invalid request.
-     */
-    public native void SetProxy(const char[] proxy, const char[] userpwd);
 
     /**
      * Sends the request with the HTTP GET method.
@@ -496,7 +546,8 @@ methodmap System2HTTPRequest < System2Request {
         public native get();
 
         /**
-         * Sets whether to follow redirects or not.
+         * Sets to follow any Location: header that the server sends as part of an HTTP header in a 3xx response.
+         * For 301, 302 and 303 responses system2 will switch method to GET. All other 3xx codes will make system2 send the same method again.
          * By default, redirects will be followed.
          *
          * @param follow    True to follow redirects, otherwise false.
@@ -518,6 +569,12 @@ methodmap System2FTPRequest < System2Request {
      *
      * @param callback  Response callback to call when the request is finished.
      * @param url       URL to use for the request.
+     *
+     *                  Must be URL-encoded (use System2_URLEncode) in the following format:
+     *                  scheme://host:port/path
+     *
+     *                  Host is a hostname or dotted numerical IP address. A numerical IPv6 address must be written within [brackets].
+     *                  If no scheme is given, FTP will be used.
      * @param ...       URL format arguments.
      *
      * @noreturn
@@ -527,6 +584,7 @@ methodmap System2FTPRequest < System2Request {
 
     /**
      * Sets the progress callback for the transfer of the request.
+     * This will be called frequently while data is being transferred.
      *
      * @param callback  Progress callback to call for the transfer.
      *
@@ -537,7 +595,7 @@ methodmap System2FTPRequest < System2Request {
 
 
     /**
-     * Sets authentication for the request.
+     * Sets authentication needed to access the FTP server.
      *
      * @param username  Username to use for authentication.
      * @param password  Password to use for authentication.
@@ -617,7 +675,7 @@ methodmap System2FTPRequest < System2Request {
         public native get();
 
         /**
-         * Sets whether to create missing dirs when uploading a file.
+         * Sets whether to create any remote directory that it fails to "move" into.
          * By default, missing dirs will be created.
          *
          * @param create    True to create missing dirs, otherwise false.
@@ -639,7 +697,8 @@ methodmap System2FTPRequest < System2Request {
         public native get();
 
         /**
-         * Sets whether only file names should be fetched for directory listing.
+         * Sets whether to list the names of files in a directory,
+         * rather than performing a full directory listing that would normally include file sizes, dates etc.
          * By default, all information will be fetched.
          *
          * @param append    True if only file names should be fetched, false for full directory listing.
@@ -658,7 +717,7 @@ methodmap System2FTPRequest < System2Request {
  */
 methodmap System2Response < Handle {
     /**
-     * Retrieves the last URL of the response.
+     * Retrieves the last used effective URL.
      * This may differ from the request URL, if a redirect was followed.
      *
      * @param url       Buffer to store last URL in.
@@ -688,7 +747,7 @@ methodmap System2Response < Handle {
 
     property int ContentLength {
         /**
-         * Returns the length of the complete content.
+         * Returns the length of the complete response content.
          *
          * @return      Length of the content.
          * @error       Invalid response.
@@ -709,6 +768,7 @@ methodmap System2Response < Handle {
     property float TotalTime {
         /**
          * Returns the total time from the request until the response in seconds.
+         * Includs name resolving, TCP connect etc.
          *
          * @return      Total time from the request until the response in seconds.
          * @error       Invalid response.
@@ -719,6 +779,8 @@ methodmap System2Response < Handle {
     property int DownloadSize {
         /**
          * Returns the total amount of bytes that were downloaded.
+         * This counts actual payload data, what's also commonly called body.
+         * All meta and header data are excluded and will not be counted in this number.
          *
          * @return      Total amount of bytes that were downloaded.
          * @error       Invalid response.
@@ -738,7 +800,7 @@ methodmap System2Response < Handle {
 
     property int DownloadSpeed {
         /**
-         * Returns the average download speed in bytes per second.
+         * Returns the average download speed measured for the complete download in bytes per second.
          *
          * @return      Average download speed in bytes per second.
          * @error       Invalid response.
@@ -748,7 +810,7 @@ methodmap System2Response < Handle {
 
     property int UploadSpeed {
         /**
-         * Returns the average upload speed in bytes per second.
+         * Returns the average upload speed measured for the complete upload in bytes per second.
          *
          * @return      Average upload speed in bytes per second.
          * @error       Invalid response.
@@ -764,6 +826,7 @@ methodmap System2Response < Handle {
 methodmap System2HTTPResponse < System2Response {
     /**
      * Retrieves the content type of the response.
+     * This is the value read from the Content-Type header.
      *
      * @param type      Buffer to store content type in.
      * @param maxlength Maxlength of the buffer.
@@ -787,7 +850,7 @@ methodmap System2HTTPResponse < System2Response {
 
     /**
      * Retrieves the name of a header at a given index.
-     * Use GetHeadersCount to retrieve the maximum index.
+     * Use Headers property to retrieve the maximum index.
      *
      * @param index     Index of the header name.
      * @param name      Buffer to store name in.
@@ -800,7 +863,7 @@ methodmap System2HTTPResponse < System2Response {
 
     property int Headers {
         /**
-         * Returns the number of set headers.
+         * Returns the number of set headers in the response.
          *
          * @return      The number of set headers.
          * @error       Invalid response.
@@ -809,12 +872,12 @@ methodmap System2HTTPResponse < System2Response {
     }
 
     /**
-     * Returns all header names of the response as ArrayList.
+     * Returns all header set names of the response as ArrayList.
      * Attention: ArrayList has to be deleted after use!
 
      * @param maxlength Maxlength of a header.
      *
-     * @return          ArrayList with all response header names. Must be deleted!
+     * @return          ArrayList with all set response header names. Must be deleted!
      * @error           Invalid request.
      */
     public ArrayList GetHeaders(int maxlength = 256) {
@@ -853,6 +916,9 @@ methodmap System2FTPResponse < System2Response {
 
 /**
  * Converts a plain string to an URL encoded string.
+ * All input characters that are not a-z, A-Z, 0-9, '-', '.', '_' or '~' 
+ * are converted to their "URL escaped" version (%NN where NN is a two-digit hexadecimal number).
+ *
  * Be aware that the output string may be larger then the input string.
  *
  * @param output        Buffer to store encoded string in. May point to the input string (will replace the input string).
@@ -866,6 +932,7 @@ native bool System2_URLEncode(char[] output, int maxlength, const char[] input, 
 
 /**
  * Converts an URL encoded string to a plain string.
+ * All input characters that are URL encoded (%XX where XX is a two-digit hexadecimal number) are converted to their binary versions.
  *
  * @param output        Buffer to store decoded string in. May point to the input string (will replace the input string).
  * @param maxlength     Maxlength of the output buffer.

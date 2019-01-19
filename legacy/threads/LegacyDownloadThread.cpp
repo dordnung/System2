@@ -68,6 +68,14 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressUpdated);
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
+#if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
+        // Use our own ca-bundle on unix like systems
+        std::string caFile = system2Extension.GetCertificateFile();
+        if (!caFile.empty()) {
+            curl_easy_setopt(curl, CURLOPT_CAINFO, caFile.c_str());
+        }
+#endif
+
         // Perform and clean
         if (curl_easy_perform(curl) == CURLE_OK) {
             // Clean error buffer if there was no error

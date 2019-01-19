@@ -50,6 +50,7 @@ public Action OnCommand(int args) {
     PrintToServer("INFO: Retrieve URL %s", url);
 
     System2HTTPRequest httpRequest = new System2HTTPRequest(HttpResponseCallback, url);
+    httpRequest.Timeout = 30;
     httpRequest.GET();
     delete httpRequest;
 

@@ -42,6 +42,35 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     if (!this->request->verifySSL) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    } else {
+#if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
+        // Use our own ca-bundle on unix like systems
+        std::string caFile = system2Extension.GetCertificateFile();
+        if (!caFile.empty()) {
+            curl_easy_setopt(curl, CURLOPT_CAINFO, caFile.c_str());
+        }
+#endif
+    }
+
+    // Set proxy with username and password
+    if (!this->request->proxy.empty()) {
+        curl_easy_setopt(curl, CURLOPT_PROXY, this->request->proxy.c_str());
+
+        // Set the username for the proxy
+        if (!this->request->proxyUsername.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, this->request->proxyUsername.c_str());
+        }
+
+        // Set the password for the proxy
+        if (!this->request->proxyPassword.empty()) {
+            curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, this->request->proxyPassword.c_str());
+        }
+
+        // Set http tunneling
+        if (this->request->proxyHttpTunnel) {
+            curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1L);
+            curl_easy_setopt(curl, CURLOPT_SUPPRESS_CONNECT_HEADERS, 1L);
+        }
     }
 
     // Check if also write to an output file
