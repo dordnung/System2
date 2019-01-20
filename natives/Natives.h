@@ -60,6 +60,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params);
 cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_AddPostFormData(IPluginContext *pContext, const cell_t *params);
 
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
@@ -153,6 +154,7 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2HTTPRequest.FollowRedirects.get", NativeHTTPRequest_GetFollowRedirects },
     { "System2HTTPRequest.FollowRedirects.set", NativeHTTPRequest_SetFollowRedirects },
     { "System2HTTPRequest.Headers.get", NativeHTTPRequest_GetHeaders },
+    { "System2HTTPRequest.AddPostFormData", NativeHTTPRequest_AddPostFormData },
 
     { "System2FTPRequest.System2FTPRequest", NativeFTPRequest_FTPRequest },
     { "System2FTPRequest.SetProgressCallback", NativeFTPRequest_SetProgressCallback },

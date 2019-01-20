@@ -31,7 +31,7 @@ HTTPRequest::HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> re
 
 HTTPRequest::HTTPRequest(const HTTPRequest &request) :
     Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),
-    username(request.username), password(request.password), followRedirects(request.followRedirects) {}
+    username(request.username), password(request.password), followRedirects(request.followRedirects), form(request.form) {}
 
 
 HTTPRequest *HTTPRequest::Clone() const {

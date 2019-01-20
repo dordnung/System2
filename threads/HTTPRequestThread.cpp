@@ -93,6 +93,7 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
                 if (this->EqualsIgnoreCase(it->first, "Accept-Encoding")) {
                     curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, it->second.c_str());
                 }
+
             }
 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -102,6 +103,24 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         HeaderInfo headerData = { curl, std::map<std::string, std::string>(), -1L };
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, HTTPRequestThread::ReadHeader);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerData);
+
+        // Post Form
+        curl_httppost *post = NULL;
+        curl_httppost *last = NULL;
+        while (!this->httpRequest->form.empty()) {
+
+            auto f = this->httpRequest->form.front();
+            this->httpRequest->form.pop();
+
+            curl_formadd(&post, &last,
+                (CURLformoption)f.nameType, f.nameContent.c_str(),
+                (CURLformoption)f.dataType, f.dataContent.c_str(),
+                CURLFORM_END);
+        }
+        if (post) {
+            curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
+            goto skipMethod;
+        }
 
         // Set http method
         switch (this->requestMethod) {
@@ -130,6 +149,8 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
                 break;
         }
 
+        skipMethod:
+
         // Perform curl operation and create the callback
         std::shared_ptr<HTTPResponseCallback> callback;
         if (curl_easy_perform(curl) == CURLE_OK) {
@@ -147,6 +168,9 @@ void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
         curl_easy_cleanup(curl);
         if (headers) {
             curl_slist_free_all(headers);
+        }
+        if (post) {
+            curl_formfree(post);
         }
 
         // Also close output file if opened

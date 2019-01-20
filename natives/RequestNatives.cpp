@@ -445,6 +445,31 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
     return 1;
 }
 
+cell_t NativeHTTPRequest_AddPostFormData(IPluginContext *pContext, const cell_t *params) {
+    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+    if (request == NULL) {
+        return 0;
+    }
+
+    char *name, *temp;
+    pContext->LocalToString(params[3], &name);
+    pContext->LocalToString(params[5], &temp);
+
+    uint8_t nameType = (uint8_t)params[2];
+    uint8_t dataType = (uint8_t)params[4];
+
+    char data[1024];
+    if ((CURLformoption)dataType == CURLFORM_FILE) {
+        smutils->BuildPath(Path_Game, data, sizeof(data), temp);
+    } else {
+        strcpy(data, temp);
+    }
+
+    request->form.push(forms{ nameType, name, dataType, data });
+
+    return 1;
+}
+
 cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {

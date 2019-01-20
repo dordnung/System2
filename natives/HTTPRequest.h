@@ -29,7 +29,14 @@
 #include "HTTPRequestMethod.h"
 
 #include <map>
+#include <queue>
 
+struct forms {
+    uint8_t nameType;
+    std::string nameContent;
+    uint8_t dataType;
+    std::string dataContent;
+};
 
 class HTTPRequest : public Request {
 public:
@@ -39,6 +46,7 @@ public:
     std::string username;
     std::string password;
     bool followRedirects;
+    std::queue<forms>form;
 
     HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
     HTTPRequest(const HTTPRequest &request);
