@@ -13,11 +13,11 @@ cd "$BUILD_DIR" || exit
 
 # OpenSSL
 echo "Building openssl"
-if [[ ! -f "openssl-1.1.1a.tar.gz" ]]; then
-	wget https://www.openssl.org/source/openssl-1.1.1a.tar.gz && tar -xzf openssl-1.1.1a.tar.gz
+if [[ ! -f "openssl-1.1.1g.tar.gz" ]]; then
+	wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz && tar -xzf openssl-1.1.1g.tar.gz
 fi
 
-cd openssl-1.1.1a
+cd openssl-1.1.1g
 setarch i386 ./config -m32 no-shared no-tests && make
 mkdir lib && cp ./*.a lib/
 cd "$BUILD_DIR" || exit
@@ -35,24 +35,24 @@ cd "$BUILD_DIR" || exit
 
 # Libidn
 echo "Building libidn"
-if [[ ! -f "libidn2-2.0.5.tar.gz" ]]; then
-	wget https://ftp.gnu.org/gnu/libidn/libidn2-2.0.5.tar.gz && tar -xzf libidn2-2.0.5.tar.gz
+if [[ ! -f "libidn2-2.3.0.tar.gz" ]]; then
+	wget https://ftp.gnu.org/gnu/libidn/libidn2-2.3.0.tar.gz && tar -xzf libidn2-2.3.0.tar.gz
 fi
 
-cd libidn2-2.0.5
+cd libidn2-2.3.0
 CFLAGS=-m32 ./configure --disable-shared --enable-static --disable-doc && make
 mkdir include && cp lib/*.h include/ && cp lib/.libs/libidn2.a lib
 cd "$BUILD_DIR" || exit
 
 # LibCurl
 echo "Building libcurl"
-if [[ ! -f "curl-7.62.0.zip" ]]; then
-	wget https://curl.haxx.se/download/curl-7.62.0.zip && unzip -q curl-7.62.0.zip
+if [[ ! -f "curl-7.70.0.zip" ]]; then
+	wget https://curl.haxx.se/download/curl-7.70.0.zip && unzip -q curl-7.70.0.zip
 fi
 
-cd curl-7.62.0
-./configure --with-ssl="$BUILD_DIR/openssl-1.1.1a" --with-zlib="$BUILD_DIR/zlib-1.2.11" \
- --with-libidn2="$BUILD_DIR/libidn2-2.0.5" --disable-shared --enable-static --disable-rtsp \
+cd curl-7.70.0
+./configure --with-ssl="$BUILD_DIR/openssl-1.1.1g" --with-zlib="$BUILD_DIR/zlib-1.2.11" \
+ --with-libidn2="$BUILD_DIR/libidn2-2.3.0" --disable-shared --enable-static --disable-rtsp \
  --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp \
  --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 && make all ca-bundle
 cd "$BUILD_DIR" || exit
@@ -66,4 +66,4 @@ fi
 
 echo "Building system2"
 cd "$SYSTEM2_DIR" || exit
-make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1a" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.0.5" CURL="$BUILD_DIR/curl-7.62.0"
+make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1g" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.3.0" CURL="$BUILD_DIR/curl-7.70.0"

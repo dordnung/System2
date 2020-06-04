@@ -11,6 +11,7 @@
 *.la
 
 # Visual Studio
+*.vs
 *.vscode
 *.sdf
 *.suo

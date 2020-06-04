@@ -280,7 +280,7 @@ methodmap System2Request < Handle {
      * @noreturn
      * @error           Invalid request.
      */
-    public native void SetProxyAuthentication(const char[] username, const char[] password)
+    public native void SetProxyAuthentication(const char[] username, const char[] password);
 
 
     property int Timeout {
