@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM dockette/debian:wheezy
 
 WORKDIR /build
 
