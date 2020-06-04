@@ -35,11 +35,11 @@ cd "$BUILD_DIR" || exit
 
 # Libidn
 echo "Building libidn"
-if [[ ! -f "libidn2-2.3.0.tar.gz" ]]; then
-	wget https://ftp.gnu.org/gnu/libidn/libidn2-2.3.0.tar.gz && tar -xzf libidn2-2.3.0.tar.gz
+if [[ ! -f "libidn2-2.2.0.tar.gz" ]]; then
+	wget https://ftp.gnu.org/gnu/libidn/libidn2-2.2.0.tar.gz && tar -xzf libidn2-2.2.0.tar.gz
 fi
 
-cd libidn2-2.3.0
+cd libidn2-2.2.0
 CFLAGS=-m32 ./configure --disable-shared --enable-static --disable-doc && make
 mkdir include && cp lib/*.h include/ && cp lib/.libs/libidn2.a lib
 cd "$BUILD_DIR" || exit
@@ -52,7 +52,7 @@ fi
 
 cd curl-7.70.0
 ./configure --with-ssl="$BUILD_DIR/openssl-1.1.1g" --with-zlib="$BUILD_DIR/zlib-1.2.11" \
- --with-libidn2="$BUILD_DIR/libidn2-2.3.0" --disable-shared --enable-static --disable-rtsp \
+ --with-libidn2="$BUILD_DIR/libidn2-2.2.0" --disable-shared --enable-static --disable-rtsp \
  --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp \
  --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 && make all ca-bundle
 cd "$BUILD_DIR" || exit
@@ -66,4 +66,4 @@ fi
 
 echo "Building system2"
 cd "$SYSTEM2_DIR" || exit
-make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1g" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.3.0" CURL="$BUILD_DIR/curl-7.70.0"
+make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1g" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.2.0" CURL="$BUILD_DIR/curl-7.70.0"
