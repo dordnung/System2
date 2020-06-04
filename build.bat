@@ -1,7 +1,8 @@
 set SYSTEM2_DIR=%cd%
 set BUILD_DIR=%SYSTEM2_DIR%\build-windows
 set VCVARSALL="C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat"
-dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC"
+dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary"
+dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build"
 
 if not exist "%BUILD_DIR%" (
 	mkdir "%BUILD_DIR%"
