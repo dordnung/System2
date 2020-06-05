@@ -40,7 +40,7 @@ if [[ ! -f "libidn2-2.2.0.tar.gz" ]]; then
 fi
 
 cd libidn2-2.2.0
-CFLAGS=-m32 ./configure --disable-shared --enable-static --disable-doc && make
+CFLAGS=-m32 -std=gnu11 ./configure --disable-shared --enable-static --disable-doc && make
 mkdir include && cp lib/*.h include/ && cp lib/.libs/libidn2.a lib
 cd "$BUILD_DIR" || exit
 
