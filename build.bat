@@ -48,7 +48,7 @@ if not exist "curl.zip" (
 cd curl-7.70.0\winbuild
 nmake /f Makefile.vc mode=static WITH_ZLIB=static ZLIB_PATH=%ZLIB% RTLIBCFG=static VC=16 MACHINE=x86
 
-cd ..\builds\libcurl-vc15-x86-release-static-zlib-static-ipv6-sspi-winssl
+cd ..\builds\libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-winssl
 set CURL=%cd%
 
 cd %BUILD_DIR%
