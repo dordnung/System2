@@ -38,7 +38,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;..\sdk;..\handler;..\threads;..\threads\callbacks;..\legacy\threads\callbacks;..\legacy\threads;..\legacy;..\natives;..\3rdparty\;$(CURL)\include;$(SOURCEMOD17)\core;$(SOURCEMOD17)\public;$(SOURCEMOD17)\sourcepawn\include;$(SOURCEMOD17)\public\sourcepawn;$(SOURCEMOD17)\public\amtl;$(SOURCEMOD17)\public\amtl\amtl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\sdk;..\handler;..\threads;..\threads\callbacks;..\legacy\threads\callbacks;..\legacy\threads;..\legacy;..\natives;..\3rdparty\;$(CURL)\include;$(SOURCEMOD)\core;$(SOURCEMOD)\public;$(SOURCEMOD)\sourcepawn\include;$(SOURCEMOD)\public\sourcepawn;$(SOURCEMOD)\public\amtl;$(SOURCEMOD)\public\amtl\amtl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CURL_STATICLIB;WIN32;NDEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>

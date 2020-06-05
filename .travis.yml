@@ -14,7 +14,6 @@ addons:
 
 env:
     jobs:
-        - SMBRANCH=1.7-dev
         - SMBRANCH=1.8-dev
         - SMBRANCH=1.9-dev
         - SMBRANCH=1.10-dev
@@ -43,7 +42,7 @@ deploy:
           - msvc19/Release/system2.ext.dll
           - sourcemod/data/system2/ca-bundle.crt
       on:
-          condition: "$SMBRANCH = 1.7-dev"
+          condition: "$SMBRANCH = 1.8-dev"
           repo: dordnung/System2
           all_branches: true
           tags: true
