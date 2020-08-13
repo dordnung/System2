@@ -54,7 +54,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 - **Build zlib**
   1. Download zlib from `https://zlib.net/zlib1211.zip` and unzip to some folder
   2. Open the `Developer Command Prompt for VS 2019` at the `zlib-1.2.11` folder
-  3. Type `vcvarsall.bat x86 8.1` and press ENTER
+  3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `nmake /f win32/Makefile.msc LOC=-MT` and press ENTER
   5. Type `md lib include` and press ENTER
   6. Type `copy /Y zlib.lib lib` and press ENTER
@@ -64,7 +64,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 - **Build libcurl**
   1. Download curl from `https://curl.haxx.se/download/curl-7.71.1.zip` and unzip to some folder
   2. Reopen the `Developer Command Prompt for VS 2019` at the `curl-7.71.1` folder
-  3. Type `vcvarsall.bat x86 8.1` and press ENTER
+  3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `cd winbuild` and press ENTER
   5. Type `nmake /f Makefile.vc mode=static WITH_ZLIB=static ZLIB_PATH=%ZLIB% RTLIBCFG=static VC=16 MACHINE=x86` and press ENTER
   6. Add a new system variable named `CURL` pointing to the `curl-7.71.1/builds/libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
@@ -76,5 +76,5 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 - **Build System2**
   1. Retrieve System2 with: `git clone https://github.com/dordnung/System2`
   2. Reopen the `Developer Command Prompt for VS 2019` at the `system2` folder
-  3. Type `vcvarsall.bat x86 8.1` and press ENTER
+  3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `msbuild msvc19/system2.sln /p:Platform="win32"` and press ENTER
