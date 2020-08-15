@@ -40,9 +40,6 @@ void Thread::RunThread() {
         this->threader = std::make_unique<std::thread>([this]() -> void {
             this->Run();
             system2Extension.UnregisterThread(this);
-
-            // Delete ourself when finished
-            delete this;
         });
     }
 }

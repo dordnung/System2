@@ -80,13 +80,19 @@ void System2Extension::SDK_OnUnload() {
         smutils->RemoveGameFrameHook(&OnGameFrameHit);
     }
 
-    // Wait until all threads are finished
+    // Delete all deletable and running threads (which will wait until they are finished)
     if (runningThreads.size() > 0) {
         rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
         for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
-            (*it)->TerminateThread();
+            delete *it;
         }
         rootconsole->ConsolePrint("[System2] All threads finished");
+    }
+
+    if (deletableThreads.size() > 0) {
+        for (auto it = this->deletableThreads.begin(); it != deletableThreads.end(); ++it) {
+            delete* it;
+        }
     }
 
     // Abort callbacks
@@ -106,6 +112,7 @@ void System2Extension::SDK_OnUnload() {
     this->callbackQueue.clear();
     this->callbackFunctions.clear();
     this->runningThreads.clear();
+    this->deletableThreads.clear();
 
     // Finally clean up CURL
     curl_global_cleanup();
@@ -158,7 +165,8 @@ void System2Extension::UnregisterThread(Thread *thread) {
 
     std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
 
-    // Just remove from the list of running threads
+    // Add to the deletable threads and then just remove from the list of running threads
+    this->deletableThreads.push_back(thread);
     if (this->isRunning) {
         this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), thread), this->runningThreads.end());
     }
@@ -233,6 +241,15 @@ void System2Extension::GameFrameHit() {
     std::shared_ptr<Callback> callback = NULL;
     {
         std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
+
+        // First delete all deletable threads
+        if (deletableThreads.size() > 0) {
+            for (auto it = this->deletableThreads.begin(); it != deletableThreads.end(); ++it) {
+                delete* it;
+            }
+
+            deletableThreads.clear();
+        }
 
         // Are there outstandig callbacks?
         if (this->isRunning && !this->callbackQueue.empty()) {
