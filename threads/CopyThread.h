@@ -26,7 +26,7 @@
 #define _SYSTEM2_COPY_THREAD_H_
 
 #include "extension.h"
-#include "thread.h"
+#include "Thread.h"
 
 
 class CopyThread : public Thread {
