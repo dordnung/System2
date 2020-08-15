@@ -29,12 +29,12 @@
 HTTPRequest::HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction)
     : Request(url, responseCallbackFunction), followRedirects(true) {}
 
-HTTPRequest::HTTPRequest(const HTTPRequest &request) :
+HTTPRequest::HTTPRequest(const HTTPRequest& request) :
     Request(request), bodyData(request.bodyData), headers(request.headers), userAgent(request.userAgent),
     username(request.username), password(request.password), followRedirects(request.followRedirects) {}
 
 
-HTTPRequest *HTTPRequest::Clone() const {
+HTTPRequest* HTTPRequest::Clone() const {
     return new HTTPRequest(*this);
 }
 
@@ -66,6 +66,6 @@ void HTTPRequest::Head() {
 
 void HTTPRequest::MakeThread(HTTPRequestMethod method) {
     // Make a copy for the thread, so it works independent
-    HTTPRequestThread *requestThread = new HTTPRequestThread(this->Clone(), method);
+    HTTPRequestThread* requestThread = new HTTPRequestThread(this->Clone(), method);
     requestThread->RunThread();
 }

@@ -27,96 +27,96 @@
 
 #include "extension.h"
 
-cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params);
-cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params);
+cell_t NativeRequest_SetURL(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetURL(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetPort(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetPort(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetOutputFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetOutputFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetVerifySSL(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetVerifySSL(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetProxy(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetProxyAuthentication(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetTimeout(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetTimeout(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_GetAnyData(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetAnyData(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPRequest_HTTPRequest(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetData(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GetData(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetHeader(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GetHeader(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GetHeaderName(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GetHeaders(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetUserAgent(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GET(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_POST(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_PUT(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_PATCH(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_DELETE(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_HEAD(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cell_t *params);
-cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cell_t *params);
+cell_t NativeFTPRequest_FTPRequest(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetProgressCallback(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetAuthentication(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetInputFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_GetInputFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_StartRequest(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_GetAppendToFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetAppendToFile(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext* pContext, const cell_t* params);
+cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *params);
-cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *params);
+cell_t NativeResponse_GetLastURL(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetContent(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetContentLength(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetStatusCode(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetTotalTime(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetDownloadSize(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetUploadSize(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetDownloadSpeed(IPluginContext* pContext, const cell_t* params);
+cell_t NativeResponse_GetUploadSpeed(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *params);
-cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext *pContext, const cell_t *params);
+cell_t NativeHTTPResponse_GetContentType(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPResponse_GetHeader(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPResponse_GetHeaderName(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPResponse_GetHeaders(IPluginContext* pContext, const cell_t* params);
+cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params);
-cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params);
+cell_t NativeURLEncode(IPluginContext* pContext, const cell_t* params);
+cell_t NativeURLDecode(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params);
+cell_t NativeCopyFile(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params);
-cell_t NativeCompress(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExtract(IPluginContext *pContext, const cell_t *params);
-bool Get7ZIPExecutable(bool force32Bit, std::string &binDir);
+cell_t NativeCheck7ZIP(IPluginContext* pContext, const cell_t* params);
+cell_t NativeCompress(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExtract(IPluginContext* pContext, const cell_t* params);
+bool Get7ZIPExecutable(bool force32Bit, std::string& binDir);
 
-cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteOutput_GetLength(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteOutput_GetExitStatus(IPluginContext *pContext, const cell_t *params);
+cell_t NativeExecuteThreaded(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteFormattedThreaded(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteOutput_GetOutput(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteOutput_GetLength(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteOutput_GetExitStatus(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeExecute(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params);
-cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const cell_t *params);
+cell_t NativeExecute(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteFormatted(IPluginContext* pContext, const cell_t* params);
+cell_t NativeExecuteCommand(std::string command, IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params);
-cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params);
+cell_t NativeGetGameDir(IPluginContext* pContext, const cell_t* params);
+cell_t NativeGetOS(IPluginContext* pContext, const cell_t* params);
 
-cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params);
-cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params);
-cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params);
-cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params);
+cell_t NativeGetStringMD5(IPluginContext* pContext, const cell_t* params);
+cell_t NativeGetFileMD5(IPluginContext* pContext, const cell_t* params);
+cell_t NativeGetStringCRC32(IPluginContext* pContext, const cell_t* params);
+cell_t NativeGetFileCRC32(IPluginContext* pContext, const cell_t* params);
 
 const sp_nativeinfo_t system2_natives[] =
 {

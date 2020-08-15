@@ -38,9 +38,9 @@ public:
     bool listFilenamesOnly;
 
     FTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
-    FTPRequest(const FTPRequest &request);
+    FTPRequest(const FTPRequest& request);
 
-    virtual FTPRequest *Clone() const;
+    virtual FTPRequest* Clone() const;
 
     void MakeRequest();
 

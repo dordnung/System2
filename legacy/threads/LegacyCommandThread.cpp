@@ -40,7 +40,7 @@ void LegacyCommandThread::Run() {
     }
 
     // Execute the command
-    FILE *commandFile = PosixOpen(realCommand.c_str(), "r");
+    FILE* commandFile = PosixOpen(realCommand.c_str(), "r");
 
     LegacyCommandState state = CMD_SUCCESS;
     std::string output;

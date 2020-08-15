@@ -29,8 +29,8 @@
 #include "HTTPRequestThread.h"
 
 
-cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetURL(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -42,8 +42,8 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetURL(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -52,8 +52,8 @@ cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetPort(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -67,8 +67,8 @@ cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetPort(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -76,8 +76,8 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
     return request->port;
 }
 
-cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetOutputFile(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -89,8 +89,8 @@ cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *param
     return 1;
 }
 
-cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetOutputFile(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -99,8 +99,8 @@ cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *param
     return 1;
 }
 
-cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetVerifySSL(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -109,8 +109,8 @@ cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params
     return 1;
 }
 
-cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetVerifySSL(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -118,13 +118,13 @@ cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params
     return request->verifySSL;
 }
 
-cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetProxy(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
 
-    char *proxy;
+    char* proxy;
     pContext->LocalToString(params[2], &proxy);
 
     request->proxy = proxy;
@@ -132,14 +132,14 @@ cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetProxyAuthentication(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
 
-    char *username;
-    char *password;
+    char* username;
+    char* password;
     pContext->LocalToString(params[2], &username);
     pContext->LocalToString(params[3], &password);
 
@@ -148,8 +148,8 @@ cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell
     return 1;
 }
 
-cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetTimeout(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -157,8 +157,8 @@ cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) 
     return request->timeout;
 }
 
-cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetTimeout(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -172,8 +172,8 @@ cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) 
     return 1;
 }
 
-cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_GetAnyData(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -181,8 +181,8 @@ cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) 
     return request->data;
 }
 
-cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) {
-    Request *request = Request::ConvertRequest<Request>(params[1], pContext);
+cell_t NativeRequest_SetAnyData(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -192,7 +192,7 @@ cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) 
 }
 
 
-cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeHTTPRequest_HTTPRequest(IPluginContext* pContext, const cell_t* params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
@@ -210,8 +210,8 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
     return hndl;
 }
 
-cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -226,8 +226,8 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
     return 1;
 }
 
-cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetData(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -239,8 +239,8 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
     return 1;
 }
 
-cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GetData(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -249,13 +249,13 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
     return 1;
 }
 
-cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetHeader(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
 
-    char *header;
+    char* header;
     pContext->LocalToString(params[2], &header);
 
     char value[2048];
@@ -265,13 +265,13 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
     return 1;
 }
 
-cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GetHeader(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return false;
     }
 
-    char *header;
+    char* header;
     pContext->LocalToString(params[2], &header);
 
     for (auto it = request->headers.begin(); it != request->headers.end(); ++it) {
@@ -284,8 +284,8 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
     return false;
 }
 
-cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GetHeaderName(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return false;
     }
@@ -304,8 +304,8 @@ cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *p
     return true;
 }
 
-cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GetHeaders(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -313,8 +313,8 @@ cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *para
     return request->headers.size();
 }
 
-cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetUserAgent(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -326,14 +326,14 @@ cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *pa
     return 1;
 }
 
-cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
 
-    char *username;
-    char *password;
+    char* username;
+    char* password;
     pContext->LocalToString(params[2], &username);
     pContext->LocalToString(params[3], &password);
 
@@ -342,8 +342,8 @@ cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const 
     return 1;
 }
 
-cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GET(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -352,8 +352,8 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_POST(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -362,8 +362,8 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_PUT(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -372,8 +372,8 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_PATCH(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -382,8 +382,8 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_DELETE(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -392,8 +392,8 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
     return 1;
 }
 
-cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_HEAD(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -402,8 +402,8 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
     return 1;
 }
 
-cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -411,8 +411,8 @@ cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell
     return request->followRedirects;
 }
 
-cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
-    HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
+cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext* pContext, const cell_t* params) {
+    HTTPRequest* request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -421,7 +421,7 @@ cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell
     return 1;
 }
 
-cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeFTPRequest_FTPRequest(IPluginContext* pContext, const cell_t* params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
         pContext->ThrowNativeError("Callback ID %x is invalid", params[1]);
@@ -431,7 +431,7 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
     char url[1024];
     smutils->FormatString(url, sizeof(url), pContext, params, 2);
 
-    FTPRequest *request = new FTPRequest(url, callback);
+    FTPRequest* request = new FTPRequest(url, callback);
 
     Handle_t hndl = requestHandler.CreateGlobalHandle<FTPRequest>(request, pContext->GetIdentity());
     if (hndl == BAD_HANDLE) {
@@ -441,8 +441,8 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
     return hndl;
 }
 
-cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetProgressCallback(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -457,14 +457,14 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
     return 1;
 }
 
-cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetAuthentication(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
 
-    char *username;
-    char *password;
+    char* username;
+    char* password;
     pContext->LocalToString(params[2], &username);
     pContext->LocalToString(params[3], &password);
 
@@ -473,8 +473,8 @@ cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t
     return 1;
 }
 
-cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetInputFile(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -486,8 +486,8 @@ cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *par
     return 1;
 }
 
-cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = FTPRequest::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_GetInputFile(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = FTPRequest::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -496,8 +496,8 @@ cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *par
     return 1;
 }
 
-cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_StartRequest(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -506,8 +506,8 @@ cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *par
     return 1;
 }
 
-cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_GetAppendToFile(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -515,8 +515,8 @@ cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *
     return request->appendToFile;
 }
 
-cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetAppendToFile(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -525,8 +525,8 @@ cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *
     return 1;
 }
 
-cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -534,8 +534,8 @@ cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cel
     return request->createMissingDirs;
 }
 
-cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -544,8 +544,8 @@ cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cel
     return 1;
 }
 
-cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }
@@ -553,8 +553,8 @@ cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cel
     return request->listFilenamesOnly;
 }
 
-cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
-    FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
+cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext* pContext, const cell_t* params) {
+    FTPRequest* request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
     if (!request) {
         return 0;
     }

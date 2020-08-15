@@ -39,10 +39,10 @@ public:
     virtual void Initialize();
     virtual void Shutdown();
 
-    Handle_t CreateHandle(ExecuteCallback *callback, IdentityToken_t *owner);
-    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, ExecuteCallback **callback);
+    Handle_t CreateHandle(ExecuteCallback* callback, IdentityToken_t* owner);
+    HandleError ReadHandle(Handle_t hndl, IdentityToken_t* owner, ExecuteCallback** callback);
 
-    virtual void OnHandleDestroy(HandleType_t type, void *object);
+    virtual void OnHandleDestroy(HandleType_t type, void* object);
 };
 
 extern ExecuteCallbackHandler executeCallbackHandler;

@@ -25,11 +25,11 @@
 #include "HTTPResponseCallback.h"
 
 
-HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, std::string error, HTTPRequestMethod requestMethod)
+HTTPResponseCallback::HTTPResponseCallback(HTTPRequest* httpRequest, std::string error, HTTPRequestMethod requestMethod)
     : ResponseCallback(httpRequest, error), requestMethod(requestMethod), httpVersion(CURL_HTTP_VERSION_NONE) {}
 
 
-HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl, std::string content,
+HTTPResponseCallback::HTTPResponseCallback(HTTPRequest* httpRequest, CURL* curl, std::string content,
                                            HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers)
     : ResponseCallback(httpRequest, curl, content), requestMethod(requestMethod), headers(headers), httpVersion(CURL_HTTP_VERSION_NONE) {
     // Get the http version
@@ -39,7 +39,7 @@ HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl,
     }
 
     // Get the content type
-    char *contentType = nullptr;
+    char* contentType = nullptr;
     if (curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &contentType) == CURLE_OK && contentType) {
         this->contentType = contentType;
     }

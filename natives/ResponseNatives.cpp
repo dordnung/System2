@@ -27,8 +27,8 @@
 #include "HTTPRequestThread.h"
 
 
-cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetLastURL(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -37,8 +37,8 @@ cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params)
     return 1;
 }
 
-cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetContent(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -56,7 +56,7 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
         offset = length;
     }
 
-    char *delimiter;
+    char* delimiter;
     pContext->LocalToString(params[5], &delimiter);
 
     if (strlen(delimiter) > 0) {
@@ -83,8 +83,8 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
     return bytes;
 }
 
-cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetContentLength(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -92,8 +92,8 @@ cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *p
     return response->content.length();
 }
 
-cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetStatusCode(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -101,8 +101,8 @@ cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *para
     return response->statusCode;
 }
 
-cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetTotalTime(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -110,8 +110,8 @@ cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *param
     return sp_ftoc(response->totalTime);
 }
 
-cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetDownloadSize(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -119,8 +119,8 @@ cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *pa
     return response->downloadSize;
 }
 
-cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetUploadSize(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -128,8 +128,8 @@ cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *para
     return response->uploadSize;
 }
 
-cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetDownloadSpeed(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -137,8 +137,8 @@ cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *p
     return response->downloadSpeed;
 }
 
-cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *params) {
-    ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
+cell_t NativeResponse_GetUploadSpeed(IPluginContext* pContext, const cell_t* params) {
+    ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -148,8 +148,8 @@ cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *par
 
 
 
-cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+cell_t NativeHTTPResponse_GetContentType(IPluginContext* pContext, const cell_t* params) {
+    HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -158,13 +158,13 @@ cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t 
     return 1;
 }
 
-cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+cell_t NativeHTTPResponse_GetHeader(IPluginContext* pContext, const cell_t* params) {
+    HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
 
-    char *header;
+    char* header;
     pContext->LocalToString(params[2], &header);
 
     for (auto it = response->headers.begin(); it != response->headers.end(); ++it) {
@@ -177,8 +177,8 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
     return 0;
 }
 
-cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+cell_t NativeHTTPResponse_GetHeaderName(IPluginContext* pContext, const cell_t* params) {
+    HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -197,8 +197,8 @@ cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *
     return 1;
 }
 
-cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+cell_t NativeHTTPResponse_GetHeaders(IPluginContext* pContext, const cell_t* params) {
+    HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }
@@ -206,8 +206,8 @@ cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *par
     return response->headers.size();
 }
 
-cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext *pContext, const cell_t *params) {
-    HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
+cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext* pContext, const cell_t* params) {
+    HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
     if (!response) {
         return 0;
     }

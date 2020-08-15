@@ -31,8 +31,8 @@
 
 class FTPResponseCallback : public ResponseCallback {
 public:
-    FTPResponseCallback(FTPRequest *ftpRequest, std::string error);
-    FTPResponseCallback(FTPRequest *ftpRequest, CURL *curl, std::string content);
+    FTPResponseCallback(FTPRequest* ftpRequest, std::string error);
+    FTPResponseCallback(FTPRequest* ftpRequest, CURL* curl, std::string content);
 
 private:
     virtual void PreFire();

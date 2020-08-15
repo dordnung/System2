@@ -29,9 +29,9 @@
 uint32_t RequestThread::lastProgressFrame = 0;
 
 
-RequestThread::RequestThread(Request *request) : Thread(), request(request) {};
+RequestThread::RequestThread(Request* request) : Thread(), request(request) {};
 
-bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
+bool RequestThread::ApplyRequest(CURL* curl, WriteDataInfo& writeData) {
     // Set URL and port
     curl_easy_setopt(curl, CURLOPT_URL, this->request->url.c_str());
     if (this->request->port >= 0) {
@@ -111,9 +111,9 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     return true;
 }
 
-size_t RequestThread::WriteData(char *ptr, size_t size, size_t nmemb, void *userdata) {
+size_t RequestThread::WriteData(char* ptr, size_t size, size_t nmemb, void* userdata) {
     // Get the data info
-    RequestThread::WriteDataInfo *dataInfo = (RequestThread::WriteDataInfo *)userdata;
+    RequestThread::WriteDataInfo* dataInfo = (RequestThread::WriteDataInfo*)userdata;
 
     // Add to content
     size_t realsize = size * nmemb;
@@ -127,13 +127,13 @@ size_t RequestThread::WriteData(char *ptr, size_t size, size_t nmemb, void *user
     return realsize;
 }
 
-size_t RequestThread::ReadFile(char *buffer, size_t size, size_t nitems, void *instream) {
+size_t RequestThread::ReadFile(char* buffer, size_t size, size_t nitems, void* instream) {
     // Just read the content from the file
-    return fread(buffer, size, nitems, (FILE *)instream);
+    return fread(buffer, size, nitems, (FILE*)instream);
 }
 
-size_t RequestThread::ProgressUpdated(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-    RequestThread *requestThread = static_cast<RequestThread *>(clientp);
+size_t RequestThread::ProgressUpdated(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+    RequestThread* requestThread = static_cast<RequestThread*>(clientp);
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != requestThread->lastProgressFrame)) {
         // Append progress callback

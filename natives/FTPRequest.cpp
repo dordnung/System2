@@ -29,12 +29,12 @@
 FTPRequest::FTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction)
     : Request(url, responseCallbackFunction), appendToFile(false), createMissingDirs(true), listFilenamesOnly(false) {}
 
-FTPRequest::FTPRequest(const FTPRequest &request) :
+FTPRequest::FTPRequest(const FTPRequest& request) :
     Request(request), username(request.username), password(request.password), inputFile(request.inputFile),
     appendToFile(request.appendToFile), createMissingDirs(request.createMissingDirs), listFilenamesOnly(request.listFilenamesOnly) {}
 
 
-FTPRequest *FTPRequest::Clone() const {
+FTPRequest* FTPRequest::Clone() const {
     return new FTPRequest(*this);
 }
 
@@ -44,6 +44,6 @@ void FTPRequest::MakeRequest() {
 
 void FTPRequest::MakeThread() {
     // Make a copy for the thread, so it works independent
-    FTPRequestThread *requestThread = new FTPRequestThread(this->Clone());
+    FTPRequestThread* requestThread = new FTPRequestThread(this->Clone());
     requestThread->RunThread();
 }

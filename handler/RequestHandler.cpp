@@ -43,8 +43,8 @@ void RequestHandler::Shutdown() {
     handlesys->RemoveType(this->handleType, myself->GetIdentity());
 }
 
-void RequestHandler::OnHandleDestroy(HandleType_t type, void *object) {
-    delete (Request *)object;
+void RequestHandler::OnHandleDestroy(HandleType_t type, void* object) {
+    delete (Request*)object;
 }
 
 

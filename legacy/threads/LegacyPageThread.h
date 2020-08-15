@@ -47,7 +47,7 @@ public:
 
     LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    static size_t GetPage(void *buffer, size_t size, size_t nmemb, void *userdata);
+    static size_t GetPage(void* buffer, size_t size, size_t nmemb, void* userdata);
 
 protected:
     void Run();

@@ -26,11 +26,11 @@
 #include "FTPResponseCallback.h"
 
 
-FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
+FTPRequestThread::FTPRequestThread(FTPRequest* ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
 
 void FTPRequestThread::Run() {
     // Create a curl object
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
 
     if (curl) {
         // Apply general request stuff
@@ -59,7 +59,7 @@ void FTPRequestThread::Run() {
             curl_easy_setopt(curl, CURLOPT_PASSWORD, this->ftpRequest->password.c_str());
         }
 
-        FILE *inputFile = nullptr;
+        FILE* inputFile = nullptr;
         if (!this->ftpRequest->inputFile.empty()) {
             // Get the full path to the file
             char filePath[PLATFORM_MAX_PATH + 1];

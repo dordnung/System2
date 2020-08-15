@@ -28,8 +28,8 @@
 #include "smsdk_ext.h"
 
 typedef struct {
-    IPlugin * plugin;
-    IPluginFunction * function;
+    IPlugin* plugin;
+    IPluginFunction* function;
     bool isValid;
 } CallbackFunction_t;
 

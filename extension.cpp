@@ -43,7 +43,7 @@
 
 System2Extension::System2Extension() : frames(0), isRunning(false) {};
 
-bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
+bool System2Extension::SDK_OnLoad(char* error, size_t err_max, bool late) {
     this->frames = 0;
     this->isRunning = true;
 
@@ -84,7 +84,7 @@ void System2Extension::SDK_OnUnload() {
     if (runningThreads.size() > 0) {
         rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
         for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
-            delete *it;
+            delete* it;
         }
         rootconsole->ConsolePrint("[System2] All threads finished");
     }
@@ -119,7 +119,7 @@ void System2Extension::SDK_OnUnload() {
 }
 
 
-void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
+void System2Extension::OnPluginUnloaded(IPlugin* plugin) {
     // Search if the plugin has any pending callback functions and invalidate them
     for (auto it = this->callbackFunctions.begin(); it != callbackFunctions.end();) {
         if ((*it)->plugin == plugin) {
@@ -150,7 +150,7 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
 }
 
 
-void System2Extension::RegisterThread(Thread *thread) {
+void System2Extension::RegisterThread(Thread* thread) {
     // Add the thread to the list and then start it
     {
         std::lock_guard<std::mutex> lock(this->threadMutex);
@@ -158,7 +158,7 @@ void System2Extension::RegisterThread(Thread *thread) {
     }
 }
 
-void System2Extension::UnregisterThread(Thread *thread) {
+void System2Extension::UnregisterThread(Thread* thread) {
     while (!this->threadMutex.try_lock()) {
         sleep_ms(1);
     }
@@ -173,7 +173,7 @@ void System2Extension::UnregisterThread(Thread *thread) {
 }
 
 
-std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction *function) {
+std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction* function) {
     if (!function || !function->IsRunnable()) {
         // Function is not valid
         return nullptr;

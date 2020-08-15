@@ -43,7 +43,7 @@ void LegacyPageThread::Run() {
         this->callbackFunction,
     };
 
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
     if (curl) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
 
@@ -96,11 +96,11 @@ void LegacyPageThread::Run() {
 
 
 // Got something of the page
-size_t LegacyPageThread::GetPage(void *buffer, size_t size, size_t nmemb, void *userdata) {
+size_t LegacyPageThread::GetPage(void* buffer, size_t size, size_t nmemb, void* userdata) {
     size_t realsize = size * nmemb;
 
     // Get the page info
-    PageInfo *page = (PageInfo *)userdata;
+    PageInfo* page = (PageInfo*)userdata;
 
     // We only can push a string with a length of MAX_RESULT_LENGTH
     if (page->result.length() + realsize >= MAX_RESULT_LENGTH) {
@@ -112,7 +112,7 @@ size_t LegacyPageThread::GetPage(void *buffer, size_t size, size_t nmemb, void *
     }
 
     // Add to result
-    page->result.append((char *)buffer, realsize);
+    page->result.append((char*)buffer, realsize);
 
     return realsize;
 }

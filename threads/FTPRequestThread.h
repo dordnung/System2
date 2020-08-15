@@ -35,9 +35,9 @@ private:
     std::mutex mutex;
 
 public:
-    FTPRequest * ftpRequest;
+    FTPRequest* ftpRequest;
 
-    explicit FTPRequestThread(FTPRequest *ftpRequest);
+    explicit FTPRequestThread(FTPRequest* ftpRequest);
 
 protected:
     virtual void Run();

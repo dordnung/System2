@@ -49,7 +49,7 @@ void ExecuteCallbackHandler::Shutdown() {
 }
 
 
-Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback *callback, IdentityToken_t *owner) {
+Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback* callback, IdentityToken_t* owner) {
     return handlesys->CreateHandle(this->handleType,
                                    callback,
                                    owner,
@@ -57,14 +57,14 @@ Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback *callback, Identit
                                    nullptr);
 }
 
-HandleError ExecuteCallbackHandler::ReadHandle(Handle_t hndl, IdentityToken_t *owner, ExecuteCallback **callback) {
+HandleError ExecuteCallbackHandler::ReadHandle(Handle_t hndl, IdentityToken_t* owner, ExecuteCallback** callback) {
     HandleSecurity sec = { owner, myself->GetIdentity() };
 
-    return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)callback);
+    return handlesys->ReadHandle(hndl, this->handleType, &sec, (void**)callback);
 }
 
 
-void ExecuteCallbackHandler::OnHandleDestroy(HandleType_t type, void *object) {
+void ExecuteCallbackHandler::OnHandleDestroy(HandleType_t type, void* object) {
     // Nothing to do, as handle is a callback and will be deleted otherwise
 }
 

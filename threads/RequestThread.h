@@ -34,22 +34,22 @@
 class RequestThread : public Thread {
 private:
     static uint32_t lastProgressFrame;
-    Request *request;
+    Request* request;
 
 public:
     typedef struct {
         std::string content;
-        FILE *file;
+        FILE* file;
     } WriteDataInfo;
 
-    explicit RequestThread(Request *request);
+    explicit RequestThread(Request* request);
 
-    static size_t WriteData(char *ptr, size_t size, size_t nmemb, void *userdata);
-    static size_t ReadFile(char *buffer, size_t size, size_t nitems, void *instream);
-    static size_t ProgressUpdated(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
+    static size_t WriteData(char* ptr, size_t size, size_t nmemb, void* userdata);
+    static size_t ReadFile(char* buffer, size_t size, size_t nitems, void* instream);
+    static size_t ProgressUpdated(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
 
 protected:
-    bool ApplyRequest(CURL *curl, WriteDataInfo &writeData);
+    bool ApplyRequest(CURL* curl, WriteDataInfo& writeData);
 };
 
 #endif

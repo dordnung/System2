@@ -27,7 +27,6 @@
 
 #include "Handler.h"
 
-
 class ResponseCallbackHandler : public Handler {
 private:
     HandleType_t handleType;
@@ -39,7 +38,7 @@ public:
     virtual void Shutdown();
 
     template<class ResponseCallbackClass>
-    Handle_t CreateHandle(ResponseCallbackClass *responseCallback, IdentityToken_t *owner) {
+    Handle_t CreateHandle(ResponseCallbackClass* responseCallback, IdentityToken_t* owner) {
         return handlesys->CreateHandle(this->handleType,
                                        responseCallback,
                                        owner,
@@ -48,12 +47,12 @@ public:
     }
 
     template<class ResponseCallbackClass>
-    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, ResponseCallbackClass **responseCallback) {
+    HandleError ReadHandle(Handle_t hndl, IdentityToken_t* owner, ResponseCallbackClass** responseCallback) {
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)responseCallback);
+        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void**)responseCallback);
     }
 
-    virtual void OnHandleDestroy(HandleType_t type, void *object);
+    virtual void OnHandleDestroy(HandleType_t type, void* object);
 };
 
 extern ResponseCallbackHandler responseCallbackHandler;

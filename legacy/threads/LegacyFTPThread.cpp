@@ -42,7 +42,7 @@ void LegacyFTPThread::Run() {
     g_pSM->BuildPath(Path_Game, fullLocalFilePath, sizeof(fullLocalFilePath), this->localFile.c_str());
 
     // Open the local file
-    FILE *localFile = nullptr;
+    FILE* localFile = nullptr;
     if (this->download) {
         // When downloading open writeable
         localFile = fopen(fullLocalFilePath, "wb");
@@ -141,7 +141,7 @@ void LegacyFTPThread::Run() {
 }
 
 
-size_t LegacyFTPThread::UploadFTP(void *buffer, size_t size, size_t nmemb, void *userdata) {
+size_t LegacyFTPThread::UploadFTP(void* buffer, size_t size, size_t nmemb, void* userdata) {
     // Read file and return size
-    return fread(buffer, size, nmemb, (FILE *)userdata);
+    return fread(buffer, size, nmemb, (FILE*)userdata);
 }

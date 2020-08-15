@@ -46,8 +46,8 @@ private:
 
     std::deque<std::shared_ptr<Callback>> callbackQueue;
     std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
-    std::vector<Thread *> runningThreads;
-    std::vector<Thread *> deletableThreads;
+    std::vector<Thread*> runningThreads;
+    std::vector<Thread*> deletableThreads;
 
     volatile uint32_t frames;
     bool isRunning;
@@ -55,17 +55,17 @@ private:
 public:
     System2Extension();
 
-    virtual bool SDK_OnLoad(char *error, size_t maxlength, bool late);
+    virtual bool SDK_OnLoad(char* error, size_t maxlength, bool late);
     virtual void SDK_OnUnload();
 
-    virtual void OnPluginUnloaded(IPlugin *plugin);
+    virtual void OnPluginUnloaded(IPlugin* plugin);
 
     void AppendCallback(std::shared_ptr<Callback> callback);
 
-    void RegisterThread(Thread *thread);
-    void UnregisterThread(Thread * thread);
+    void RegisterThread(Thread* thread);
+    void UnregisterThread(Thread* thread);
 
-    std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
+    std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction* function);
 
     std::string GetCertificateFile();
 

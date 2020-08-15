@@ -35,7 +35,7 @@ void ExecuteThread::Run() {
     int exitStatus;
 
     // Execute the command
-    FILE *commandFile = PosixOpen(this->command.c_str(), "r");
+    FILE* commandFile = PosixOpen(this->command.c_str(), "r");
     if (commandFile) {
         char buffer[1024];
         while (fgets(buffer, sizeof(buffer), commandFile)) {

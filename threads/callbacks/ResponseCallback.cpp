@@ -26,11 +26,11 @@
 #include "RequestHandler.h"
 
 
-ResponseCallback::ResponseCallback(Request *request, std::string error)
+ResponseCallback::ResponseCallback(Request* request, std::string error)
     : Callback(request->responseCallbackFunction), request(request), error(error),
     statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {};
 
-ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string content)
+ResponseCallback::ResponseCallback(Request* request, CURL* curl, std::string content)
     : Callback(request->responseCallbackFunction), request(request), content(content),
     statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {
     // Get the response code
@@ -40,7 +40,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
     }
 
     // Get the last url
-    char *url = nullptr;
+    char* url = nullptr;
     if (curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url) == CURLE_OK && url) {
         this->lastURL = url;
     }
@@ -78,7 +78,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
 
 
 void ResponseCallback::Fire() {
-    IdentityToken_t *owner = this->request->responseCallbackFunction->plugin->GetIdentity();
+    IdentityToken_t* owner = this->request->responseCallbackFunction->plugin->GetIdentity();
     Handle_t responseHandle = BAD_HANDLE;
 
     if (this->error.empty()) {

@@ -30,7 +30,7 @@ ExecuteCallback::ExecuteCallback(std::shared_ptr<CallbackFunction_t> callbackFun
     : Callback(callbackFunction), success(success), exitStatus(exitStatus), output(output), command(command), data(data) {}
 
 
-const std::string &ExecuteCallback::GetOutput() const {
+const std::string& ExecuteCallback::GetOutput() const {
     return this->output;
 }
 
@@ -39,7 +39,7 @@ int ExecuteCallback::GetExitStatus() const {
 }
 
 void ExecuteCallback::Fire() {
-    IdentityToken_t *owner = this->callbackFunction->plugin->GetIdentity();
+    IdentityToken_t* owner = this->callbackFunction->plugin->GetIdentity();
     Handle_t outputHandle = BAD_HANDLE;
 
     if (this->success) {
@@ -60,10 +60,10 @@ void ExecuteCallback::Fire() {
     }
 }
 
-ExecuteCallback *ExecuteCallback::ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext) {
+ExecuteCallback* ExecuteCallback::ConvertExecuteCallback(Handle_t hndl, IPluginContext* pContext) {
     HandleError err;
 
-    ExecuteCallback *executeCallback = nullptr;
+    ExecuteCallback* executeCallback = nullptr;
     if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &executeCallback)) != HandleError_None) {
         pContext->ThrowNativeError("Invalid execute output handle %x (error %d)", hndl, err);
         return nullptr;

@@ -40,12 +40,12 @@ private:
 public:
     ExecuteCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, int exitStatus, std::string output, std::string command, int data);
 
-    const std::string &GetOutput() const;
+    const std::string& GetOutput() const;
     int GetExitStatus() const;
 
     virtual void Fire();
 
-    static ExecuteCallback *ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext);
+    static ExecuteCallback* ConvertExecuteCallback(Handle_t hndl, IPluginContext* pContext);
 };
 
 #endif

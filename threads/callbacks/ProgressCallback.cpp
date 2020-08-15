@@ -26,13 +26,13 @@
 #include "RequestHandler.h"
 
 
-ProgressCallback::ProgressCallback(Request *request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data)
+ProgressCallback::ProgressCallback(Request* request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data)
     : Callback(request->progressCallbackFunction), request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {};
 
 
 void ProgressCallback::Fire() {
     // Create a temporary request handle, so in the callback the correct request will be used
-    IdentityToken_t *owner = request->progressCallbackFunction->plugin->GetIdentity();
+    IdentityToken_t* owner = request->progressCallbackFunction->plugin->GetIdentity();
     Handle_t requestHandle = requestHandler.CreateLocaleHandle<Request>(this->request, owner);
 
     request->progressCallbackFunction->function->PushCell(requestHandle);

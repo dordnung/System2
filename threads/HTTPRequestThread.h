@@ -34,23 +34,23 @@ private:
     HTTPRequestMethod requestMethod;
 
 public:
-    HTTPRequest * httpRequest;
+    HTTPRequest* httpRequest;
 
     typedef struct {
-        CURL *curl;
+        CURL* curl;
         std::map<std::string, std::string> headers;
         long lastResponseCode;
     } HeaderInfo;
 
-    HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod);
+    HTTPRequestThread(HTTPRequest* httpRequest, HTTPRequestMethod requestMethod);
 
-    static size_t ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata);
-    static bool EqualsIgnoreCase(const std::string &str1, const std::string &str2);
+    static size_t ReadHeader(char* buffer, size_t size, size_t nitems, void* userdata);
+    static bool EqualsIgnoreCase(const std::string& str1, const std::string& str2);
 
 private:
-    static inline std::string& LeftTrim(std::string &str);
-    static inline std::string& RightTrim(std::string &str);
-    static inline std::string& Trim(std::string &str);
+    static inline std::string& LeftTrim(std::string& str);
+    static inline std::string& RightTrim(std::string& str);
+    static inline std::string& Trim(std::string& str);
 
 protected:
     virtual void Run();

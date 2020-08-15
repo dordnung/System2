@@ -39,7 +39,7 @@ public:
     virtual void Shutdown();
 
     template<class RequestClass>
-    Handle_t CreateGlobalHandle(RequestClass *request, IdentityToken_t *owner) {
+    Handle_t CreateGlobalHandle(RequestClass* request, IdentityToken_t* owner) {
         return handlesys->CreateHandle(this->handleType,
                                        request,
                                        owner,
@@ -48,7 +48,7 @@ public:
     }
 
     template<class RequestClass>
-    Handle_t CreateLocaleHandle(RequestClass *request, IdentityToken_t *owner) {
+    Handle_t CreateLocaleHandle(RequestClass* request, IdentityToken_t* owner) {
         // Do not allow deleting or cloning for the plugin
         HandleAccess rules;
         g_pHandleSys->InitAccessDefaults(nullptr, &rules);
@@ -64,12 +64,12 @@ public:
     }
 
     template<class RequestClass>
-    HandleError ReadHandle(Handle_t hndl, IdentityToken_t *owner, RequestClass **request) {
+    HandleError ReadHandle(Handle_t hndl, IdentityToken_t* owner, RequestClass** request) {
         HandleSecurity sec = { owner, myself->GetIdentity() };
-        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void **)request);
+        return handlesys->ReadHandle(hndl, this->handleType, &sec, (void**)request);
     }
 
-    virtual void OnHandleDestroy(HandleType_t type, void *object);
+    virtual void OnHandleDestroy(HandleType_t type, void* object);
 };
 
 extern RequestHandler requestHandler;

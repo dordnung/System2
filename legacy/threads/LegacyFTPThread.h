@@ -51,7 +51,7 @@ public:
     LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url,
                     std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    static size_t UploadFTP(void *buffer, size_t size, size_t nmemb, void *userdata);
+    static size_t UploadFTP(void* buffer, size_t size, size_t nmemb, void* userdata);
 
 protected:
     void Run();

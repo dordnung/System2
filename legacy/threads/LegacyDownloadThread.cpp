@@ -36,7 +36,7 @@ void LegacyDownloadThread::Run() {
     g_pSM->BuildPath(Path_Game, fullLocalPath, sizeof(fullLocalPath), this->localFile.c_str());
 
     // Could we open the file?
-    FILE *stream = fopen(fullLocalPath, "wb");
+    FILE* stream = fopen(fullLocalPath, "wb");
     if (!stream) {
         system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, "Couldn't create file", this->data));
         return;
@@ -44,7 +44,7 @@ void LegacyDownloadThread::Run() {
 
     // Init. Curl
     std::string error;
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
     if (curl) {
         char errorBuffer[CURL_ERROR_SIZE + 1];
 
@@ -98,14 +98,14 @@ void LegacyDownloadThread::Run() {
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
 }
 
-size_t LegacyDownloadThread::WriteFile(void *buffer, size_t size, size_t nmemb, void *userdata) {
+size_t LegacyDownloadThread::WriteFile(void* buffer, size_t size, size_t nmemb, void* userdata) {
     // Write to the file
-    return fwrite(buffer, size, nmemb, (FILE *)userdata);
+    return fwrite(buffer, size, nmemb, (FILE*)userdata);
 }
 
 
-int LegacyDownloadThread::ProgressUpdated(void *data, double dltotal, double dlnow, double ultotal, double ulnow) {
-    ProgressInfo *progress = (ProgressInfo *)data;
+int LegacyDownloadThread::ProgressUpdated(void* data, double dltotal, double dlnow, double ultotal, double ulnow) {
+    ProgressInfo* progress = (ProgressInfo*)data;
 
     if ((dlnow > 0.0 || dltotal > 0.0 || ultotal > 0.0 || ulnow > 0.0) && (system2Extension.GetFrames() != progress->lastFrame)) {
         // Add return status to queue

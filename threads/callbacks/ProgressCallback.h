@@ -31,7 +31,7 @@
 
 class ProgressCallback : public Callback {
 private:
-    Request * request;
+    Request* request;
 
     int dlTotal;
     int dlNow;
@@ -40,7 +40,7 @@ private:
     int data;
 
 public:
-    ProgressCallback(Request *request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data);
+    ProgressCallback(Request* request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data);
 
     virtual void Fire();
     virtual void Abort();

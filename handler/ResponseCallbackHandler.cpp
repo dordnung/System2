@@ -49,7 +49,7 @@ void ResponseCallbackHandler::Shutdown() {
     handlesys->RemoveType(this->handleType, myself->GetIdentity());
 }
 
-void ResponseCallbackHandler::OnHandleDestroy(HandleType_t type, void *object) {
+void ResponseCallbackHandler::OnHandleDestroy(HandleType_t type, void* object) {
     // Nothing to do, as handle is a callback and will be deleted otherwise
 }
 

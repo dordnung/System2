@@ -40,7 +40,7 @@
 
 #define MAX_COMMAND_LENGTH 2048
 
-bool Get7ZIPExecutable(bool force32Bit, std::string &binDir) {
+bool Get7ZIPExecutable(bool force32Bit, std::string& binDir) {
     static std::string sBinDir64;
     static std::string sBinDir32;
 
@@ -98,7 +98,7 @@ bool Get7ZIPExecutable(bool force32Bit, std::string &binDir) {
 #endif
 }
 
-cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeCheck7ZIP(IPluginContext* pContext, const cell_t* params) {
     std::string binDir;
     bool valid = Get7ZIPExecutable(params[3], binDir);
 
@@ -107,9 +107,9 @@ cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
     return valid;
 }
 
-cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
-    char *path;
-    char *archive;
+cell_t NativeCompress(IPluginContext* pContext, const cell_t* params) {
+    char* path;
+    char* archive;
     char fullPath[PLATFORM_MAX_PATH + 1];
     char fullArchivePath[PLATFORM_MAX_PATH + 1];
 
@@ -199,16 +199,16 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 #endif
 
     // Start the thread that executes the command
-    ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
+    ExecuteThread* commandThread = new ExecuteThread(command, params[6], callback);
     commandThread->RunThread();
 
     return 1;
 }
 
 
-cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
-    char *path;
-    char *archive;
+cell_t NativeExtract(IPluginContext* pContext, const cell_t* params) {
+    char* path;
+    char* archive;
     char fullArchivePath[PLATFORM_MAX_PATH + 1];
     char fullPath[PLATFORM_MAX_PATH + 1];
 
@@ -238,15 +238,15 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 #endif
 
     // Start the thread that executes the command
-    ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
+    ExecuteThread* commandThread = new ExecuteThread(command, params[4], callback);
     commandThread->RunThread();
 
     return 1;
 }
 
 
-cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
-    char *command;
+cell_t NativeExecuteThreaded(IPluginContext* pContext, const cell_t* params) {
+    char* command;
     pContext->LocalToString(params[2], &command);
 
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
@@ -256,14 +256,14 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
     }
 
     // Start the thread that executes the command
-    ExecuteThread *commandThread = new ExecuteThread(command, params[3], callback);
+    ExecuteThread* commandThread = new ExecuteThread(command, params[3], callback);
     commandThread->RunThread();
 
     return 1;
 }
 
 
-cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteFormattedThreaded(IPluginContext* pContext, const cell_t* params) {
     char command[MAX_COMMAND_LENGTH + 1];
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
 
@@ -274,18 +274,18 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
     }
 
     // Start the thread that executes the command - with data
-    ExecuteThread *commandThread = new ExecuteThread(command, params[2], callback);
+    ExecuteThread* commandThread = new ExecuteThread(command, params[2], callback);
     commandThread->RunThread();
 
     return 1;
 }
 
 
-cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteOutput_GetOutput(IPluginContext* pContext, const cell_t* params) {
     // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 
-    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    ExecuteCallback* callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
     if (!callback) {
         return 0;
     }
@@ -303,7 +303,7 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
         offset = length;
     }
 
-    char *delimiter;
+    char* delimiter;
     pContext->LocalToString(params[5], &delimiter);
 
     if (strlen(delimiter) > 0) {
@@ -330,11 +330,11 @@ cell_t NativeExecuteOutput_GetOutput(IPluginContext *pContext, const cell_t *par
     return bytes;
 }
 
-cell_t NativeExecuteOutput_GetLength(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteOutput_GetLength(IPluginContext* pContext, const cell_t* params) {
     // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 
-    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    ExecuteCallback* callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
     if (!callback) {
         return 0;
     }
@@ -343,11 +343,11 @@ cell_t NativeExecuteOutput_GetLength(IPluginContext *pContext, const cell_t *par
     return callback->GetOutput().length();
 }
 
-cell_t NativeExecuteOutput_GetExitStatus(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteOutput_GetExitStatus(IPluginContext* pContext, const cell_t* params) {
     // Get the handle to the execute callback
     Handle_t hndl = static_cast<Handle_t>(params[1]);
 
-    ExecuteCallback *callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
+    ExecuteCallback* callback = ExecuteCallback::ConvertExecuteCallback(hndl, pContext);
     if (!callback) {
         return 0;
     }
@@ -357,15 +357,15 @@ cell_t NativeExecuteOutput_GetExitStatus(IPluginContext *pContext, const cell_t 
 }
 
 
-cell_t NativeExecute(IPluginContext *pContext, const cell_t *params) {
-    char *command;
+cell_t NativeExecute(IPluginContext* pContext, const cell_t* params) {
+    char* command;
     pContext->LocalToString(params[3], &command);
 
     return NativeExecuteCommand(command, pContext, params);
 }
 
 
-cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteFormatted(IPluginContext* pContext, const cell_t* params) {
     // Format the command string
     char command[MAX_COMMAND_LENGTH + 1];
     smutils->FormatString(command, sizeof(command), pContext, params, 3);
@@ -374,9 +374,9 @@ cell_t NativeExecuteFormatted(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const cell_t *params) {
+cell_t NativeExecuteCommand(std::string command, IPluginContext* pContext, const cell_t* params) {
     // Execute the command
-    FILE *commandFile = PosixOpen(command.c_str(), "r");
+    FILE* commandFile = PosixOpen(command.c_str(), "r");
 
     // Was there an error?
     if (!commandFile) {

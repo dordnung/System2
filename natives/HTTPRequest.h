@@ -41,9 +41,9 @@ public:
     bool followRedirects;
 
     HTTPRequest(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
-    HTTPRequest(const HTTPRequest &request);
+    HTTPRequest(const HTTPRequest& request);
 
-    virtual HTTPRequest *Clone() const;
+    virtual HTTPRequest* Clone() const;
 
     void Get();
     void Post();

@@ -27,13 +27,13 @@
 #include "HTTPRequestMethod.h"
 
 
-HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod)
+HTTPRequestThread::HTTPRequestThread(HTTPRequest* httpRequest, HTTPRequestMethod requestMethod)
     : RequestThread(httpRequest), requestMethod(requestMethod), httpRequest(httpRequest) {};
 
 
 void HTTPRequestThread::Run() {
     // Create a curl object
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
 
     if (curl) {
         // Apply general request stuff
@@ -79,7 +79,7 @@ void HTTPRequestThread::Run() {
         }
 
         // Set headers
-        struct curl_slist *headers = nullptr;
+        struct curl_slist* headers = nullptr;
         if (!this->httpRequest->headers.empty()) {
             std::string header;
             for (auto it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {
@@ -162,9 +162,9 @@ void HTTPRequestThread::Run() {
 }
 
 
-size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata) {
+size_t HTTPRequestThread::ReadHeader(char* buffer, size_t size, size_t nitems, void* userdata) {
     // Get the header info
-    HeaderInfo *headerInfo = (HeaderInfo *)userdata;
+    HeaderInfo* headerInfo = (HeaderInfo*)userdata;
 
     long responseCode;
     curl_easy_getinfo(headerInfo->curl, CURLINFO_RESPONSE_CODE, &responseCode);
@@ -205,7 +205,7 @@ size_t HTTPRequestThread::ReadHeader(char *buffer, size_t size, size_t nitems, v
 }
 
 
-bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const std::string &str2) {
+bool HTTPRequestThread::EqualsIgnoreCase(const std::string& str1, const std::string& str2) {
     size_t str1Len = str1.size();
     if (str2.size() != str1Len) {
         return false;
@@ -220,7 +220,7 @@ bool HTTPRequestThread::EqualsIgnoreCase(const std::string &str1, const std::str
     return true;
 }
 
-inline std::string& HTTPRequestThread::LeftTrim(std::string &str) {
+inline std::string& HTTPRequestThread::LeftTrim(std::string& str) {
     std::size_t found = str.find_first_not_of(" \t\f\v\n\r");
     if (found != std::string::npos) {
         str.erase(0, found);
@@ -231,7 +231,7 @@ inline std::string& HTTPRequestThread::LeftTrim(std::string &str) {
     return str;
 }
 
-inline std::string& HTTPRequestThread::RightTrim(std::string &str) {
+inline std::string& HTTPRequestThread::RightTrim(std::string& str) {
     std::size_t found = str.find_last_not_of(" \t\f\v\n\r");
     if (found != std::string::npos) {
         str.erase(found + 1);
@@ -242,6 +242,6 @@ inline std::string& HTTPRequestThread::RightTrim(std::string &str) {
     return str;
 }
 
-inline std::string& HTTPRequestThread::Trim(std::string &str) {
+inline std::string& HTTPRequestThread::Trim(std::string& str) {
     return LeftTrim(RightTrim(str));
 }

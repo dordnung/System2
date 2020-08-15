@@ -32,9 +32,9 @@
 #include <fstream>
 
 
-cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
-    char *from;
-    char *to;
+cell_t NativeCopyFile(IPluginContext* pContext, const cell_t* params) {
+    char* from;
+    char* to;
 
     pContext->LocalToString(params[2], &from);
     pContext->LocalToString(params[3], &to);
@@ -46,20 +46,20 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
     }
 
     // Start the thread that copys a file
-    CopyThread *copyThread = new CopyThread(from, to, params[4], callback);
+    CopyThread* copyThread = new CopyThread(from, to, params[4], callback);
     copyThread->RunThread();
 
     return 1;
 }
 
 
-cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeGetGameDir(IPluginContext* pContext, const cell_t* params) {
     pContext->StringToLocalUTF8(params[1], params[2], smutils->GetGamePath(), nullptr);
     return 1;
 }
 
 
-cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeGetOS(IPluginContext* pContext, const cell_t* params) {
 #if defined __WIN32__ || defined _MSC_VER || defined __CYGWIN32__ || defined _Windows || defined __MSDOS__ || defined _WIN64 || defined _WIN32
     return OS_WIN;
 #elif defined unix || defined __unix__ || defined __linux__ || defined __unix
@@ -72,8 +72,8 @@ cell_t NativeGetOS(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params) {
-    char *str;
+cell_t NativeGetStringMD5(IPluginContext* pContext, const cell_t* params) {
+    char* str;
 
     // Get the string to get MD5 of
     pContext->LocalToString(params[1], &str);
@@ -92,9 +92,9 @@ cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
-    char *memblock;
-    char *filePath;
+cell_t NativeGetFileMD5(IPluginContext* pContext, const cell_t* params) {
+    char* memblock;
+    char* filePath;
     char fullFilePath[PLATFORM_MAX_PATH + 1];
 
     // Get the full paths to the file
@@ -135,8 +135,8 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {
-    char *str;
+cell_t NativeGetStringCRC32(IPluginContext* pContext, const cell_t* params) {
+    char* str;
 
     // Get the string
     pContext->LocalToString(params[1], &str);
@@ -154,9 +154,9 @@ cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
-    char *memblock;
-    char *filePath;
+cell_t NativeGetFileCRC32(IPluginContext* pContext, const cell_t* params) {
+    char* memblock;
+    char* filePath;
     char fullFilePath[PLATFORM_MAX_PATH + 1];
 
     // Get the full paths to the file
@@ -196,15 +196,15 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeURLEncode(IPluginContext* pContext, const cell_t* params) {
     // Get the string to encode
     char str[2048];
     smutils->FormatString(str, sizeof(str), pContext, params, 3);
 
     // Use the curl escape method to encode it
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
     if (curl) {
-        char *output = curl_easy_escape(curl, str, 0);
+        char* output = curl_easy_escape(curl, str, 0);
         if (output) {
             pContext->StringToLocalUTF8(params[1], params[2], output, nullptr);
             curl_free(output);
@@ -221,15 +221,15 @@ cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
 }
 
 
-cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params) {
+cell_t NativeURLDecode(IPluginContext* pContext, const cell_t* params) {
     // Get the string to decode
     char str[2048];
     smutils->FormatString(str, sizeof(str), pContext, params, 3);
 
     // Use the curl unescape method to decode it
-    CURL *curl = curl_easy_init();
+    CURL* curl = curl_easy_init();
     if (curl) {
-        char *output = curl_easy_unescape(curl, str, 0, nullptr);
+        char* output = curl_easy_unescape(curl, str, 0, nullptr);
         if (output) {
             pContext->StringToLocalUTF8(params[1], params[2], output, nullptr);
             curl_free(output);

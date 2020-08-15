@@ -46,16 +46,16 @@ public:
     std::shared_ptr<CallbackFunction_t> progressCallbackFunction;
 
     Request(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction);
-    Request(const Request &request);
+    Request(const Request& request);
     virtual ~Request() = 0;
 
-    virtual Request *Clone() const = 0;
+    virtual Request* Clone() const = 0;
 
     template<class RequestClass>
-    static RequestClass *ConvertRequest(Handle_t hndl, IPluginContext *pContext) {
+    static RequestClass* ConvertRequest(Handle_t hndl, IPluginContext* pContext) {
         HandleError err;
 
-        RequestClass *request = nullptr;
+        RequestClass* request = nullptr;
         if ((err = requestHandler.ReadHandle<RequestClass>(hndl, pContext->GetIdentity(), &request)) != HandleError_None) {
             pContext->ThrowNativeError("Invalid request handle %x (error %d)", hndl, err);
             return nullptr;

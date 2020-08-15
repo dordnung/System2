@@ -32,7 +32,7 @@
 
 class ResponseCallback : public Callback {
 protected:
-    Request * request;
+    Request* request;
 
 public:
     std::string error;
@@ -45,16 +45,16 @@ public:
     int downloadSpeed;
     int uploadSpeed;
 
-    ResponseCallback(Request *request, std::string error);
-    ResponseCallback(Request *request, CURL *curl, std::string content);
+    ResponseCallback(Request* request, std::string error);
+    ResponseCallback(Request* request, CURL* curl, std::string content);
 
     virtual void Abort();
 
     template<class ResponseCallbackClass>
-    static ResponseCallbackClass *ConvertResponse(Handle_t hndl, IPluginContext *pContext) {
+    static ResponseCallbackClass* ConvertResponse(Handle_t hndl, IPluginContext* pContext) {
         HandleError err;
 
-        ResponseCallbackClass *response = nullptr;
+        ResponseCallbackClass* response = nullptr;
         if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &response)) != HandleError_None) {
             pContext->ThrowNativeError("Invalid response handle %x (error %d)", hndl, err);
             return nullptr;
