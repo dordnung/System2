@@ -361,7 +361,7 @@ void PerformRequestTests() {
     // Test verify ssl
     PrintToServer("INFO: Test verifying ssl");
     httpRequest.Any = TEST_VERIFY_SSL;
-    httpRequest.SetURL("https://www.unsecure.com/");
+    httpRequest.SetURL("https://neverssl.com/");
     httpRequest.GET();
 
     // Test not verify ssl
@@ -561,6 +561,13 @@ void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest r
 
     // Timeout and verifiy SSL requests should fail
     if (request.Any == TEST_TIMEOUT || request.Any == TEST_VERIFY_SSL) {
+        if (request.Any == TEST_TIMEOUT) {
+            PrintToServer("INFO: Got timeout callback");
+        }
+        if (request.Any == TEST_VERIFY_SSL) {
+            PrintToServer("INFO: Got verify ssl callback");
+        }
+
         assertFalse("An error was expected", success);
         assertValueNotEquals(0, strlen(error));
 
