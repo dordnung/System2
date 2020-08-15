@@ -27,18 +27,20 @@
 
 #include "RequestThread.h"
 #include "FTPRequest.h"
-
-
- // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-extern IMutex *ftpMutex;
+#include <mutex>
 
 class FTPRequestThread : public RequestThread {
+private:
+     // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+    std::mutex mutex;
+
 public:
     FTPRequest * ftpRequest;
 
     explicit FTPRequestThread(FTPRequest *ftpRequest);
 
-    virtual void RunThread(IThreadHandle *pThread);
+protected:
+    virtual void Run();
 };
 
 #endif

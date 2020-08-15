@@ -98,6 +98,7 @@
     <ClCompile Include="..\threads\FTPRequestThread.cpp" />
     <ClCompile Include="..\threads\HTTPRequestThread.cpp" />
     <ClCompile Include="..\threads\RequestThread.cpp" />
+    <ClCompile Include="..\threads\Thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\crc\crc.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="..\threads\FTPRequestThread.h" />
     <ClInclude Include="..\threads\HTTPRequestThread.h" />
     <ClInclude Include="..\threads\RequestThread.h" />
+    <ClInclude Include="..\threads\Thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

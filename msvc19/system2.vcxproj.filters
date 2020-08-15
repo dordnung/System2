@@ -165,6 +165,9 @@
     <ClCompile Include="..\handler\Handler.cpp">
       <Filter>Source Files\handler</Filter>
     </ClCompile>
+    <ClCompile Include="..\threads\Thread.cpp">
+      <Filter>Source Files\threads</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">
@@ -280,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="..\threads\callbacks\CallbackFunction.h">
       <Filter>Header Files\threads\callbacks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\threads\Thread.h">
+      <Filter>Header Files\threads</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

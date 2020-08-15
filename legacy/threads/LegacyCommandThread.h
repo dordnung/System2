@@ -26,6 +26,7 @@
 #define _SYSTEM2_LEGACY_COMMAND_THREAD_H_
 
 #include "extension.h"
+#include "Thread.h"
 
  // Define Posix
 #if defined  _WIN32
@@ -39,7 +40,7 @@
 #define MAX_RESULT_LENGTH 4096
 
 
-class LegacyCommandThread : public IThread {
+class LegacyCommandThread : public Thread {
 private:
     std::string command;
     int data;
@@ -48,8 +49,8 @@ private:
 public:
     LegacyCommandThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
+protected:
+    void Run();
 };
 
 #endif

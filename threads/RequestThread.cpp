@@ -29,7 +29,7 @@
 uint32_t RequestThread::lastProgressFrame = 0;
 
 
-RequestThread::RequestThread(Request *request) : request(request) {};
+RequestThread::RequestThread(Request *request) : Thread(), request(request) {};
 
 bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     // Set URL and port
@@ -110,12 +110,6 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
 
     return true;
 }
-
-void RequestThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
-}
-
 
 size_t RequestThread::WriteData(char *ptr, size_t size, size_t nmemb, void *userdata) {
     // Get the data info

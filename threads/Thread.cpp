@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        LegacyPageThread.h
+ * File        Thread.cpp
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,35 +22,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _SYSTEM2_LEGACY_PAGE_THREAD_H_
-#define _SYSTEM2_LEGACY_PAGE_THREAD_H_
-
-#include "extension.h"
 #include "Thread.h"
+#include "extension.h"
+#include <memory>
 
 
-class LegacyPageThread : public Thread {
-private:
-    std::string url;
-    std::string post;
-    std::string useragent;
-    int data;
+Thread::Thread() : shouldTerminate(false), threader(nullptr) {};
 
-    std::shared_ptr<CallbackFunction_t> callbackFunction;
+void Thread::RunThread() {
+    if (!this->threader) {
+        system2Extension.RegisterThread(this);
 
-public:
-    typedef struct {
-        std::string result;
-        int data;
-        std::shared_ptr<CallbackFunction_t> callbackFunction;
-    } PageInfo;
+        this->threader = std::make_unique<std::thread>([this]() -> void {
+            this->Run();
+            system2Extension.UnregisterThread(this);
 
-    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
+            // Delete ourself when finished
+            delete this;
+        });
+    }
+}
 
-    static size_t GetPage(void *buffer, size_t size, size_t nmemb, void *userdata);
+void Thread::WaitUntilFinished() {
+    if (this->threader) {
+        {
+            std::lock_guard<std::mutex> lock(this->lock);
+            this->shouldTerminate = true;
+        }
 
-protected:
-    void Run();
-};
+        this->threader->join();
+        this->threader = nullptr;
+        this->shouldTerminate = false;
+    }
+}
 
-#endif
+bool Thread::ShouldTerminate() {
+    std::lock_guard<std::mutex> lock(this->lock);
+    return this->shouldTerminate;
+}

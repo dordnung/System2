@@ -27,10 +27,11 @@
 
 #include "extension.h"
 #include "Request.h"
+#include "Thread.h"
 #include <map>
 
 
-class RequestThread : public IThread {
+class RequestThread : public Thread {
 private:
     static uint32_t lastProgressFrame;
     Request *request;
@@ -42,9 +43,6 @@ public:
     } WriteDataInfo;
 
     explicit RequestThread(Request *request);
-
-    virtual void RunThread(IThreadHandle *pThread) = 0;
-    virtual void OnTerminate(IThreadHandle *pThread, bool cancel);
 
     static size_t WriteData(char *ptr, size_t size, size_t nmemb, void *userdata);
     static size_t ReadFile(char *buffer, size_t size, size_t nitems, void *instream);

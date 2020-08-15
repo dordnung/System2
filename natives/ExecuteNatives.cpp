@@ -200,13 +200,7 @@ cell_t NativeCompress(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     ExecuteThread *commandThread = new ExecuteThread(command, params[6], callback);
-    if (!system2Extension.RegisterAndStartThread(commandThread)) {
-        delete commandThread;
-
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    commandThread->RunThread();
 
     return 1;
 }
@@ -245,13 +239,6 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
-    if (!system2Extension.RegisterAndStartThread(commandThread)) {
-        delete commandThread;
-
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
 
     return 1;
 }
@@ -269,12 +256,7 @@ cell_t NativeExecuteThreaded(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     ExecuteThread *commandThread = new ExecuteThread(command, params[3], callback);
-    if (!system2Extension.RegisterAndStartThread(commandThread)) {
-        delete commandThread;
-
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
+    commandThread->RunThread();
 
     return 1;
 }
@@ -292,12 +274,7 @@ cell_t NativeExecuteFormattedThreaded(IPluginContext *pContext, const cell_t *pa
 
     // Start the thread that executes the command - with data
     ExecuteThread *commandThread = new ExecuteThread(command, params[2], callback);
-    if (!system2Extension.RegisterAndStartThread(commandThread)) {
-        delete commandThread;
-
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
+    commandThread->RunThread();
 
     return 1;
 }

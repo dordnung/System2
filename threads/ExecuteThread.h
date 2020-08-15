@@ -26,6 +26,7 @@
 #define _SYSTEM2_EXECUTE_THREAD_H_
 
 #include "extension.h"
+#include "Thread.h"
 
  // Define Posix
 #if defined  _WIN32
@@ -37,7 +38,7 @@
 #endif
 
 
-class ExecuteThread : public IThread {
+class ExecuteThread : public Thread {
 private:
     std::string command;
     int data;
@@ -47,8 +48,8 @@ private:
 public:
     ExecuteThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
+protected:
+    void Run();
 };
 
 #endif

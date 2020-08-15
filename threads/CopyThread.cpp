@@ -29,10 +29,10 @@
 
 
 CopyThread::CopyThread(std::string from, std::string to, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), from(from), to(to), data(data), callbackFunction(callbackFunction) {}
+    : Thread(), from(from), to(to), data(data), callbackFunction(callbackFunction) {}
 
 
-void CopyThread::RunThread(IThreadHandle *pHandle) {
+void CopyThread::Run() {
     char filePath[PLATFORM_MAX_PATH + 1];
     char copyPath[PLATFORM_MAX_PATH + 1];
 
@@ -65,10 +65,4 @@ void CopyThread::RunThread(IThreadHandle *pHandle) {
 
     // Add callback to queue
     system2Extension.AppendCallback(std::make_shared<CopyCallback>(this->callbackFunction, success, this->from, this->to, this->data));
-}
-
-
-void CopyThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
 }

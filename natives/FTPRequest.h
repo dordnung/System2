@@ -42,10 +42,10 @@ public:
 
     virtual FTPRequest *Clone() const;
 
-    bool MakeRequest();
+    void MakeRequest();
 
 private:
-    bool MakeThread();
+    void MakeThread();
 };
 
 

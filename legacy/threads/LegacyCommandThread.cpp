@@ -28,10 +28,10 @@
 
 
 LegacyCommandThread::LegacyCommandThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), command(command), data(data), callbackFunction(callbackFunction) {}
+    : Thread(), command(command), data(data), callbackFunction(callbackFunction) {}
 
 
-void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
+void LegacyCommandThread::Run() {
     // Redirect everything to output
     std::string redirect = " 2>&1";
     std::string realCommand = this->command;
@@ -80,10 +80,4 @@ void LegacyCommandThread::RunThread(IThreadHandle *pHandle) {
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, output, this->command, this->data, state));
-}
-
-
-void LegacyCommandThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
 }

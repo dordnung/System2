@@ -26,12 +26,10 @@
 #define _SYSTEM2_LEGACY_FTP_THREAD_H_
 
 #include "extension.h"
+#include "Thread.h"
+#include <mutex>
 
-
- // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-extern IMutex *legacyFTPMutex;
-
-class LegacyFTPThread : public IThread {
+class LegacyFTPThread : public Thread {
 private:
     bool download;
 
@@ -46,14 +44,17 @@ private:
 
     std::shared_ptr<CallbackFunction_t> callbackFunction;
 
+    // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
+    std::mutex mutex;
+
 public:
     LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url,
                     std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
-
     static size_t UploadFTP(void *buffer, size_t size, size_t nmemb, void *userdata);
+
+protected:
+    void Run();
 };
 
 #endif

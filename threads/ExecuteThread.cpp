@@ -27,9 +27,9 @@
 
 
 ExecuteThread::ExecuteThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), command(command), data(data), callbackFunction(callbackFunction) {}
+    : Thread(), command(command), data(data), callbackFunction(callbackFunction) {}
 
-void ExecuteThread::RunThread(IThreadHandle *pHandle) {
+void ExecuteThread::Run() {
     bool success = true;
     std::string output;
     int exitStatus;
@@ -51,9 +51,4 @@ void ExecuteThread::RunThread(IThreadHandle *pHandle) {
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<ExecuteCallback>(this->callbackFunction, success, exitStatus, output, this->command, this->data));
-}
-
-void ExecuteThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
 }

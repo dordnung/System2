@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------
- * File        LegacyPageThread.h
+ * File        Thread.h
  * Authors     David Ordnung
  * License     GPLv3
  * Web         http://dordnung.de
@@ -22,35 +22,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-#ifndef _SYSTEM2_LEGACY_PAGE_THREAD_H_
-#define _SYSTEM2_LEGACY_PAGE_THREAD_H_
+#ifndef _SYSTEM2_THREAD_H_
+#define _SYSTEM2_THREAD_H_
 
-#include "extension.h"
-#include "Thread.h"
+#include <mutex>
+#include <thread>
 
-
-class LegacyPageThread : public Thread {
+class Thread {
 private:
-    std::string url;
-    std::string post;
-    std::string useragent;
-    int data;
-
-    std::shared_ptr<CallbackFunction_t> callbackFunction;
-
-public:
-    typedef struct {
-        std::string result;
-        int data;
-        std::shared_ptr<CallbackFunction_t> callbackFunction;
-    } PageInfo;
-
-    LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
-
-    static size_t GetPage(void *buffer, size_t size, size_t nmemb, void *userdata);
+    bool shouldTerminate;
+    std::unique_ptr<std::thread> threader;
+    std::mutex lock;
 
 protected:
-    void Run();
+    virtual void Run() = 0;
+    bool ShouldTerminate();
+
+public:
+    Thread();
+
+    void RunThread();
+    void WaitUntilFinished();
 };
 
 #endif

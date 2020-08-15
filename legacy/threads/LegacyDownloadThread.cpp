@@ -27,10 +27,10 @@
 
 
 LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), url(url), localFile(localFile), data(data), callbackFunction(callbackFunction) {}
+    : Thread(), url(url), localFile(localFile), data(data), callbackFunction(callbackFunction) {}
 
 
-void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
+void LegacyDownloadThread::Run() {
     // Get full path to the local file and open it
     char fullLocalPath[PLATFORM_MAX_PATH + 1];
     g_pSM->BuildPath(Path_Game, fullLocalPath, sizeof(fullLocalPath), this->localFile.c_str());
@@ -97,13 +97,6 @@ void LegacyDownloadThread::RunThread(IThreadHandle *pHandle) {
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
 }
-
-
-void LegacyDownloadThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
-}
-
 
 size_t LegacyDownloadThread::WriteFile(void *buffer, size_t size, size_t nmemb, void *userdata) {
     // Write to the file

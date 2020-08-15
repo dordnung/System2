@@ -29,10 +29,10 @@
 
 
 LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), url(url), post(post), useragent(useragent), data(data), callbackFunction(callbackFunction) {}
+    : Thread(), url(url), post(post), useragent(useragent), data(data), callbackFunction(callbackFunction) {}
 
 
-void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
+void LegacyPageThread::Run() {
     LegacyCommandState state = CMD_SUCCESS;
 
     // Create a page info for the write function
@@ -92,12 +92,6 @@ void LegacyPageThread::RunThread(IThreadHandle *pHandle) {
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, page.result, std::string(), this->data, state));
-}
-
-
-void LegacyPageThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
 }
 
 

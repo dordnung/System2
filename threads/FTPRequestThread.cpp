@@ -26,12 +26,9 @@
 #include "FTPResponseCallback.h"
 
 
- // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-IMutex *ftpMutex = NULL;
-
 FTPRequestThread::FTPRequestThread(FTPRequest *ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
 
-void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
+void FTPRequestThread::Run() {
     // Create a curl object
     CURL *curl = curl_easy_init();
 
@@ -102,23 +99,22 @@ void FTPRequestThread::RunThread(IThreadHandle *pHandle) {
         }
 
         // Only one process can be connect to FTP
-        ftpMutex->Lock();
-
-        // Perform curl operation and create the callback
         std::shared_ptr<FTPResponseCallback> callback;
-        if (curl_easy_perform(curl) == CURLE_OK) {
-            callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content);
-        } else {
-            if (!strlen(errorBuffer)) {
-                // Set readable error if there is no one
-                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't execute FTP request");
+        {
+            std::lock_guard<std::mutex> lock(this->mutex);
+
+            // Perform curl operation and create the callback
+            if (curl_easy_perform(curl) == CURLE_OK) {
+                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content);
             } else {
-                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, errorBuffer);
+                if (!strlen(errorBuffer)) {
+                    // Set readable error if there is no one
+                    callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, "Couldn't execute FTP request");
+                } else {
+                    callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, errorBuffer);
+                }
             }
         }
-
-        // Only one process can be connect to FTP
-        ftpMutex->Unlock();
 
         // Clean up curl
         curl_easy_cleanup(curl);

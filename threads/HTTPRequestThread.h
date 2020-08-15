@@ -44,8 +44,6 @@ public:
 
     HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod requestMethod);
 
-    virtual void RunThread(IThreadHandle *pThread);
-
     static size_t ReadHeader(char *buffer, size_t size, size_t nitems, void *userdata);
     static bool EqualsIgnoreCase(const std::string &str1, const std::string &str2);
 
@@ -53,6 +51,9 @@ private:
     static inline std::string& LeftTrim(std::string &str);
     static inline std::string& RightTrim(std::string &str);
     static inline std::string& Trim(std::string &str);
+
+protected:
+    virtual void Run();
 };
 
 

@@ -27,6 +27,7 @@
 
 #include "smsdk_ext.h"
 #include "Callback.h"
+#include "Thread.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -34,17 +35,18 @@
 #include <memory>
 #include <deque>
 #include <vector>
+#include <mutex>
 
 #include <curl/curl.h>
 
 
 class System2Extension : public SDKExtension, public IPluginsListener {
 private:
-    IMutex * threadMutex;
+    std::mutex threadMutex;
 
     std::deque<std::shared_ptr<Callback>> callbackQueue;
     std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
-    std::vector<IThreadHandle *> runningThreads;
+    std::vector<Thread *> runningThreads;
 
     volatile uint32_t frames;
     bool isRunning;
@@ -59,8 +61,8 @@ public:
 
     void AppendCallback(std::shared_ptr<Callback> callback);
 
-    bool RegisterAndStartThread(IThread *thread);
-    void UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle);
+    void RegisterThread(Thread *thread);
+    void UnregisterThread(Thread * thread);
 
     std::shared_ptr<CallbackFunction_t> CreateCallbackFunction(IPluginFunction *function);
 

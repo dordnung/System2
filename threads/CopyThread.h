@@ -26,9 +26,10 @@
 #define _SYSTEM2_COPY_THREAD_H_
 
 #include "extension.h"
+#include "thread.h"
 
 
-class CopyThread : public IThread {
+class CopyThread : public Thread {
 private:
     std::string from;
     std::string to;
@@ -39,8 +40,8 @@ private:
 public:
     CopyThread(std::string from, std::string to, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
+protected:
+    void Run();
 };
 
 #endif

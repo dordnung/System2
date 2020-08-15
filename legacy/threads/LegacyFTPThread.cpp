@@ -28,15 +28,15 @@
 
 
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
-IMutex *legacyFTPMutex = NULL;
+std::mutex legacyFTPMutex;
 
 LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::string localFile, std::string url,
                                  std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
-    : IThread(), download(download), remoteFile(remoteFile), localFile(localFile), host(url),
+    : Thread(), download(download), remoteFile(remoteFile), localFile(localFile), host(url),
     username(user), password(pw), port(port), data(data), callbackFunction(callbackFunction) {}
 
 
-void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
+void LegacyFTPThread::Run() {
     // Get the full path to the local file
     char fullLocalFilePath[PLATFORM_MAX_PATH + 1];
     g_pSM->BuildPath(Path_Game, fullLocalFilePath, sizeof(fullLocalFilePath), this->localFile.c_str());
@@ -58,93 +58,86 @@ void LegacyFTPThread::RunThread(IThreadHandle *pHandle) {
     }
 
     // Only one process can be connect to FTP
-    legacyFTPMutex->Lock();
-
-    // Init. Curl
     std::string error;
-    CURL *curl = curl_easy_init();
-    if (curl) {
-        char errorBuffer[CURL_ERROR_SIZE + 1];
+    {
+        std::lock_guard<std::mutex> lock(this->mutex);
 
-        // Get progress info
-        LegacyDownloadThread::ProgressInfo progress =
-        {
-            0,
-            this->data,
-            this->callbackFunction
-        };
+        // Init. Curl
+        CURL* curl = curl_easy_init();
+        if (curl) {
+            char errorBuffer[CURL_ERROR_SIZE + 1];
 
-        // Get whole URL
-        std::string fullURL = "ftp://" + this->host + "/" + this->remoteFile;
+            // Get progress info
+            LegacyDownloadThread::ProgressInfo progress =
+            {
+                0,
+                this->data,
+                this->callbackFunction
+            };
 
-        // Set up curl
-        curl_easy_setopt(curl, CURLOPT_URL, fullURL.c_str());
-        curl_easy_setopt(curl, CURLOPT_PORT, this->port);
-        curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, LegacyDownloadThread::ProgressUpdated);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
+            // Get whole URL
+            std::string fullURL = "ftp://" + this->host + "/" + this->remoteFile;
+
+            // Set up curl
+            curl_easy_setopt(curl, CURLOPT_URL, fullURL.c_str());
+            curl_easy_setopt(curl, CURLOPT_PORT, this->port);
+            curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+            curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+            curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+            curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, LegacyDownloadThread::ProgressUpdated);
+            curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &progress);
 
 #if defined unix || defined __unix__ || defined __linux__ || defined __unix || defined __APPLE__ || defined __darwin__
-        // Use our own ca-bundle on unix like systems
-        std::string caFile = system2Extension.GetCertificateFile();
-        if (!caFile.empty()) {
-            curl_easy_setopt(curl, CURLOPT_CAINFO, caFile.c_str());
-        }
+            // Use our own ca-bundle on unix like systems
+            std::string caFile = system2Extension.GetCertificateFile();
+            if (!caFile.empty()) {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, caFile.c_str());
+            }
 #endif
 
-        // Login?
-        if (!this->username.empty()) {
-            std::string loginData = this->username + ":" + this->password;
-            curl_easy_setopt(curl, CURLOPT_USERPWD, loginData.c_str());
+            // Login?
+            if (!this->username.empty()) {
+                std::string loginData = this->username + ":" + this->password;
+                curl_easy_setopt(curl, CURLOPT_USERPWD, loginData.c_str());
+            }
+
+            // Upload stuff
+            if (!download) {
+                // Get the size of the file
+                fseek(localFile, 0L, SEEK_END);
+                curl_off_t fsize = (curl_off_t)ftell(localFile);
+                fseek(localFile, 0L, SEEK_SET);
+
+                curl_easy_setopt(curl, CURLOPT_READFUNCTION, UploadFTP);
+                curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+                curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
+                curl_easy_setopt(curl, CURLOPT_READDATA, localFile);
+                curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
+            } else {
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, LegacyDownloadThread::WriteFile);
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, localFile);
+            }
+
+            // Perform and clean
+            if (curl_easy_perform(curl) == CURLE_OK) {
+                // Clean error buffer if there was no error
+                error.clear();
+            } else if (strlen(errorBuffer) < 2) {
+                // Set readable error if there is no one
+                error = "Couldn't execute FTP command";
+            } else {
+                error = errorBuffer;
+            }
+
+            curl_easy_cleanup(curl);
         }
 
-        // Upload stuff
-        if (!download) {
-            // Get the size of the file
-            fseek(localFile, 0L, SEEK_END);
-            curl_off_t fsize = (curl_off_t)ftell(localFile);
-            fseek(localFile, 0L, SEEK_SET);
-
-            curl_easy_setopt(curl, CURLOPT_READFUNCTION, UploadFTP);
-            curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-            curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR_RETRY);
-            curl_easy_setopt(curl, CURLOPT_READDATA, localFile);
-            curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, fsize);
-        } else {
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, LegacyDownloadThread::WriteFile);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, localFile);
-        }
-
-        // Perform and clean
-        if (curl_easy_perform(curl) == CURLE_OK) {
-            // Clean error buffer if there was no error
-            error.clear();
-        } else if (strlen(errorBuffer) < 2) {
-            // Set readable error if there is no one
-            error = "Couldn't execute FTP command";
-        } else {
-            error = errorBuffer;
-        }
-
-        curl_easy_cleanup(curl);
+        // Close file
+        fclose(localFile);
     }
-
-    // Close file
-    fclose(localFile);
-
-    // We are finished
-    legacyFTPMutex->Unlock();
 
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
-}
-
-
-void LegacyFTPThread::OnTerminate(IThreadHandle *pThread, bool cancel) {
-    system2Extension.UnregisterAndDeleteThreadHandle(pThread);
-    delete this;
 }
 
 

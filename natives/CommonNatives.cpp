@@ -47,12 +47,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that copys a file
     CopyThread *copyThread = new CopyThread(from, to, params[4], callback);
-    if (!system2Extension.RegisterAndStartThread(copyThread)) {
-        delete copyThread;
-
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
+    copyThread->RunThread();
 
     return 1;
 }

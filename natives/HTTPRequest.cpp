@@ -39,40 +39,33 @@ HTTPRequest *HTTPRequest::Clone() const {
 }
 
 
-bool HTTPRequest::Get() {
-    return this->MakeThread(METHOD_GET);
+void HTTPRequest::Get() {
+    MakeThread(METHOD_GET);
 }
 
-bool HTTPRequest::Post() {
-    return this->MakeThread(METHOD_POST);
+void HTTPRequest::Post() {
+    MakeThread(METHOD_POST);
 }
 
-bool HTTPRequest::Put() {
-    return this->MakeThread(METHOD_PUT);
+void HTTPRequest::Put() {
+    MakeThread(METHOD_PUT);
 }
 
-bool HTTPRequest::Patch() {
-    return this->MakeThread(METHOD_PATCH);
+void HTTPRequest::Patch() {
+    MakeThread(METHOD_PATCH);
 }
 
-bool HTTPRequest::Delete() {
-    return this->MakeThread(METHOD_DELETE);
+void HTTPRequest::Delete() {
+    MakeThread(METHOD_DELETE);
 }
 
-bool HTTPRequest::Head() {
-    return this->MakeThread(METHOD_HEAD);
+void HTTPRequest::Head() {
+    MakeThread(METHOD_HEAD);
 }
 
 
-bool HTTPRequest::MakeThread(HTTPRequestMethod method) {
+void HTTPRequest::MakeThread(HTTPRequestMethod method) {
     // Make a copy for the thread, so it works independent
     HTTPRequestThread *requestThread = new HTTPRequestThread(this->Clone(), method);
-    if (!system2Extension.RegisterAndStartThread(requestThread)) {
-        delete requestThread->httpRequest;
-        delete requestThread;
-
-        return false;
-    }
-
-    return true;
+    requestThread->RunThread();
 }

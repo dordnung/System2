@@ -348,11 +348,7 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    if (!request->Get()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Get();
     return 1;
 }
 
@@ -362,11 +358,7 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    if (!request->Post()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Post();
     return 1;
 }
 
@@ -376,11 +368,7 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    if (!request->Put()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Put();
     return 1;
 }
 
@@ -390,11 +378,7 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    if (!request->Patch()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Patch();
     return 1;
 }
 
@@ -404,11 +388,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
         return 0;
     }
 
-    if (!request->Delete()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Delete();
     return 1;
 }
 
@@ -418,11 +398,7 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
         return 0;
     }
 
-    if (!request->Head()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->Head();
     return 1;
 }
 
@@ -526,11 +502,7 @@ cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *par
         return 0;
     }
 
-    if (!request->MakeRequest()) {
-        pContext->ThrowNativeError("Couldn't create a new thread");
-        return 0;
-    }
-
+    request->MakeRequest();
     return 1;
 }
 

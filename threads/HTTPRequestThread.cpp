@@ -31,7 +31,7 @@ HTTPRequestThread::HTTPRequestThread(HTTPRequest *httpRequest, HTTPRequestMethod
     : RequestThread(httpRequest), requestMethod(requestMethod), httpRequest(httpRequest) {};
 
 
-void HTTPRequestThread::RunThread(IThreadHandle *pHandle) {
+void HTTPRequestThread::Run() {
     // Create a curl object
     CURL *curl = curl_easy_init();
 

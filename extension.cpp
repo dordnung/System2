@@ -41,7 +41,7 @@
 #endif
 
 
-System2Extension::System2Extension() : threadMutex(NULL), frames(0), isRunning(false) {};
+System2Extension::System2Extension() : frames(0), isRunning(false) {};
 
 bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     this->frames = 0;
@@ -51,11 +51,6 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
     sharesys->AddNatives(myself, system2_natives);
     sharesys->AddNatives(myself, system2_legacy_natives);
     sharesys->RegisterLibrary(myself, "system2");
-
-    // Creates needed mutexes
-    threadMutex = threader->MakeMutex();
-    ftpMutex = threader->MakeMutex();
-    legacyFTPMutex = threader->MakeMutex();
 
     // Create handles
     executeCallbackHandler.Initialize();
@@ -75,21 +70,21 @@ bool System2Extension::SDK_OnLoad(char *error, size_t err_max, bool late) {
 }
 
 void System2Extension::SDK_OnUnload() {
-    this->threadMutex->Lock();
+    {
+        std::lock_guard<std::mutex> lock(this->threadMutex);
 
-    // Mark that we are not running anymore
-    this->isRunning = false;
+        // Mark that we are not running anymore
+        this->isRunning = false;
 
-    // Remove game frame hook so no callback will run anymore
-    smutils->RemoveGameFrameHook(&OnGameFrameHit);
-
-    this->threadMutex->Unlock();
+        // Remove game frame hook so no callback will run anymore
+        smutils->RemoveGameFrameHook(&OnGameFrameHit);
+    }
 
     // Wait until all threads are finished
     if (runningThreads.size() > 0) {
         rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
         for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
-            (*it)->WaitForThread();
+            (*it)->WaitUntilFinished();
         }
         rootconsole->ConsolePrint("[System2] All threads finished");
     }
@@ -112,11 +107,6 @@ void System2Extension::SDK_OnUnload() {
     this->callbackFunctions.clear();
     this->runningThreads.clear();
 
-    // Remove created mutexes
-    this->threadMutex->DestroyThis();
-    ftpMutex->DestroyThis();
-    legacyFTPMutex->DestroyThis();
-
     // Finally clean up CURL
     curl_global_cleanup();
 }
@@ -138,9 +128,10 @@ void System2Extension::OnPluginUnloaded(IPlugin *plugin) {
 
 void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
     // Lock mutex to gain thread safety
-    while (!this->threadMutex->TryLock()) {
+    while (!this->threadMutex.try_lock()) {
         sleep_ms(1);
     }
+    std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
 
     if (this->isRunning) {
         // Add the callback to the queue and unlock mutex again
@@ -149,40 +140,28 @@ void System2Extension::AppendCallback(std::shared_ptr<Callback> callback) {
         // Abort the callback if we not running anymore
         callback->Abort();
     }
-
-    this->threadMutex->Unlock();
 }
 
 
-bool System2Extension::RegisterAndStartThread(IThread *thread) {
-    // Create the thread suspended, add it to the list and then start it
-    IThreadHandle *handle = threader->MakeThread(thread, Thread_CreateSuspended);
-    if (!handle) {
-        return false;
+void System2Extension::RegisterThread(Thread *thread) {
+    // Add the thread to the list and then start it
+    {
+        std::lock_guard<std::mutex> lock(this->threadMutex);
+        this->runningThreads.push_back(thread);
     }
-
-    this->threadMutex->Lock();
-    this->runningThreads.push_back(handle);
-    this->threadMutex->Unlock();
-
-    handle->Unpause();
-    return true;
 }
 
-void System2Extension::UnregisterAndDeleteThreadHandle(IThreadHandle *threadHandle) {
-    while (!this->threadMutex->TryLock()) {
+void System2Extension::UnregisterThread(Thread *thread) {
+    while (!this->threadMutex.try_lock()) {
         sleep_ms(1);
     }
 
+    std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
+
     // Just remove from the list of running threads
     if (this->isRunning) {
-        this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), threadHandle), this->runningThreads.end());
+        this->runningThreads.erase(std::remove(this->runningThreads.begin(), this->runningThreads.end(), thread), this->runningThreads.end());
     }
-
-    // Destroy the thread handle to free resources
-    threadHandle->DestroyThis();
-
-    this->threadMutex->Unlock();
 }
 
 
@@ -246,23 +225,24 @@ void System2Extension::GameFrameHit() {
     this->frames++;
 
     // Lock the mutex to gain thread safety
-    if (!this->threadMutex->TryLock()) {
+    if (!this->threadMutex.try_lock()) {
         // Couldn't lock -> do not wait
         return;
     }
 
-    // Are there outstandig callbacks?
     std::shared_ptr<Callback> callback = NULL;
-    if (this->isRunning && !this->callbackQueue.empty()) {
-        callback = this->callbackQueue.front();
+    {
+        std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
 
-        // Remove the callback from the queue
-        // No deleting needed, as callbacks are shared pointers
-        callbackQueue.pop_front();
+        // Are there outstandig callbacks?
+        if (this->isRunning && !this->callbackQueue.empty()) {
+            callback = this->callbackQueue.front();
+
+            // Remove the callback from the queue
+            // No deleting needed, as callbacks are shared pointers
+            callbackQueue.pop_front();
+        }
     }
-
-    // Unlock mutex
-    this->threadMutex->Unlock();
 
     // Proccess callback outside mutex lock to avoid infinite loop
     if (callback) {

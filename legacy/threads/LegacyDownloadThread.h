@@ -26,9 +26,10 @@
 #define _SYSTEM2_LEGACY_DOWNLOAD_THREAD_H_
 
 #include "extension.h"
+#include "Thread.h"
 
 
-class LegacyDownloadThread : public IThread {
+class LegacyDownloadThread : public Thread {
 private:
     std::string url;
     std::string localFile;
@@ -45,11 +46,11 @@ public:
 
     LegacyDownloadThread(std::string url, std::string localFile, int data, std::shared_ptr<CallbackFunction_t> callbackFunction);
 
-    void RunThread(IThreadHandle *pThread);
-    void OnTerminate(IThreadHandle *pThread, bool cancel);
-
     static size_t WriteFile(void *buffer, size_t size, size_t nmemb, void *userdata);
     static int ProgressUpdated(void *data, double dltotal, double dlnow, double ultotal, double ulnow);
+
+protected:
+    void Run();
 };
 
 #endif

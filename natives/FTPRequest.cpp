@@ -38,20 +38,12 @@ FTPRequest *FTPRequest::Clone() const {
     return new FTPRequest(*this);
 }
 
-bool FTPRequest::MakeRequest() {
+void FTPRequest::MakeRequest() {
     return this->MakeThread();
 }
 
-
-bool FTPRequest::MakeThread() {
+void FTPRequest::MakeThread() {
     // Make a copy for the thread, so it works independent
     FTPRequestThread *requestThread = new FTPRequestThread(this->Clone());
-    if (!system2Extension.RegisterAndStartThread(requestThread)) {
-        delete requestThread->ftpRequest;
-        delete requestThread;
-
-        return false;
-    }
-
-    return true;
+    requestThread->RunThread();
 }
