@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ cell_t NativeCopyFile(IPluginContext *pContext, const cell_t *params) {
 
 
 cell_t NativeGetGameDir(IPluginContext *pContext, const cell_t *params) {
-    pContext->StringToLocalUTF8(params[1], params[2], smutils->GetGamePath(), NULL);
+    pContext->StringToLocalUTF8(params[1], params[2], smutils->GetGamePath(), nullptr);
     return 1;
 }
 
@@ -87,7 +87,7 @@ cell_t NativeGetStringMD5(IPluginContext *pContext, const cell_t *params) {
     md5.finalize();
 
     // Save the MD5 hash to the plugins buffer
-    pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), nullptr);
     return 1;
 }
 
@@ -104,14 +104,14 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     // Open the file
     std::ifstream file(fullFilePath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
     if (file.bad() || !file.is_open()) {
-        pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
+        pContext->StringToLocalUTF8(params[2], params[3], "", nullptr);
         return false;
     }
 
     // Get the size of the file and save the content to a var
     int size = (int)file.tellg();
     if (size < 1) {
-        pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
+        pContext->StringToLocalUTF8(params[2], params[3], "", nullptr);
         return false;
     }
 
@@ -129,7 +129,7 @@ cell_t NativeGetFileMD5(IPluginContext *pContext, const cell_t *params) {
     delete[] memblock;
 
     // Save the MD5 hash to the plugins buffer
-    pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), nullptr);
 
     return true;
 }
@@ -149,7 +149,7 @@ cell_t NativeGetStringCRC32(IPluginContext *pContext, const cell_t *params) {
     crc32ToHex(crc32buf(str, strlen(str)), crc32, sizeof(crc32));
 
     // Save the CRC32 hash to the plugins buffer
-    pContext->StringToLocalUTF8(params[2], params[3], crc32, NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], crc32, nullptr);
     return 1;
 }
 
@@ -166,14 +166,14 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
     // Open the file
     std::ifstream file(fullFilePath, std::ifstream::in | std::ifstream::binary | std::ifstream::ate);
     if (file.bad() || !file.is_open()) {
-        pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
+        pContext->StringToLocalUTF8(params[2], params[3], "", nullptr);
         return false;
     }
 
     // Get the size of the file and save the content to a var
     int size = (int)file.tellg();
     if (size < 1) {
-        pContext->StringToLocalUTF8(params[2], params[3], "", NULL);
+        pContext->StringToLocalUTF8(params[2], params[3], "", nullptr);
         return false;
     }
 
@@ -190,7 +190,7 @@ cell_t NativeGetFileCRC32(IPluginContext *pContext, const cell_t *params) {
     delete[] memblock;
 
     // Save the CRC32 hash to the plugins buffer
-    pContext->StringToLocalUTF8(params[2], params[3], crc32, NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], crc32, nullptr);
 
     return true;
 }
@@ -206,7 +206,7 @@ cell_t NativeURLEncode(IPluginContext *pContext, const cell_t *params) {
     if (curl) {
         char *output = curl_easy_escape(curl, str, 0);
         if (output) {
-            pContext->StringToLocalUTF8(params[1], params[2], output, NULL);
+            pContext->StringToLocalUTF8(params[1], params[2], output, nullptr);
             curl_free(output);
 
             curl_easy_cleanup(curl);
@@ -229,9 +229,9 @@ cell_t NativeURLDecode(IPluginContext *pContext, const cell_t *params) {
     // Use the curl unescape method to decode it
     CURL *curl = curl_easy_init();
     if (curl) {
-        char *output = curl_easy_unescape(curl, str, 0, NULL);
+        char *output = curl_easy_unescape(curl, str, 0, nullptr);
         if (output) {
-            pContext->StringToLocalUTF8(params[1], params[2], output, NULL);
+            pContext->StringToLocalUTF8(params[1], params[2], output, nullptr);
             curl_free(output);
 
             curl_easy_cleanup(curl);

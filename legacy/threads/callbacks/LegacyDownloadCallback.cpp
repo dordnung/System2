@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,5 +41,5 @@ void LegacyDownloadCallback::Fire() {
     this->callbackFunction->function->PushFloat(this->ulTotal);
     this->callbackFunction->function->PushFloat(this->ulNow);
     this->callbackFunction->function->PushCell(this->data);
-    this->callbackFunction->function->Execute(NULL);
+    this->callbackFunction->function->Execute(nullptr);
 }

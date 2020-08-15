@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ void ExecuteThread::Run() {
 
     // Execute the command
     FILE *commandFile = PosixOpen(this->command.c_str(), "r");
-    if (commandFile != NULL) {
+    if (commandFile != nullptr) {
         char buffer[1024];
-        while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
+        while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
             // Add buffer to the output
             output += buffer;
         }

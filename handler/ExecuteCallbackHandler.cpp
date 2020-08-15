@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2018 David Ordnung
+* Copyright (C) 2013-2020 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ ExecuteCallbackHandler::ExecuteCallbackHandler() : handleType(0) {};
 
 void ExecuteCallbackHandler::Initialize() {
     HandleAccess rules;
-    handlesys->InitAccessDefaults(NULL, &rules);
+    handlesys->InitAccessDefaults(nullptr, &rules);
 
     // Do not allowe deleting of the handle, as this will always deleted after the callback
     rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
@@ -38,10 +38,10 @@ void ExecuteCallbackHandler::Initialize() {
     this->handleType = handlesys->CreateType("System2ExecuteCallback",
                                              this,
                                              0,
-                                             NULL,
+                                             nullptr,
                                              &rules,
                                              myself->GetIdentity(),
-                                             NULL);
+                                             nullptr);
 }
 
 void ExecuteCallbackHandler::Shutdown() {
@@ -54,7 +54,7 @@ Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback *callback, Identit
                                    callback,
                                    owner,
                                    myself->GetIdentity(),
-                                   NULL);
+                                   nullptr);
 }
 
 HandleError ExecuteCallbackHandler::ReadHandle(Handle_t hndl, IdentityToken_t *owner, ExecuteCallback **callback) {

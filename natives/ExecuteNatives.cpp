@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ cell_t NativeCheck7ZIP(IPluginContext *pContext, const cell_t *params) {
     std::string binDir;
     bool valid = Get7ZIPExecutable(params[3], binDir);
 
-    pContext->StringToLocalUTF8(params[1], params[2], binDir.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[1], params[2], binDir.c_str(), nullptr);
 
     return valid;
 }
@@ -388,7 +388,7 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
     std::string output;
 
     char buffer[1024];
-    while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
+    while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
         // Add buffer to the output
         output += buffer;
     }
@@ -397,6 +397,6 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
     PosixClose(commandFile);
 
     // Set the result output
-    pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), nullptr);
     return 1;
 }

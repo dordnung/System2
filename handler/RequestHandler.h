@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2018 David Ordnung
+* Copyright (C) 2013-2020 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,14 +44,14 @@ public:
                                        request,
                                        owner,
                                        myself->GetIdentity(),
-                                       NULL);
+                                       nullptr);
     }
 
     template<class RequestClass>
     Handle_t CreateLocaleHandle(RequestClass *request, IdentityToken_t *owner) {
         // Do not allow deleting or cloning for the plugin
         HandleAccess rules;
-        g_pHandleSys->InitAccessDefaults(NULL, &rules);
+        g_pHandleSys->InitAccessDefaults(nullptr, &rules);
         rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
         rules.access[HandleAccess_Clone] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
 
@@ -60,7 +60,7 @@ public:
                                          request,
                                          &sec,
                                          &rules,
-                                         NULL);
+                                         nullptr);
     }
 
     template<class RequestClass>

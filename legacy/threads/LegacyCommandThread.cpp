@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,11 @@ void LegacyCommandThread::Run() {
     std::string output;
 
     // Was there an error?
-    if (commandFile != NULL) {
+    if (commandFile != nullptr) {
         bool found = false;
 
         char buffer[MAX_RESULT_LENGTH + 1];
-        while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
+        while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
             found = true;
 
             // More than MAX_RESULT_LENGTH?

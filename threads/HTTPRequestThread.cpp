@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ void HTTPRequestThread::Run() {
 
     if (curl) {
         // Apply general request stuff
-        WriteDataInfo writeData = { std::string(), NULL };
+        WriteDataInfo writeData = { std::string(), nullptr };
         if (!this->ApplyRequest(curl, writeData)) {
             // Create error callback and clean up curl
             system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Can not open output file", this->requestMethod));
@@ -79,7 +79,7 @@ void HTTPRequestThread::Run() {
         }
 
         // Set headers
-        struct curl_slist *headers = NULL;
+        struct curl_slist *headers = nullptr;
         if (!this->httpRequest->headers.empty()) {
             std::string header;
             for (auto it = this->httpRequest->headers.begin(); it != this->httpRequest->headers.end(); ++it) {

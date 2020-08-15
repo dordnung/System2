@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,5 +33,5 @@ void CopyCallback::Fire() {
     this->callbackFunction->function->PushString(this->from.c_str());
     this->callbackFunction->function->PushString(this->to.c_str());
     this->callbackFunction->function->PushCell(this->data);
-    this->callbackFunction->function->Execute(NULL);
+    this->callbackFunction->function->Execute(nullptr);
 }

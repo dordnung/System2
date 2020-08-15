@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ void ExecuteCallback::Fire() {
     this->callbackFunction->function->PushString(this->command.c_str());
     this->callbackFunction->function->PushCell(outputHandle);
     this->callbackFunction->function->PushCell(this->data);
-    this->callbackFunction->function->Execute(NULL);
+    this->callbackFunction->function->Execute(nullptr);
 
     // Delete the output handle when finished
     if (outputHandle != BAD_HANDLE) {
@@ -63,10 +63,10 @@ void ExecuteCallback::Fire() {
 ExecuteCallback *ExecuteCallback::ConvertExecuteCallback(Handle_t hndl, IPluginContext *pContext) {
     HandleError err;
 
-    ExecuteCallback *executeCallback = NULL;
+    ExecuteCallback *executeCallback = nullptr;
     if ((err = executeCallbackHandler.ReadHandle(hndl, pContext->GetIdentity(), &executeCallback)) != HandleError_None) {
         pContext->ThrowNativeError("Invalid execute output handle %x (error %d)", hndl, err);
-        return NULL;
+        return nullptr;
     }
 
     return executeCallback;

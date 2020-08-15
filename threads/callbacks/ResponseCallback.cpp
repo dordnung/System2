@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ ResponseCallback::ResponseCallback(Request *request, CURL *curl, std::string con
     }
 
     // Get the last url
-    char *url = NULL;
+    char *url = nullptr;
     if (curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url) == CURLE_OK && url) {
         this->lastURL = url;
     }
@@ -101,7 +101,7 @@ void ResponseCallback::Fire() {
     this->PreFire();
 
     // Finally execute the callback
-    this->request->responseCallbackFunction->function->Execute(NULL);
+    this->request->responseCallbackFunction->function->Execute(nullptr);
 
     // Delete the request handle when finished
     if (requestHandle != BAD_HANDLE) {

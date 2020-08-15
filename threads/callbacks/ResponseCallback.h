@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2018 David Ordnung
+* Copyright (C) 2013-2020 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,10 +54,10 @@ public:
     static ResponseCallbackClass *ConvertResponse(Handle_t hndl, IPluginContext *pContext) {
         HandleError err;
 
-        ResponseCallbackClass *response = NULL;
+        ResponseCallbackClass *response = nullptr;
         if ((err = responseCallbackHandler.ReadHandle<ResponseCallbackClass>(hndl, pContext->GetIdentity(), &response)) != HandleError_None) {
             pContext->ThrowNativeError("Invalid response handle %x (error %d)", hndl, err);
-            return NULL;
+            return nullptr;
         }
 
         return response;

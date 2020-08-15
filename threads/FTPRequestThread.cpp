@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ void FTPRequestThread::Run() {
 
     if (curl) {
         // Apply general request stuff
-        WriteDataInfo writeData = { std::string(), NULL };
+        WriteDataInfo writeData = { std::string(), nullptr };
         if (!this->ApplyRequest(curl, writeData)) {
             system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open output file"));
             curl_easy_cleanup(curl);
@@ -59,7 +59,7 @@ void FTPRequestThread::Run() {
             curl_easy_setopt(curl, CURLOPT_PASSWORD, this->ftpRequest->password.c_str());
         }
 
-        FILE *inputFile = NULL;
+        FILE *inputFile = nullptr;
         if (!this->ftpRequest->inputFile.empty()) {
             // Get the full path to the file
             char filePath[PLATFORM_MAX_PATH + 1];

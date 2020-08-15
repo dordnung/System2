@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,13 +176,13 @@ void System2Extension::UnregisterThread(Thread *thread) {
 std::shared_ptr<CallbackFunction_t> System2Extension::CreateCallbackFunction(IPluginFunction *function) {
     if (!function || !function->IsRunnable()) {
         // Function is not valid
-        return NULL;
+        return nullptr;
     }
 
     auto plugin = plsys->FindPluginByContext(function->GetParentRuntime()->GetDefaultContext()->GetContext());
     if (!plugin) {
         // Plugin is not valid
-        return NULL;
+        return nullptr;
     }
 
     // Check if we already have the callback function
@@ -238,7 +238,7 @@ void System2Extension::GameFrameHit() {
         return;
     }
 
-    std::shared_ptr<Callback> callback = NULL;
+    std::shared_ptr<Callback> callback = nullptr;
     {
         std::lock_guard<std::mutex> lock(this->threadMutex, std::adopt_lock);
 

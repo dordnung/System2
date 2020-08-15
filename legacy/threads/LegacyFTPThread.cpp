@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ void LegacyFTPThread::Run() {
     g_pSM->BuildPath(Path_Game, fullLocalFilePath, sizeof(fullLocalFilePath), this->localFile.c_str());
 
     // Open the local file
-    FILE *localFile = NULL;
+    FILE *localFile = nullptr;
     if (this->download) {
         // When downloading open writeable
         localFile = fopen(fullLocalFilePath, "wb");

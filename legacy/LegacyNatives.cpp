@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +219,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
     // 7z exists?
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != NULL) {
+    if ((testExist = fopen(zdir, "rb")) != nullptr) {
         fclose(testExist);
 
         // Create the compress command
@@ -275,7 +275,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 
     // Test if the local file exists
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != NULL) {
+    if ((testExist = fopen(zdir, "rb")) != nullptr) {
         fclose(testExist);
 
         // Create the extract command
@@ -356,7 +356,7 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
     // Was there an error?
     if (!commandFile) {
         // Return the error
-        pContext->StringToLocalUTF8(params[1], params[2], "ERROR: Couldn't execute the command!", NULL);
+        pContext->StringToLocalUTF8(params[1], params[2], "ERROR: Couldn't execute the command!", nullptr);
         return CMD_ERROR;
     }
 
@@ -365,7 +365,7 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
     std::string output;
 
     char buffer[MAX_RESULT_LENGTH + 1];
-    while (fgets(buffer, sizeof(buffer), commandFile) != NULL) {
+    while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
         // More than MAX_RESULT_LENGTH?
         if (output.length() + strlen(buffer) >= size_t(params[2] - 1)) {
             // Only make the result full!
@@ -379,10 +379,10 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
 
 
     if (output.empty()) {
-        pContext->StringToLocalUTF8(params[1], params[2], "Empty reading result!", NULL);
+        pContext->StringToLocalUTF8(params[1], params[2], "Empty reading result!", nullptr);
         state = CMD_EMPTY;
     } else {
-        pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), NULL);
+        pContext->StringToLocalUTF8(params[1], params[2], output.c_str(), nullptr);
     }
 
     // Close Posix and return the result

@@ -6,7 +6,7 @@
 * Web         http://dordnung.de
 * -----------------------------------------------------
 *
-* Copyright (C) 2013-2018 David Ordnung
+* Copyright (C) 2013-2020 David Ordnung
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ ResponseCallbackHandler::ResponseCallbackHandler() : handleType(0) {}
 
 void ResponseCallbackHandler::Initialize() {
     HandleAccess rules;
-    handlesys->InitAccessDefaults(NULL, &rules);
+    handlesys->InitAccessDefaults(nullptr, &rules);
 
     // Do not allowe deleting of the handle, as this will always deleted after the callback
     rules.access[HandleAccess_Delete] = HANDLE_RESTRICT_OWNER | HANDLE_RESTRICT_IDENTITY;
@@ -39,10 +39,10 @@ void ResponseCallbackHandler::Initialize() {
         handlesys->CreateType("System2Response",
                               this,
                               0,
-                              NULL,
+                              nullptr,
                               &rules,
                               myself->GetIdentity(),
-                              NULL);
+                              nullptr);
 }
 
 void ResponseCallbackHandler::Shutdown() {

@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +29,17 @@
 
 cell_t NativeResponse_GetLastURL(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[2], params[3], response->lastURL.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], response->lastURL.c_str(), nullptr);
     return 1;
 }
 
 cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -85,7 +85,7 @@ cell_t NativeResponse_GetContent(IPluginContext *pContext, const cell_t *params)
 
 cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -94,7 +94,7 @@ cell_t NativeResponse_GetContentLength(IPluginContext *pContext, const cell_t *p
 
 cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -103,7 +103,7 @@ cell_t NativeResponse_GetStatusCode(IPluginContext *pContext, const cell_t *para
 
 cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -112,7 +112,7 @@ cell_t NativeResponse_GetTotalTime(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -121,7 +121,7 @@ cell_t NativeResponse_GetDownloadSize(IPluginContext *pContext, const cell_t *pa
 
 cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -130,7 +130,7 @@ cell_t NativeResponse_GetUploadSize(IPluginContext *pContext, const cell_t *para
 
 cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -139,7 +139,7 @@ cell_t NativeResponse_GetDownloadSpeed(IPluginContext *pContext, const cell_t *p
 
 cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *params) {
     ResponseCallback *response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -150,17 +150,17 @@ cell_t NativeResponse_GetUploadSpeed(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeHTTPResponse_GetContentType(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
-    pContext->StringToLocalUTF8(params[2], params[3], response->contentType.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[2], params[3], response->contentType.c_str(), nullptr);
     return 1;
 }
 
 cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -169,7 +169,7 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
 
     for (auto it = response->headers.begin(); it != response->headers.end(); ++it) {
         if (HTTPRequestThread::EqualsIgnoreCase(it->first, header)) {
-            pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), NULL);
+            pContext->StringToLocalUTF8(params[3], params[4], response->headers[header].c_str(), nullptr);
             return 1;
         }
     }
@@ -179,7 +179,7 @@ cell_t NativeHTTPResponse_GetHeader(IPluginContext *pContext, const cell_t *para
 
 cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -193,13 +193,13 @@ cell_t NativeHTTPResponse_GetHeaderName(IPluginContext *pContext, const cell_t *
         ++it;
     }
 
-    pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), NULL);
+    pContext->StringToLocalUTF8(params[3], params[4], it->first.c_str(), nullptr);
     return 1;
 }
 
 cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 
@@ -208,7 +208,7 @@ cell_t NativeHTTPResponse_GetHeaders(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeHTTPResponse_GetHTTPVersion(IPluginContext *pContext, const cell_t *params) {
     HTTPResponseCallback *response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);
-    if (response == NULL) {
+    if (response == nullptr) {
         return 0;
     }
 

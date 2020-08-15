@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ void ProgressCallback::Fire() {
     request->progressCallbackFunction->function->PushCell(this->dlNow);
     request->progressCallbackFunction->function->PushCell(this->ulTotal);
     request->progressCallbackFunction->function->PushCell(this->ulNow);
-    request->progressCallbackFunction->function->Execute(NULL);
+    request->progressCallbackFunction->function->Execute(nullptr);
 
     // Delete the request handle when finished
     if (requestHandle != BAD_HANDLE) {

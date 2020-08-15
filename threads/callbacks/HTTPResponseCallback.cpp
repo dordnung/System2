@@ -6,7 +6,7 @@
  * Web         http://dordnung.de
  * -----------------------------------------------------
  *
- * Copyright (C) 2013-2018 David Ordnung
+ * Copyright (C) 2013-2020 David Ordnung
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ HTTPResponseCallback::HTTPResponseCallback(HTTPRequest *httpRequest, CURL *curl,
     }
 
     // Get the content type
-    char *contentType = NULL;
+    char *contentType = nullptr;
     if (curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &contentType) == CURLE_OK && contentType) {
         this->contentType = contentType;
     }
