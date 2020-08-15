@@ -39,7 +39,6 @@
 
 #define MAX_RESULT_LENGTH 4096
 
-
 class LegacyCommandThread : public Thread {
 private:
     std::string command;

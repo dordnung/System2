@@ -25,7 +25,6 @@
 #include "FTPRequestThread.h"
 #include "FTPResponseCallback.h"
 
-
 FTPRequestThread::FTPRequestThread(FTPRequest* ftpRequest) : RequestThread(ftpRequest), ftpRequest(ftpRequest) {};
 
 void FTPRequestThread::Run() {

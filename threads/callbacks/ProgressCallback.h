@@ -28,7 +28,6 @@
 #include "Callback.h"
 #include "Request.h"
 
-
 class ProgressCallback : public Callback {
 private:
     Request* request;

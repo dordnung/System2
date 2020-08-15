@@ -29,7 +29,6 @@
 #include "LegacyCommandState.h"
 #include "Callback.h"
 
-
 class LegacyCommandCallback : public Callback {
 private:
     std::string output;

@@ -28,7 +28,6 @@
 #include "Callback.h"
 #include "extension.h"
 
-
 class CopyCallback : public Callback {
 private:
     bool success;

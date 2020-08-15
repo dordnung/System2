@@ -24,7 +24,6 @@
 
 #include "LegacyCommandCallback.h"
 
-
 LegacyCommandCallback::LegacyCommandCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string output,
                                              std::string command, int data, LegacyCommandState state)
     : Callback(callbackFunction), output(output), command(command), data(data), state(state) {}

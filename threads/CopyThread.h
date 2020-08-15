@@ -28,7 +28,6 @@
 #include "extension.h"
 #include "Thread.h"
 
-
 class CopyThread : public Thread {
 private:
     std::string from;

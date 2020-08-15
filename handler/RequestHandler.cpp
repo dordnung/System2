@@ -25,7 +25,6 @@
 #include "RequestHandler.h"
 #include "Request.h"
 
-
 RequestHandler::RequestHandler() : handleType(0) {}
 
 void RequestHandler::Initialize() {
@@ -46,7 +45,6 @@ void RequestHandler::Shutdown() {
 void RequestHandler::OnHandleDestroy(HandleType_t type, void* object) {
     delete (Request*)object;
 }
-
 
 // Create an instance of the request handler
 RequestHandler requestHandler;

@@ -28,7 +28,6 @@
 #include "extension.h"
 #include "Thread.h"
 
-
 class LegacyPageThread : public Thread {
 private:
     std::string url;

@@ -24,7 +24,6 @@
 
 #include "CopyCallback.h"
 
-
 CopyCallback::CopyCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, std::string from, std::string to, int data)
     : Callback(callbackFunction), success(success), from(from), to(to), data(data) {}
 

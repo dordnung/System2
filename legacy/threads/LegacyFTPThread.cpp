@@ -26,7 +26,6 @@
 #include "LegacyDownloadCallback.h"
 #include "LegacyDownloadThread.h"
 
-
 // Only allow one FTP connection at the same time, because of RFC does not allow multiple connections
 std::mutex legacyFTPMutex;
 
@@ -34,7 +33,6 @@ LegacyFTPThread::LegacyFTPThread(bool download, std::string remoteFile, std::str
                                  std::string user, std::string pw, int port, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), download(download), remoteFile(remoteFile), localFile(localFile), host(url),
     username(user), password(pw), port(port), data(data), callbackFunction(callbackFunction) {}
-
 
 void LegacyFTPThread::Run() {
     // Get the full path to the local file
@@ -139,7 +137,6 @@ void LegacyFTPThread::Run() {
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyDownloadCallback>(this->callbackFunction, error, this->data));
 }
-
 
 size_t LegacyFTPThread::UploadFTP(void* buffer, size_t size, size_t nmemb, void* userdata) {
     // Read file and return size

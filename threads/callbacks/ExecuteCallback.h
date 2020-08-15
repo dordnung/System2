@@ -28,7 +28,6 @@
 #include "Callback.h"
 #include "extension.h"
 
-
 class ExecuteCallback : public Callback {
 private:
     bool success;

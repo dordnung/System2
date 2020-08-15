@@ -28,7 +28,6 @@
 #include "ResponseCallback.h"
 #include "FTPRequest.h"
 
-
 class FTPResponseCallback : public ResponseCallback {
 public:
     FTPResponseCallback(FTPRequest* ftpRequest, std::string error);

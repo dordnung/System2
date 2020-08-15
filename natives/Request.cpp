@@ -24,7 +24,6 @@
 
 #include "Request.h"
 
-
 Request::Request(std::string url, std::shared_ptr<CallbackFunction_t> responseCallbackFunction) :
     url(url), port(0), verifySSL(true), proxyHttpTunnel(false), timeout(0), data(0),
     responseCallbackFunction(responseCallbackFunction), progressCallbackFunction(nullptr) {}

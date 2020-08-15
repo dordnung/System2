@@ -28,7 +28,6 @@
 #include "RequestThread.h"
 #include "HTTPRequest.h"
 
-
 class HTTPRequestThread : public RequestThread {
 private:
     HTTPRequestMethod requestMethod;
@@ -55,6 +54,5 @@ private:
 protected:
     virtual void Run();
 };
-
 
 #endif

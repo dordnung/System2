@@ -27,7 +27,6 @@
 
 #include "Request.h"
 
-
 class FTPRequest : public Request {
 public:
     std::string username;
@@ -47,6 +46,5 @@ public:
 private:
     void MakeThread();
 };
-
 
 #endif

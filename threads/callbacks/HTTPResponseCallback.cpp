@@ -24,10 +24,8 @@
 
 #include "HTTPResponseCallback.h"
 
-
 HTTPResponseCallback::HTTPResponseCallback(HTTPRequest* httpRequest, std::string error, HTTPRequestMethod requestMethod)
     : ResponseCallback(httpRequest, error), requestMethod(requestMethod), httpVersion(CURL_HTTP_VERSION_NONE) {}
-
 
 HTTPResponseCallback::HTTPResponseCallback(HTTPRequest* httpRequest, CURL* curl, std::string content,
                                            HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers)
@@ -44,7 +42,6 @@ HTTPResponseCallback::HTTPResponseCallback(HTTPRequest* httpRequest, CURL* curl,
         this->contentType = contentType;
     }
 }
-
 
 void HTTPResponseCallback::PreFire() {
     // Push the request method for a HTTP request

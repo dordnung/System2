@@ -26,10 +26,8 @@
 #include "HTTPResponseCallback.h"
 #include "HTTPRequestMethod.h"
 
-
 HTTPRequestThread::HTTPRequestThread(HTTPRequest* httpRequest, HTTPRequestMethod requestMethod)
     : RequestThread(httpRequest), requestMethod(requestMethod), httpRequest(httpRequest) {};
-
 
 void HTTPRequestThread::Run() {
     // Create a curl object
@@ -161,7 +159,6 @@ void HTTPRequestThread::Run() {
     }
 }
 
-
 size_t HTTPRequestThread::ReadHeader(char* buffer, size_t size, size_t nitems, void* userdata) {
     // Get the header info
     HeaderInfo* headerInfo = (HeaderInfo*)userdata;
@@ -203,7 +200,6 @@ size_t HTTPRequestThread::ReadHeader(char* buffer, size_t size, size_t nitems, v
 
     return realsize;
 }
-
 
 bool HTTPRequestThread::EqualsIgnoreCase(const std::string& str1, const std::string& str2) {
     size_t str1Len = str1.size();

@@ -26,10 +26,8 @@
 #include "LegacyCommandCallback.h"
 #include "LegacyCommandState.h"
 
-
 LegacyCommandThread::LegacyCommandThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), command(command), data(data), callbackFunction(callbackFunction) {}
-
 
 void LegacyCommandThread::Run() {
     // Redirect everything to output

@@ -28,7 +28,6 @@
 #include "RequestHandler.h"
 #include "HTTPRequestThread.h"
 
-
 cell_t NativeRequest_SetURL(IPluginContext* pContext, const cell_t* params) {
     Request* request = Request::ConvertRequest<Request>(params[1], pContext);
     if (!request) {
@@ -190,7 +189,6 @@ cell_t NativeRequest_SetAnyData(IPluginContext* pContext, const cell_t* params) 
     request->data = params[2];
     return 1;
 }
-
 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext* pContext, const cell_t* params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));

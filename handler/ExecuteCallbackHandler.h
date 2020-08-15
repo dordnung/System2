@@ -28,7 +28,6 @@
 #include "Handler.h"
 #include "ExecuteCallback.h"
 
-
 class ExecuteCallbackHandler : public Handler {
 private:
     HandleType_t handleType;

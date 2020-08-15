@@ -27,7 +27,6 @@
 
 #include "extension.h"
 
-
 cell_t NativeGetPage(IPluginContext* pContext, const cell_t* params);
 cell_t NativeDownloadFileUrl(IPluginContext* pContext, const cell_t* params);
 cell_t NativeDownloadFile(IPluginContext* pContext, const cell_t* params);
@@ -37,7 +36,6 @@ cell_t NativeExtractArchive(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRunThreadCommand(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRunThreadCommandWithData(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRunCommand(IPluginContext* pContext, const cell_t* params);
-
 
 const sp_nativeinfo_t system2_legacy_natives[] =
 {

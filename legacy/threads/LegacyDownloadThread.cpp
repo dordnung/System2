@@ -25,10 +25,8 @@
 #include "LegacyDownloadThread.h"
 #include "LegacyDownloadCallback.h"
 
-
 LegacyDownloadThread::LegacyDownloadThread(std::string url, std::string localFile, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), url(url), localFile(localFile), data(data), callbackFunction(callbackFunction) {}
-
 
 void LegacyDownloadThread::Run() {
     // Get full path to the local file and open it
@@ -90,7 +88,6 @@ void LegacyDownloadThread::Run() {
         curl_easy_cleanup(curl);
     }
 
-
     // Close file
     fclose(stream);
 
@@ -102,7 +99,6 @@ size_t LegacyDownloadThread::WriteFile(void* buffer, size_t size, size_t nmemb, 
     // Write to the file
     return fwrite(buffer, size, nmemb, (FILE*)userdata);
 }
-
 
 int LegacyDownloadThread::ProgressUpdated(void* data, double dltotal, double dlnow, double ultotal, double ulnow) {
     ProgressInfo* progress = (ProgressInfo*)data;

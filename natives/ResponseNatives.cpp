@@ -26,7 +26,6 @@
 #include "HTTPResponseCallback.h"
 #include "HTTPRequestThread.h"
 
-
 cell_t NativeResponse_GetLastURL(IPluginContext* pContext, const cell_t* params) {
     ResponseCallback* response = ResponseCallback::ConvertResponse<ResponseCallback>(params[1], pContext);
     if (!response) {
@@ -145,8 +144,6 @@ cell_t NativeResponse_GetUploadSpeed(IPluginContext* pContext, const cell_t* par
 
     return response->uploadSpeed;
 }
-
-
 
 cell_t NativeHTTPResponse_GetContentType(IPluginContext* pContext, const cell_t* params) {
     HTTPResponseCallback* response = ResponseCallback::ConvertResponse<HTTPResponseCallback>(params[1], pContext);

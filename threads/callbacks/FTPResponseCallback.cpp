@@ -24,13 +24,11 @@
 
 #include "FTPResponseCallback.h"
 
-
 FTPResponseCallback::FTPResponseCallback(FTPRequest* ftpRequest, std::string error)
     : ResponseCallback(ftpRequest, error) {}
 
 FTPResponseCallback::FTPResponseCallback(FTPRequest* ftpRequest, CURL* curl, std::string content)
     : ResponseCallback(ftpRequest, curl, content) {}
-
 
 void FTPResponseCallback::PreFire() {
     // Nothing to do here

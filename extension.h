@@ -39,7 +39,6 @@
 
 #include <curl/curl.h>
 
-
 class System2Extension : public SDKExtension, public IPluginsListener {
 private:
     std::mutex threadMutex;
@@ -72,7 +71,6 @@ public:
     void GameFrameHit();
     uint32_t GetFrames();
 };
-
 
 void OnGameFrameHit(bool simulating);
 

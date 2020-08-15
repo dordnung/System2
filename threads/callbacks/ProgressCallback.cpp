@@ -25,10 +25,8 @@
 #include "ProgressCallback.h"
 #include "RequestHandler.h"
 
-
 ProgressCallback::ProgressCallback(Request* request, int dlTotal, int dlNow, int ulTotal, int ulNow, int data)
     : Callback(request->progressCallbackFunction), request(request), dlTotal(dlTotal), dlNow(dlNow), ulTotal(ulTotal), ulNow(ulNow), data(data) {};
-
 
 void ProgressCallback::Fire() {
     // Create a temporary request handle, so in the callback the correct request will be used

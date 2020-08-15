@@ -28,7 +28,6 @@
 // Set initial last progress frame
 uint32_t RequestThread::lastProgressFrame = 0;
 
-
 RequestThread::RequestThread(Request* request) : Thread(), request(request) {};
 
 bool RequestThread::ApplyRequest(CURL* curl, WriteDataInfo& writeData) {

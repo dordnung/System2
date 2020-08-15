@@ -28,7 +28,6 @@
 #include "extension.h"
 #include "RequestHandler.h"
 
-
 class Request {
 public:
     std::string url;
@@ -64,6 +63,5 @@ public:
         return request;
     }
 };
-
 
 #endif

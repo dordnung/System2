@@ -27,7 +27,6 @@
 
 #include "extension.h"
 
-
 class Handler : public IHandleTypeDispatch {
 public:
     virtual void Initialize() = 0;
@@ -37,6 +36,5 @@ public:
 
     virtual void OnHandleDestroy(HandleType_t type, void* object) = 0;
 };
-
 
 #endif

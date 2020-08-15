@@ -30,7 +30,6 @@
 #include "Thread.h"
 #include <map>
 
-
 class RequestThread : public Thread {
 private:
     static uint32_t lastProgressFrame;

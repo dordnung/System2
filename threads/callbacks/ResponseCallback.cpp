@@ -25,7 +25,6 @@
 #include "ResponseCallback.h"
 #include "RequestHandler.h"
 
-
 ResponseCallback::ResponseCallback(Request* request, std::string error)
     : Callback(request->responseCallbackFunction), request(request), error(error),
     statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {};
@@ -75,7 +74,6 @@ ResponseCallback::ResponseCallback(Request* request, CURL* curl, std::string con
         this->uploadSpeed = static_cast<int>(uploadSpeed);
     }
 }
-
 
 void ResponseCallback::Fire() {
     IdentityToken_t* owner = this->request->responseCallbackFunction->plugin->GetIdentity();

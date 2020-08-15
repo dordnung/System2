@@ -27,7 +27,6 @@
 
 #include "Handler.h"
 
-
 class RequestHandler : public Handler {
 private:
     HandleType_t handleType;

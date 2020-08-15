@@ -27,10 +27,8 @@
 
 #include <fstream>
 
-
 CopyThread::CopyThread(std::string from, std::string to, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), from(from), to(to), data(data), callbackFunction(callbackFunction) {}
-
 
 void CopyThread::Run() {
     char filePath[PLATFORM_MAX_PATH + 1];

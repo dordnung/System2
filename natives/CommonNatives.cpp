@@ -31,7 +31,6 @@
 
 #include <fstream>
 
-
 cell_t NativeCopyFile(IPluginContext* pContext, const cell_t* params) {
     char* from;
     char* to;
@@ -52,12 +51,10 @@ cell_t NativeCopyFile(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeGetGameDir(IPluginContext* pContext, const cell_t* params) {
     pContext->StringToLocalUTF8(params[1], params[2], smutils->GetGamePath(), nullptr);
     return 1;
 }
-
 
 cell_t NativeGetOS(IPluginContext* pContext, const cell_t* params) {
 #if defined __WIN32__ || defined _MSC_VER || defined __CYGWIN32__ || defined _Windows || defined __MSDOS__ || defined _WIN64 || defined _WIN32
@@ -70,7 +67,6 @@ cell_t NativeGetOS(IPluginContext* pContext, const cell_t* params) {
     return OS_UNKNOWN;
 #endif
 }
-
 
 cell_t NativeGetStringMD5(IPluginContext* pContext, const cell_t* params) {
     char* str;
@@ -90,7 +86,6 @@ cell_t NativeGetStringMD5(IPluginContext* pContext, const cell_t* params) {
     pContext->StringToLocalUTF8(params[2], params[3], md5.hexdigest().c_str(), nullptr);
     return 1;
 }
-
 
 cell_t NativeGetFileMD5(IPluginContext* pContext, const cell_t* params) {
     char* memblock;
@@ -134,7 +129,6 @@ cell_t NativeGetFileMD5(IPluginContext* pContext, const cell_t* params) {
     return true;
 }
 
-
 cell_t NativeGetStringCRC32(IPluginContext* pContext, const cell_t* params) {
     char* str;
 
@@ -152,7 +146,6 @@ cell_t NativeGetStringCRC32(IPluginContext* pContext, const cell_t* params) {
     pContext->StringToLocalUTF8(params[2], params[3], crc32, nullptr);
     return 1;
 }
-
 
 cell_t NativeGetFileCRC32(IPluginContext* pContext, const cell_t* params) {
     char* memblock;
@@ -195,7 +188,6 @@ cell_t NativeGetFileCRC32(IPluginContext* pContext, const cell_t* params) {
     return true;
 }
 
-
 cell_t NativeURLEncode(IPluginContext* pContext, const cell_t* params) {
     // Get the string to encode
     char str[2048];
@@ -219,7 +211,6 @@ cell_t NativeURLEncode(IPluginContext* pContext, const cell_t* params) {
 
     return false;
 }
-
 
 cell_t NativeURLDecode(IPluginContext* pContext, const cell_t* params) {
     // Get the string to decode

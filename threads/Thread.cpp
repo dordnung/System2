@@ -26,7 +26,6 @@
 #include "extension.h"
 #include <memory>
 
-
 Thread::Thread() : shouldTerminate(false), threader(nullptr) {};
 
 Thread::~Thread() {

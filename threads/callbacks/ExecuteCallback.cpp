@@ -25,10 +25,8 @@
 #include "ExecuteCallback.h"
 #include "ExecuteCallbackHandler.h"
 
-
 ExecuteCallback::ExecuteCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, bool success, int exitStatus, std::string output, std::string command, int data)
     : Callback(callbackFunction), success(success), exitStatus(exitStatus), output(output), command(command), data(data) {}
-
 
 const std::string& ExecuteCallback::GetOutput() const {
     return this->output;

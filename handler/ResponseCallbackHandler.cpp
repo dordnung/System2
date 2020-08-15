@@ -24,7 +24,6 @@
 
 #include "ResponseCallbackHandler.h"
 
-
 ResponseCallbackHandler::ResponseCallbackHandler() : handleType(0) {}
 
 void ResponseCallbackHandler::Initialize() {
@@ -52,7 +51,6 @@ void ResponseCallbackHandler::Shutdown() {
 void ResponseCallbackHandler::OnHandleDestroy(HandleType_t type, void* object) {
     // Nothing to do, as handle is a callback and will be deleted otherwise
 }
-
 
 // Create an instance of the response callback handler
 ResponseCallbackHandler responseCallbackHandler;

@@ -27,10 +27,8 @@
 #include "LegacyCommandCallback.h"
 #include "LegacyCommandThread.h"
 
-
 LegacyPageThread::LegacyPageThread(std::string url, std::string post, std::string useragent, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), url(url), post(post), useragent(useragent), data(data), callbackFunction(callbackFunction) {}
-
 
 void LegacyPageThread::Run() {
     LegacyCommandState state = CMD_SUCCESS;
@@ -93,7 +91,6 @@ void LegacyPageThread::Run() {
     // Add return status to queue
     system2Extension.AppendCallback(std::make_shared<LegacyCommandCallback>(this->callbackFunction, page.result, std::string(), this->data, state));
 }
-
 
 // Got something of the page
 size_t LegacyPageThread::GetPage(void* buffer, size_t size, size_t nmemb, void* userdata) {

@@ -24,7 +24,6 @@
 
 #include "LegacyDownloadCallback.h"
 
-
 LegacyDownloadCallback::LegacyDownloadCallback(std::shared_ptr<CallbackFunction_t> callbackFunction, std::string curlError, int data)
     : Callback(callbackFunction), finished(true), curlError(curlError), dlTotal(0.0f), dlNow(0.0f), ulTotal(0.0f), ulNow(0.0f), data(data) {}
 

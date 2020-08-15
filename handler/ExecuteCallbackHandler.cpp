@@ -24,7 +24,6 @@
 
 #include "ExecuteCallbackHandler.h"
 
-
 ExecuteCallbackHandler::ExecuteCallbackHandler() : handleType(0) {};
 
 void ExecuteCallbackHandler::Initialize() {
@@ -48,7 +47,6 @@ void ExecuteCallbackHandler::Shutdown() {
     handlesys->RemoveType(this->handleType, myself->GetIdentity());
 }
 
-
 Handle_t ExecuteCallbackHandler::CreateHandle(ExecuteCallback* callback, IdentityToken_t* owner) {
     return handlesys->CreateHandle(this->handleType,
                                    callback,
@@ -63,11 +61,9 @@ HandleError ExecuteCallbackHandler::ReadHandle(Handle_t hndl, IdentityToken_t* o
     return handlesys->ReadHandle(hndl, this->handleType, &sec, (void**)callback);
 }
 
-
 void ExecuteCallbackHandler::OnHandleDestroy(HandleType_t type, void* object) {
     // Nothing to do, as handle is a callback and will be deleted otherwise
 }
-
 
 // Create an instance of the handler
 ExecuteCallbackHandler executeCallbackHandler;

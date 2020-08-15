@@ -35,7 +35,6 @@
 
 #define MAX_COMMAND_LENGTH 2048
 
-
 cell_t NativeGetPage(IPluginContext* pContext, const cell_t* params) {
     char* url;
     char* post;
@@ -57,7 +56,6 @@ cell_t NativeGetPage(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeDownloadFileUrl(IPluginContext* pContext, const cell_t* params) {
     char* url;
     char* localFile;
@@ -76,7 +74,6 @@ cell_t NativeDownloadFileUrl(IPluginContext* pContext, const cell_t* params) {
 
     return 1;
 }
-
 
 cell_t NativeDownloadFile(IPluginContext* pContext, const cell_t* params) {
     char* remoteFile;
@@ -103,7 +100,6 @@ cell_t NativeDownloadFile(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeUploadFile(IPluginContext* pContext, const cell_t* params) {
     char* localFile;
     char* remoteFile;
@@ -128,7 +124,6 @@ cell_t NativeUploadFile(IPluginContext* pContext, const cell_t* params) {
 
     return 1;
 }
-
 
 cell_t NativeCompressFile(IPluginContext* pContext, const cell_t* params) {
     char* file;
@@ -245,7 +240,6 @@ cell_t NativeCompressFile(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeExtractArchive(IPluginContext* pContext, const cell_t* params) {
     char* file;
     char* folder;
@@ -301,7 +295,6 @@ cell_t NativeExtractArchive(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeRunThreadCommand(IPluginContext* pContext, const cell_t* params) {
     char command[MAX_COMMAND_LENGTH + 1];
 
@@ -319,7 +312,6 @@ cell_t NativeRunThreadCommand(IPluginContext* pContext, const cell_t* params) {
     return 1;
 }
 
-
 cell_t NativeRunThreadCommandWithData(IPluginContext* pContext, const cell_t* params) {
     char command[MAX_COMMAND_LENGTH + 1];
 
@@ -336,7 +328,6 @@ cell_t NativeRunThreadCommandWithData(IPluginContext* pContext, const cell_t* pa
 
     return 1;
 }
-
 
 cell_t NativeRunCommand(IPluginContext* pContext, const cell_t* params) {
     // Format the command string
@@ -376,7 +367,6 @@ cell_t NativeRunCommand(IPluginContext* pContext, const cell_t* params) {
         // Add buffer to result
         output += buffer;
     }
-
 
     if (output.empty()) {
         pContext->StringToLocalUTF8(params[1], params[2], "Empty reading result!", nullptr);

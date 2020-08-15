@@ -37,7 +37,6 @@
 #define PosixClose pclose
 #endif
 
-
 class ExecuteThread : public Thread {
 private:
     std::string command;

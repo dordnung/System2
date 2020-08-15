@@ -29,7 +29,6 @@
 #include "Request.h"
 #include "ResponseCallbackHandler.h"
 
-
 class ResponseCallback : public Callback {
 protected:
     Request* request;

@@ -30,7 +30,6 @@
 
 #include <map>
 
-
 class HTTPRequest : public Request {
 public:
     std::string bodyData;
@@ -55,6 +54,5 @@ public:
 private:
     void MakeThread(HTTPRequestMethod method);
 };
-
 
 #endif

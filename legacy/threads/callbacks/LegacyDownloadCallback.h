@@ -28,7 +28,6 @@
 #include "extension.h"
 #include "Callback.h"
 
-
 class LegacyDownloadCallback : public Callback {
 private:
     bool finished;

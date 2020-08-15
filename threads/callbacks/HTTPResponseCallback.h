@@ -28,7 +28,6 @@
 #include "ResponseCallback.h"
 #include "HTTPRequest.h"
 
-
 class HTTPResponseCallback : public ResponseCallback {
 private:
     HTTPRequestMethod requestMethod;

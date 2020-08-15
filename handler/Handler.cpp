@@ -24,7 +24,6 @@
 
 #include "Handler.h"
 
-
 void Handler::FreeHandle(Handle_t hndl, IdentityToken_t* owner) {
     HandleSecurity sec = { owner, myself->GetIdentity() };
     handlesys->FreeHandle(hndl, &sec);

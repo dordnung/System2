@@ -25,7 +25,6 @@
 #include "ExecuteThread.h"
 #include "ExecuteCallback.h"
 
-
 ExecuteThread::ExecuteThread(std::string command, int data, std::shared_ptr<CallbackFunction_t> callbackFunction)
     : Thread(), command(command), data(data), callbackFunction(callbackFunction) {}
 
