@@ -29,6 +29,10 @@
 
 Thread::Thread() : shouldTerminate(false), threader(nullptr) {};
 
+Thread::~Thread() {
+    this->TerminateThread();
+}
+
 void Thread::RunThread() {
     if (!this->threader) {
         system2Extension.RegisterThread(this);
@@ -43,7 +47,7 @@ void Thread::RunThread() {
     }
 }
 
-void Thread::WaitUntilFinished() {
+void Thread::TerminateThread() {
     if (this->threader) {
         {
             std::lock_guard<std::mutex> lock(this->lock);

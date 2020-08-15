@@ -84,7 +84,7 @@ void System2Extension::SDK_OnUnload() {
     if (runningThreads.size() > 0) {
         rootconsole->ConsolePrint("[System2] Please wait until %d thread(s) finished...", runningThreads.size());
         for (auto it = this->runningThreads.begin(); it != runningThreads.end(); ++it) {
-            (*it)->WaitUntilFinished();
+            (*it)->TerminateThread();
         }
         rootconsole->ConsolePrint("[System2] All threads finished");
     }

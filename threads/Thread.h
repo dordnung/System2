@@ -40,10 +40,10 @@ protected:
 
 public:
     Thread();
-    virtual ~Thread() {};
+    virtual ~Thread();
 
     void RunThread();
-    void WaitUntilFinished();
+    void TerminateThread();
 };
 
 #endif
