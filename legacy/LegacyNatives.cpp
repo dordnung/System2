@@ -219,7 +219,7 @@ cell_t NativeCompressFile(IPluginContext *pContext, const cell_t *params) {
 
     // 7z exists?
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != nullptr) {
+    if ((testExist = fopen(zdir, "rb"))) {
         fclose(testExist);
 
         // Create the compress command
@@ -275,7 +275,7 @@ cell_t NativeExtractArchive(IPluginContext *pContext, const cell_t *params) {
 
     // Test if the local file exists
     FILE *testExist;
-    if ((testExist = fopen(zdir, "rb")) != nullptr) {
+    if ((testExist = fopen(zdir, "rb"))) {
         fclose(testExist);
 
         // Create the extract command
@@ -365,7 +365,7 @@ cell_t NativeRunCommand(IPluginContext *pContext, const cell_t *params) {
     std::string output;
 
     char buffer[MAX_RESULT_LENGTH + 1];
-    while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
+    while (fgets(buffer, sizeof(buffer), commandFile)) {
         // More than MAX_RESULT_LENGTH?
         if (output.length() + strlen(buffer) >= size_t(params[2] - 1)) {
             // Only make the result full!

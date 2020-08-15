@@ -91,7 +91,7 @@ bool RequestThread::ApplyRequest(CURL *curl, WriteDataInfo &writeData) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
 
     // Set progress function
-    if (this->request->progressCallbackFunction != nullptr) {
+    if (this->request->progressCallbackFunction) {
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
         curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, RequestThread::ProgressUpdated);
         curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);

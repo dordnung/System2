@@ -46,11 +46,11 @@ void LegacyCommandThread::Run() {
     std::string output;
 
     // Was there an error?
-    if (commandFile != nullptr) {
+    if (commandFile) {
         bool found = false;
 
         char buffer[MAX_RESULT_LENGTH + 1];
-        while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
+        while (fgets(buffer, sizeof(buffer), commandFile)) {
             found = true;
 
             // More than MAX_RESULT_LENGTH?

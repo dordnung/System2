@@ -36,9 +36,9 @@ void ExecuteThread::Run() {
 
     // Execute the command
     FILE *commandFile = PosixOpen(this->command.c_str(), "r");
-    if (commandFile != nullptr) {
+    if (commandFile) {
         char buffer[1024];
-        while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
+        while (fgets(buffer, sizeof(buffer), commandFile)) {
             // Add buffer to the output
             output += buffer;
         }

@@ -388,7 +388,7 @@ cell_t NativeExecuteCommand(std::string command, IPluginContext *pContext, const
     std::string output;
 
     char buffer[1024];
-    while (fgets(buffer, sizeof(buffer), commandFile) != nullptr) {
+    while (fgets(buffer, sizeof(buffer), commandFile)) {
         // Add buffer to the output
         output += buffer;
     }

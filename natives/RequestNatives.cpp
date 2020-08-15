@@ -31,7 +31,7 @@
 
 cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -44,7 +44,7 @@ cell_t NativeRequest_SetURL(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -54,7 +54,7 @@ cell_t NativeRequest_GetURL(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -69,7 +69,7 @@ cell_t NativeRequest_SetPort(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -78,7 +78,7 @@ cell_t NativeRequest_GetPort(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -91,7 +91,7 @@ cell_t NativeRequest_SetOutputFile(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -101,7 +101,7 @@ cell_t NativeRequest_GetOutputFile(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -111,7 +111,7 @@ cell_t NativeRequest_SetVerifySSL(IPluginContext *pContext, const cell_t *params
 
 cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -120,7 +120,7 @@ cell_t NativeRequest_GetVerifySSL(IPluginContext *pContext, const cell_t *params
 
 cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -134,7 +134,7 @@ cell_t NativeRequest_SetProxy(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -150,7 +150,7 @@ cell_t NativeRequest_SetProxyAuthentication(IPluginContext *pContext, const cell
 
 cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -159,7 +159,7 @@ cell_t NativeRequest_GetTimeout(IPluginContext *pContext, const cell_t *params) 
 
 cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -174,7 +174,7 @@ cell_t NativeRequest_SetTimeout(IPluginContext *pContext, const cell_t *params) 
 
 cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -183,7 +183,7 @@ cell_t NativeRequest_GetAnyData(IPluginContext *pContext, const cell_t *params) 
 
 cell_t NativeRequest_SetAnyData(IPluginContext *pContext, const cell_t *params) {
     Request *request = Request::ConvertRequest<Request>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -212,7 +212,7 @@ cell_t NativeHTTPRequest_HTTPRequest(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -228,7 +228,7 @@ cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext *pContext, const cel
 
 cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -241,7 +241,7 @@ cell_t NativeHTTPRequest_SetData(IPluginContext *pContext, const cell_t *params)
 
 cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -251,7 +251,7 @@ cell_t NativeHTTPRequest_GetData(IPluginContext *pContext, const cell_t *params)
 
 cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -267,7 +267,7 @@ cell_t NativeHTTPRequest_SetHeader(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return false;
     }
 
@@ -286,7 +286,7 @@ cell_t NativeHTTPRequest_GetHeader(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return false;
     }
 
@@ -306,7 +306,7 @@ cell_t NativeHTTPRequest_GetHeaderName(IPluginContext *pContext, const cell_t *p
 
 cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -315,7 +315,7 @@ cell_t NativeHTTPRequest_GetHeaders(IPluginContext *pContext, const cell_t *para
 
 cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -328,7 +328,7 @@ cell_t NativeHTTPRequest_SetUserAgent(IPluginContext *pContext, const cell_t *pa
 
 cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -344,7 +344,7 @@ cell_t NativeHTTPRequest_SetBasicAuthentication(IPluginContext *pContext, const 
 
 cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -354,7 +354,7 @@ cell_t NativeHTTPRequest_GET(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -364,7 +364,7 @@ cell_t NativeHTTPRequest_POST(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -374,7 +374,7 @@ cell_t NativeHTTPRequest_PUT(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -384,7 +384,7 @@ cell_t NativeHTTPRequest_PATCH(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -394,7 +394,7 @@ cell_t NativeHTTPRequest_DELETE(IPluginContext *pContext, const cell_t *params) 
 
 cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -404,7 +404,7 @@ cell_t NativeHTTPRequest_HEAD(IPluginContext *pContext, const cell_t *params) {
 
 cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -413,7 +413,7 @@ cell_t NativeHTTPRequest_GetFollowRedirects(IPluginContext *pContext, const cell
 
 cell_t NativeHTTPRequest_SetFollowRedirects(IPluginContext *pContext, const cell_t *params) {
     HTTPRequest *request = Request::ConvertRequest<HTTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -443,7 +443,7 @@ cell_t NativeFTPRequest_FTPRequest(IPluginContext *pContext, const cell_t *param
 
 cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -459,7 +459,7 @@ cell_t NativeFTPRequest_SetProgressCallback(IPluginContext *pContext, const cell
 
 cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -475,7 +475,7 @@ cell_t NativeFTPRequest_SetAuthentication(IPluginContext *pContext, const cell_t
 
 cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -488,7 +488,7 @@ cell_t NativeFTPRequest_SetInputFile(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = FTPRequest::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -498,7 +498,7 @@ cell_t NativeFTPRequest_GetInputFile(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -508,7 +508,7 @@ cell_t NativeFTPRequest_StartRequest(IPluginContext *pContext, const cell_t *par
 
 cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -517,7 +517,7 @@ cell_t NativeFTPRequest_GetAppendToFile(IPluginContext *pContext, const cell_t *
 
 cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -527,7 +527,7 @@ cell_t NativeFTPRequest_SetAppendToFile(IPluginContext *pContext, const cell_t *
 
 cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -536,7 +536,7 @@ cell_t NativeFTPRequest_GetCreateMissingDirs(IPluginContext *pContext, const cel
 
 cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -546,7 +546,7 @@ cell_t NativeFTPRequest_SetCreateMissingDirs(IPluginContext *pContext, const cel
 
 cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
@@ -555,7 +555,7 @@ cell_t NativeFTPRequest_GetListFilenamesOnly(IPluginContext *pContext, const cel
 
 cell_t NativeFTPRequest_SetListFilenamesOnly(IPluginContext *pContext, const cell_t *params) {
     FTPRequest *request = Request::ConvertRequest<FTPRequest>(params[1], pContext);
-    if (request == nullptr) {
+    if (!request) {
         return 0;
     }
 
