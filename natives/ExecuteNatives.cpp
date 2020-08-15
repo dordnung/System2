@@ -239,6 +239,7 @@ cell_t NativeExtract(IPluginContext *pContext, const cell_t *params) {
 
     // Start the thread that executes the command
     ExecuteThread *commandThread = new ExecuteThread(command, params[4], callback);
+    commandThread->RunThread();
 
     return 1;
 }

@@ -47,7 +47,7 @@ private:
     std::deque<std::shared_ptr<Callback>> callbackQueue;
     std::vector<std::shared_ptr<CallbackFunction_t>> callbackFunctions;
     std::vector<Thread *> runningThreads;
-    std::vector<Thread*> deletableThreads;
+    std::vector<Thread *> deletableThreads;
 
     volatile uint32_t frames;
     bool isRunning;
