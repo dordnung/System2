@@ -27,7 +27,7 @@ OBJECTS += legacy/threads/LegacyCommandThread.cpp legacy/threads/LegacyDownloadT
 OBJECTS += legacy/threads/callbacks/LegacyCommandCallback.cpp legacy/threads/callbacks/LegacyDownloadCallback.cpp
 OBJECTS += natives/CommonNatives.cpp natives/ExecuteNatives.cpp natives/FTPRequest.cpp natives/HTTPRequest.cpp natives/Request.cpp natives/RequestNatives.cpp natives/ResponseNatives.cpp
 OBJECTS += sdk/smsdk_ext.cpp
-OBJECTS += threads/CopyThread.cpp threads/ExecuteThread.cpp threads/FTPRequestThread.cpp threads/HTTPRequestThread.cpp threads/RequestThread.cpp
+OBJECTS += threads/CopyThread.cpp threads/ExecuteThread.cpp threads/FTPRequestThread.cpp threads/HTTPRequestThread.cpp threads/RequestThread.cpp threads/Thread.cpp
 OBJECTS += threads/callbacks/CopyCallback.cpp threads/callbacks/ExecuteCallback.cpp threads/callbacks/FTPResponseCallback.cpp threads/callbacks/HTTPResponseCallback.cpp threads/callbacks/ProgressCallback.cpp threads/callbacks/ResponseCallback.cpp
 OBJECTS += extension.cpp
 
