@@ -46,11 +46,11 @@ cd "$BUILD_DIR" || exit
 
 # LibCurl
 echo "Building libcurl"
-if [[ ! -f "curl-7.71.1.zip" ]]; then
-	wget https://curl.haxx.se/download/curl-7.71.1.zip && unzip -q curl-7.71.1.zip
+if [[ ! -f "curl-7.72.0.zip" ]]; then
+	wget https://curl.haxx.se/download/curl-7.72.0.zip && unzip -q curl-7.72.0.zip
 fi
 
-cd curl-7.71.1
+cd curl-7.72.0
 ./configure --with-ssl="$BUILD_DIR/openssl-1.1.1g" --with-zlib="$BUILD_DIR/zlib-1.2.11" \
  --with-libidn2="$BUILD_DIR/libidn2-2.2.0" --disable-shared --enable-static --disable-rtsp \
  --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp \
@@ -66,4 +66,4 @@ fi
 
 echo "Building system2"
 cd "$SYSTEM2_DIR" || exit
-make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1g" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.2.0" CURL="$BUILD_DIR/curl-7.71.1"
+make SMSDK="$BUILD_DIR/sourcemod-${SMBRANCH}" OPENSSL="$BUILD_DIR/openssl-1.1.1g" ZLIB="$BUILD_DIR/zlib-1.2.11" IDN="$BUILD_DIR/libidn2-2.2.0" CURL="$BUILD_DIR/curl-7.72.0"

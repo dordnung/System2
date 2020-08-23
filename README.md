@@ -36,8 +36,8 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   5. `cd $BUILD_DIR`
 
 - **Build libcurl**
-  1. `wget https://curl.haxx.se/download/curl-7.71.1.zip && unzip curl-7.71.1.zip`
-  2. `cd curl-7.71.1`
+  1. `wget https://curl.haxx.se/download/curl-7.72.0.zip && unzip curl-7.72.0.zip`
+  2. `cd curl-7.72.0`
   3. `./configure --with-ssl=$BUILD_DIR/openssl-1.1.1g --with-zlib=$BUILD_DIR/zlib-1.2.11 --with-libidn2=$BUILD_DIR/libidn2-2.2.0 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 && make all ca-bundle`
   4. **DO NOT INSTALL IT!**
   5. `cd $BUILD_DIR`
@@ -48,7 +48,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
 - **Build system2**
   1. `git clone https://github.com/dordnung/System2`
   2. `cd System2`
-  3. `make SMSDK=$BUILD_DIR/sourcemod-1.10 OPENSSL=$BUILD_DIR/openssl-1.1.1g ZLIB=$BUILD_DIR/zlib-1.2.11 IDN=$BUILD_DIR/libidn2-2.2.0 CURL=$BUILD_DIR/curl-7.71.1`
+  3. `make SMSDK=$BUILD_DIR/sourcemod-1.10 OPENSSL=$BUILD_DIR/openssl-1.1.1g ZLIB=$BUILD_DIR/zlib-1.2.11 IDN=$BUILD_DIR/libidn2-2.2.0 CURL=$BUILD_DIR/curl-7.72.0`
 
 ### On Windows (Visual Studio 2019): ###
 - **Build zlib**
@@ -62,12 +62,12 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   8. Add a new system variable named `ZLIB` pointing to the `zlib-1.2.11` folder
 
 - **Build libcurl**
-  1. Download curl from `https://curl.haxx.se/download/curl-7.71.1.zip` and unzip to some folder
-  2. Reopen the `Developer Command Prompt for VS 2019` at the `curl-7.71.1` folder
+  1. Download curl from `https://curl.haxx.se/download/curl-7.72.0.zip` and unzip to some folder
+  2. Reopen the `Developer Command Prompt for VS 2019` at the `curl-7.72.0` folder
   3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `cd winbuild` and press ENTER
   5. Type `nmake /f Makefile.vc mode=static WITH_ZLIB=static ZLIB_PATH=%ZLIB% RTLIBCFG=static VC=16 MACHINE=x86` and press ENTER
-  6. Add a new system variable named `CURL` pointing to the `curl-7.71.1/builds/libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
+  6. Add a new system variable named `CURL` pointing to the `curl-7.72.0/builds/libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
 
 - **Get Sourcemod 1.10**
   1. Retrieve Sourcemod 1.10 with: `git clone https://github.com/alliedmodders/sourcemod --recursive --branch 1.10-dev --single-branch sourcemod-1.10`
