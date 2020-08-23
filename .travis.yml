@@ -35,8 +35,9 @@ script:
     
 deploy:
     - provider: releases
-      token:
-          secure: DKfIM7YhZxcxT/kyqcAg/rx5dTs6/h0OHsW74/dII7xUAM9AjfxGHwuySj5xt007Px5QxcEQqSTZE+45kiY8fE8L2693zP0e/Vd+BfyLc9UMPTrefN3CmDqigY4O15IvVneLYdmi1CzQZfJj83x4g8u+iM3grWbTRQAl96iPHxDkXb96We7v27WFGcQT9ir/u1l643subSey59N4hOxn5EKgGFGKG7osdGlL2SEhEjy7MhoHmBpVn/balfVjsM1PTNsvwdubDfRhzySP2dmIPvbWztYm9TVS5e3IvV0ZdopCgqvP1mmDFT2k2QZQvkthnur/jyxeq45E7HlaTs7pmUMU5a3kcdY459tTAGyblkCp2U2mHtPrq3aZBNQl4ozRttTj7sEz/sxqLWPKMUqkatJxEFFblBEL7ZNZ/7TKc/EdyLZiimTxz6XEWfYi9tUEsO7/oDOiycevj6F+PvGge5Z6rtKTvCO/2JT/DCg8IxdC3TTM4luJHH6+S06XLFx8NZ+2HdsWsfqmYrpexG7KWlXJwP6008eB3vbmAoDfTI7THUhF0O6l7dkzOC0Q8/qjdUxKZ8WbG+URUJdcrilWOVoj7LOXk9bXU5NPC710JEXmx6QRBVFyp4kBFK6quKeRr2X/z0mkcX7kfTS0kPkARKctIMpEvOCXmS0iohr1/WU=
+      skip_cleanup: true
+      api_key:
+          secure: sgqauwMNqwXWsv4TGrfaq2DdttS4bYLSa7xQrMaPUFpvecgfGS7ObmoRxgb9qrjTNISNkV8JZre+TmPkTaCdkIww5waS5efUBs4EJYeqlG55gxLx5UgC6S3w8EKsJKdnaLrLqr8mzbb2e3+vzI8v2f/mkd0HqQnu/zMdnBV5ZTS1Bey5WNkqMTl9vxZ1lksZKqeR5X0oatkjlRe+BHTBzNq9DnkOHbgV02QlTI4OSrOwfwqWeHMeAVbbcZiN0JCHoWqA/ES/+SZWsZ3T5VhfvQOm8C0rzeRk/PSixNA34GSE54tSkstQ5KAO/eyg1faVE8dh0szHLEl3sLaRERtGZAirYtghTTTcAf2OEM3890PKbkOfT36hoTKBbIr1Kak++SXz+OI3YhLMe0Mhl5h/JtevZRM4mvub4LTxMFseJTIQTl0a7XHyubl0NAyTrH/Lhnx/V82HiygiVS/l0+/iZcmjTH4RWkmGgKM5RkhXnq5iy56a7jbTu3UDqkh7WUQd50IdemxHOpm7W5fejJ98vJomfEGalEXS78IzzQ4RhQEiMSTYonfrRHCr6qWoiTkAp4i7Wew5bOV75XQzDdMhNfQmQgrwsK92lwM6cB5tCtP5yoq/aig+y/MtDCYiyoM+qJpfcVEJEIE1FPW42f5ePcmBwE78Hs6xBJ11bOfBBKI=
       file:
           - Release/system2.ext.so
           - msvc19/Release/system2.ext.dll
