@@ -67,7 +67,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `cd winbuild` and press ENTER
   5. Type `nmake /f Makefile.vc mode=static WITH_ZLIB=static ZLIB_PATH=%ZLIB% RTLIBCFG=static VC=16 MACHINE=x86` and press ENTER
-  6. Add a new system variable named `CURL` pointing to the `curl-7.72.0/builds/libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-winssl` folder
+  6. Add a new system variable named `CURL` pointing to the `curl-7.72.0/builds/libcurl-vc16-x86-release-static-zlib-static-ipv6-sspi-schannel` folder
 
 - **Get Sourcemod 1.10**
   1. Retrieve Sourcemod 1.10 with: `git clone https://github.com/alliedmodders/sourcemod --recursive --branch 1.10-dev --single-branch sourcemod-1.10`
