@@ -580,8 +580,8 @@ void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest r
         return;
     }
 
-    assertTrue("Callback should be successful", success);
     assertStringEquals("", error);
+    assertTrue("Callback should be successful", success);
     assertValueEquals(view_as<int>(VERSION_1_1), view_as<int>(response.HTTPVersion));
 
     char url[64];
