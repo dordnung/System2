@@ -325,6 +325,32 @@ methodmap System2Request < Handle {
          */
         public native set(any Any);
     }
+
+    property int MaxSendSpeed {
+
+        /**
+         * Sets max upload speed in bytes per second.
+         *
+         * @param Any       The any data to bind.
+         *
+         * @noreturn
+         * @error           Invalid request.
+         */
+        public native set(int value);
+    }
+
+    property int MaxRecvSpeed {
+
+        /**
+         * Sets max download speed in bytes per second.
+         *
+         * @param Any       The any data to bind.
+         *
+         * @noreturn
+         * @error           Invalid request.
+         */
+        public native set(int value);
+    }
 }
 
 
@@ -390,6 +416,31 @@ methodmap System2HTTPRequest < System2Request {
      * @error           Invalid request.
      */
     public native void GetData(char[] data, int maxlength);
+
+
+    /**
+     * Add Mime data to post request.
+     *
+     * @param name      Mime name.
+     * @param data      Mime data.
+     * @param file      Mime file. see curl_mime_filename
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void AddMimeData(const char[] name, const char[] data, const char[] file = NULL_STRING);
+
+    /**
+     * Add Mime file to post request.
+     *
+     * @param name      Mime name.
+     * @param data      Mime data.
+     * @param file      Mime file. see curl_mime_filename
+     *
+     * @noreturn
+     * @error           Invalid request.
+     */
+    public native void AddMimeFile(const char[] name, const char[] path, const char[] file = NULL_STRING);
 
 
     /**

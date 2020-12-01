@@ -190,6 +190,26 @@ cell_t NativeRequest_SetAnyData(IPluginContext* pContext, const cell_t* params) 
     return 1;
 }
 
+cell_t NativeRequest_SetMaxSendSpeed(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
+    if (!request) {
+        return 0;
+    }
+
+    request->maxSendSpeed = (curl_off_t)params[2];
+    return 1;
+}
+
+cell_t NativeRequest_SetMaxRecvSpeed(IPluginContext* pContext, const cell_t* params) {
+    Request* request = Request::ConvertRequest<Request>(params[1], pContext);
+    if (!request) {
+        return 0;
+    }
+
+    request->maxRecvSpeed = (curl_off_t)params[2];
+    return 1;
+}
+
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext* pContext, const cell_t* params) {
     auto callback = system2Extension.CreateCallbackFunction(pContext->GetFunctionById(params[1]));
     if (!callback) {
