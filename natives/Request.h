@@ -40,6 +40,8 @@ public:
     std::string proxyPassword;
     int timeout;
     int data;
+    curl_off_t maxSendSpeed;
+    curl_off_t maxRecvSpeed;
 
     std::shared_ptr<CallbackFunction_t> responseCallbackFunction;
     std::shared_ptr<CallbackFunction_t> progressCallbackFunction;

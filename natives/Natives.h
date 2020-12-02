@@ -41,6 +41,8 @@ cell_t NativeRequest_GetTimeout(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRequest_SetTimeout(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRequest_GetAnyData(IPluginContext* pContext, const cell_t* params);
 cell_t NativeRequest_SetAnyData(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetMaxSendSpeed(IPluginContext* pContext, const cell_t* params);
+cell_t NativeRequest_SetMaxRecvSpeed(IPluginContext* pContext, const cell_t* params);
 
 cell_t NativeHTTPRequest_HTTPRequest(IPluginContext* pContext, const cell_t* params);
 cell_t NativeHTTPRequest_SetProgressCallback(IPluginContext* pContext, const cell_t* params);
@@ -134,6 +136,8 @@ const sp_nativeinfo_t system2_natives[] =
     { "System2Request.Timeout.set", NativeRequest_SetTimeout },
     { "System2Request.Any.get", NativeRequest_GetAnyData },
     { "System2Request.Any.set", NativeRequest_SetAnyData },
+    { "System2Request.MaxSendSpeed.set", NativeRequest_SetMaxSendSpeed },
+    { "System2Request.MaxRecvSpeed.set", NativeRequest_SetMaxRecvSpeed },
 
     { "System2HTTPRequest.System2HTTPRequest", NativeHTTPRequest_HTTPRequest },
     { "System2HTTPRequest.SetProgressCallback", NativeHTTPRequest_SetProgressCallback },
