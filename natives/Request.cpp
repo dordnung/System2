@@ -30,7 +30,8 @@ Request::Request(std::string url, std::shared_ptr<CallbackFunction_t> responseCa
 
 Request::Request(const Request& request) :
     url(request.url), port(request.port), outputFile(request.outputFile), verifySSL(request.verifySSL), proxy(request.proxy),
-    proxyHttpTunnel(request.proxyHttpTunnel), proxyUsername(request.proxyUsername), proxyPassword(request.proxyPassword), timeout(request.timeout),
-    data(request.data), responseCallbackFunction(request.responseCallbackFunction), progressCallbackFunction(request.progressCallbackFunction) {}
+    proxyHttpTunnel(request.proxyHttpTunnel), proxyUsername(request.proxyUsername), proxyPassword(request.proxyPassword),
+    timeout(request.timeout), data(request.data), maxSendSpeed(request.maxSendSpeed), maxRecvSpeed(request.maxRecvSpeed),
+    responseCallbackFunction(request.responseCallbackFunction), progressCallbackFunction(request.progressCallbackFunction) {}
 
 Request::~Request() {}

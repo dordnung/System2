@@ -37,6 +37,14 @@ bool RequestThread::ApplyRequest(CURL* curl, WriteDataInfo& writeData) {
         curl_easy_setopt(curl, CURLOPT_PORT, this->request->port);
     }
 
+    // Apply max speed.
+    if (this->request->maxRecvSpeed > 0) {
+        curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, this->request->maxRecvSpeed);
+    }
+    if (this->request->maxSendSpeed > 0) {
+        curl_easy_setopt(curl, CURLOPT_MAX_SEND_SPEED_LARGE, this->request->maxSendSpeed);
+    }
+
     // Disable SSL verifying if wanted
     if (!this->request->verifySSL) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
