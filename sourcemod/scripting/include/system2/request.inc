@@ -327,29 +327,27 @@ methodmap System2Request < Handle {
     }
 
     property int MaxSendSpeed {
-
         /**
-         * Sets max upload speed in bytes per second.
+         * Sets maximum upload speed in bytes per second.
          *
-         * @param Any       The any data to bind.
+         * @param maxSpeed  The maximum upload speed in bytes per second.
          *
          * @noreturn
          * @error           Invalid request.
          */
-        public native set(int value);
+        public native set(int maxSpeed);
     }
 
     property int MaxRecvSpeed {
-
         /**
-         * Sets max download speed in bytes per second.
+         * Sets maximum download speed in bytes per second.
          *
-         * @param Any       The any data to bind.
+         * @param maxSpeed  The maximum download speed in bytes per second.
          *
          * @noreturn
          * @error           Invalid request.
          */
-        public native set(int value);
+        public native set(int maxSpeed);
     }
 }
 
