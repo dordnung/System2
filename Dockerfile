@@ -1,4 +1,4 @@
-FROM dockette/debian:jessie
+FROM dockette/debian:stretch
 
 WORKDIR /build
 
