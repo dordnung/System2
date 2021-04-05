@@ -373,12 +373,15 @@ void PerformRequestTests() {
     httpRequest.SetVerifySSL(true);
 
     // Test Proxy
-    httpRequest.Any = TEST_PROXY;
-    PrintToServer("INFO: Test using a proxy");
-    httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?method");
-    httpRequest.SetProxy("http://dordnung.de:8888");
-    httpRequest.SetProxyAuthentication("system2", "test");
-    httpRequest.GET();
+    // TODO: Found a way to test proxy
+    //httpRequest.Any = TEST_PROXY;
+    //PrintToServer("INFO: Test using a proxy");
+    //httpRequest.SetURL("https://dordnung.de/sourcemod/system2/testPage.php?method");
+    //httpRequest.SetProxy("http://dordnung.de:8888");
+    //httpRequest.SetProxyAuthentication("system2", "test");
+    //httpRequest.GET();
+    //httpRequest.SetProxy("");
+    //httpRequest.SetProxyAuthentication("", "");
 
     // Test Download
     httpRequest.Any = TEST_DOWNLOAD;
@@ -579,17 +582,22 @@ void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest r
 
         return;
     }
+    
+    char url[64];
+    request.GetURL(url, sizeof(url));
+    
+    if (!success) {
+    	PrintToServer("ERROR: Callback for URL %s and type %d", url, request.Any);
+    }
 
     assertStringEquals("", error);
     assertTrue("Callback should be successful", success);
     assertValueEquals(view_as<int>(VERSION_1_1), view_as<int>(response.HTTPVersion));
 
-    char url[64];
     char lastUrl[64];
     char output[256];
     char contentType[64];
 
-    request.GetURL(url, sizeof(url));
     response.GetLastURL(lastUrl, sizeof(lastUrl));
     response.GetContentType(contentType, sizeof(contentType));
     int responseBytes = response.GetContent(output, sizeof(output));
@@ -807,10 +815,10 @@ void HttpResponseCallback(bool success, const char[] error, System2HTTPRequest r
         assertValueEquals(view_as<int>(METHOD_GET), view_as<int>(method));
         assertStringEquals("https://dordnung.de/sourcemod/system2/testFile.txt", url);
         assertStringEquals("https://dordnung.de/sourcemod/system2/testFile.txt", lastUrl);
-        assertValueEquals(45, responseBytes);
+        assertValueEquals(0, responseBytes);
         assertValueEquals(200, response.StatusCode);
-        assertValueEquals(strlen(output), response.ContentLength);
-        assertStringEquals("This is a test file. Content should be equal.", output);
+        assertValueEquals(45, response.ContentLength);
+        assertStringEquals("", output);
         assertValueEquals(45, response.DownloadSize);
         assertTrue("Download speed should be more then 0 bytes/s", response.DownloadSpeed > 0);
 
@@ -849,14 +857,19 @@ void HttpProgressCallback(System2HTTPRequest request, int dlTotal, int dlNow, in
 
 void ftpResponseCallback(bool success, const char[] error, System2FTPRequest request, System2FTPResponse response) {
     finishedCallbacks++;
+    
+    char url[64];
+    request.GetURL(url, sizeof(url));
+    
+    if (!success) {
+    	PrintToServer("ERROR: Callback for URL %s and type %d", url, request.Any);
+    }
 
     assertTrue("Callback should be successful", success);
     assertStringEquals("", error);
 
-    char url[64];
     char lastUrl[64];
     char output[191];
-    request.GetURL(url, sizeof(url));
     response.GetLastURL(lastUrl, sizeof(lastUrl));
     int responseBytes = response.GetContent(output, sizeof(output));
 
@@ -875,6 +888,8 @@ void ftpResponseCallback(bool success, const char[] error, System2FTPRequest req
         assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", lastUrl);
         assertValueEquals(21, request.GetPort());
         assertValueEquals(226, response.StatusCode);
+        assertValueEquals(0, responseBytes);
+        assertStringEquals("", output);
         assertValueEquals(0, response.UploadSpeed);
         assertValueEquals(0, response.UploadSize);
         assertValueEquals(response.ContentLength, response.DownloadSize);
@@ -1068,7 +1083,7 @@ void CheckLegacyCallbacksCalled() {
 }
 
 public Action OnCheckCallbacks(Handle timer, any isLegacy) {
-    int callbacks = isLegacy ? 9 : 27;
+    int callbacks = isLegacy ? 9 : 26;
 
     // Wait max. 20 seconds for all callbacks
     if (timesTimerCalled >= 20) {
