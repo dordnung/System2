@@ -28,10 +28,14 @@
 #include "extension.h"
 #include "Thread.h"
 
+#include <cerrno>
+#include <cstring>
+
  // Define Posix
 #if defined  _WIN32
 #define PosixOpen _popen
 #define PosixClose _pclose
+#define strerror_r(errno, buf, len) strerror_s(buf, len, errno)
 #else
 #define PosixOpen popen
 #define PosixClose pclose

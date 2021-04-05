@@ -46,6 +46,10 @@ void ExecuteThread::Run() {
         exitStatus = PosixClose(commandFile);
     } else {
         success = false;
+
+        char errnoError[128];
+        strerror_r(errno, errnoError, sizeof(errnoError));
+        output = "ERRNO " + std::to_string(errno) + ": " + errnoError;
     }
 
     // Add return status to queue

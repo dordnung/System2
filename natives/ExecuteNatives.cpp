@@ -370,10 +370,14 @@ cell_t NativeExecuteFormatted(IPluginContext* pContext, const cell_t* params) {
 cell_t NativeExecuteCommand(std::string command, IPluginContext* pContext, const cell_t* params) {
     // Execute the command
     FILE* commandFile = PosixOpen(command.c_str(), "r");
-
+    
     // Was there an error?
     if (!commandFile) {
-        pContext->StringToLocal(params[1], params[2], "");
+        char errnoError[128];
+        strerror_r(errno, errnoError, sizeof(errnoError));
+
+        std::string error = "ERRNO " + std::to_string(errno) + ": " + errnoError;
+        pContext->StringToLocal(params[1], params[2], error.c_str());
         return 0;
     }
 
