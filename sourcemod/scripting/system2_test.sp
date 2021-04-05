@@ -396,10 +396,11 @@ void PerformRequestTests() {
     
     // Test FTP directory listing
     PrintToServer("INFO: Test list a FTP directory");
-    System2FTPRequest ftpRequest = new System2FTPRequest(ftpResponseCallback, "%s://speedtest.tele2.net/", "ftp");
+    System2FTPRequest ftpRequest = new System2FTPRequest(ftpResponseCallback, "%s://ftp.otenet.gr/", "ftp");
     ftpRequest.Any = TEST_FTP_DIRECTORY;
     ftpRequest.ListFilenamesOnly = true;
     ftpRequest.SetPort(21);
+    ftpRequest.SetAuthentication("speedtest", "speedtest");
     ftpRequest.StartRequest();
     ftpRequest.ListFilenamesOnly = false;
 
@@ -408,8 +409,9 @@ void PerformRequestTests() {
     ftpRequest.Any = TEST_FTP_DOWNLOAD;
     ftpRequest.AppendToFile = false;
     ftpRequest.CreateMissingDirs = true;
-    ftpRequest.SetURL("speedtest.tele2.net/1MB.zip");
+    ftpRequest.SetURL("ftp.otenet.gr/test1Mb.db");
     ftpRequest.SetPort(21);
+    ftpRequest.SetAuthentication("speedtest", "speedtest");
     ftpRequest.SetOutputFile(testDownloadFtpFile);
     ftpRequest.SetProgressCallback(ftpProgressCallback);
     ftpRequest.StartRequest();
@@ -439,7 +441,7 @@ void PerformLegacyTests() {
 
     // Test downloading a FTP File
     PrintToServer("INFO: Test downloading a file from FTP");
-    System2_DownloadFTPFile(LegacyProgressCallback, "1MB.zip", testDownloadFtpFile, "speedtest.tele2.net", "", "", 21, TEST_FTP_DOWNLOAD);
+    System2_DownloadFTPFile(LegacyProgressCallback, "test1Mb.db", testDownloadFtpFile, "ftp.otenet.gr", "speedtest", "speedtest", 21, TEST_FTP_DOWNLOAD);
 
     // Test compressing a file does work
     PrintToServer("INFO: Test compressing a file");
@@ -865,8 +867,8 @@ void ftpResponseCallback(bool success, const char[] error, System2FTPRequest req
     	PrintToServer("ERROR: Callback for URL %s and type %d", url, request.Any);
     }
 
-    assertTrue("Callback should be successful", success);
     assertStringEquals("", error);
+    assertTrue("Callback should be successful", success);
 
     char lastUrl[64];
     char output[191];
@@ -876,16 +878,16 @@ void ftpResponseCallback(bool success, const char[] error, System2FTPRequest req
     if (request.Any == TEST_FTP_DIRECTORY) {
         PrintToServer("INFO: Got FTP directory listening callback in %.3fs", response.TotalTime);
 
-        assertStringEquals("ftp://speedtest.tele2.net/", url);
-        assertStringEquals("ftp://speedtest.tele2.net/", lastUrl);
+        assertStringEquals("ftp://ftp.otenet.gr/", url);
+        assertStringEquals("ftp://ftp.otenet.gr/", lastUrl);
         assertValueEquals(226, response.StatusCode);
         assertValueNotEquals(0, response.ContentLength);
         assertValueEquals(true, request.ListFilenamesOnly);
     } else if (request.Any == TEST_FTP_DOWNLOAD) {
         PrintToServer("INFO: Got FTP download callback in %.3fs, uploading it again", response.TotalTime);
    
-        assertStringEquals("speedtest.tele2.net/1MB.zip", url);
-        assertStringEquals("ftp://speedtest.tele2.net/1MB.zip", lastUrl);
+        assertStringEquals("ftp.otenet.gr/test1Mb.db", url);
+        assertStringEquals("ftp://ftp.otenet.gr/test1Mb.db", lastUrl);
         assertValueEquals(21, request.GetPort());
         assertValueEquals(226, response.StatusCode);
         assertValueEquals(0, responseBytes);
@@ -903,15 +905,16 @@ void ftpResponseCallback(bool success, const char[] error, System2FTPRequest req
 
         assertTrue("Downloading a FTP file should create a new file ;)", FileExists(testDownloadFtpFile));
         request.Any = TEST_FTP_UPLOAD;
-        request.SetURL("ftp://speedtest.tele2.net/upload/system2.zip");
+        request.SetURL("ftp://test.rebex.net/system2.zip");
+        request.SetAuthentication("demo", "password");
         request.SetOutputFile("");
         request.SetInputFile("%s", testDownloadFtpFile);
-        request.StartRequest();
+        //request.StartRequest();
     } else if (request.Any == TEST_FTP_UPLOAD) {
         PrintToServer("INFO: Got FTP upload callback in %.3fs", response.TotalTime);
    
-        assertStringEquals("ftp://speedtest.tele2.net/upload/system2.zip", url);
-        assertStringEquals("ftp://speedtest.tele2.net/upload/system2.zip", lastUrl);
+        assertStringEquals("ftp://test.rebex.net/system2.zip", url);
+        assertStringEquals("ftp://test.rebex.net/system2.zip", lastUrl);
         assertValueEquals(21, request.GetPort());
         assertValueEquals(0, responseBytes);
         assertValueEquals(226, response.StatusCode);
@@ -936,7 +939,7 @@ void ftpProgressCallback(System2FTPRequest request, int dlTotal, int dlNow, int 
     request.GetURL(url, sizeof(url));
 
     if (request.Any == TEST_FTP_DOWNLOAD) {
-        assertStringEquals("speedtest.tele2.net/1MB.zip", url);
+        assertStringEquals("ftp.otenet.gr/test1Mb.db", url);
         assertTrue("Download size should be more then 0 bytes", dlTotal > 0);
         assertValueEquals(0, ulNow);
         assertValueEquals(0, ulTotal);
@@ -946,7 +949,7 @@ void ftpProgressCallback(System2FTPRequest request, int dlTotal, int dlNow, int 
         request.GetOutputFile(file, sizeof(file));
         assertStringEquals(testDownloadFtpFile, file);
     } else if (request.Any == TEST_FTP_UPLOAD) {
-        assertStringEquals("ftp://speedtest.tele2.net/upload/system2.zip", url);
+        assertStringEquals("ftp://test.rebex.net/system2.zip", url);
         assertTrue("Upload size should be more then 0 bytes", ulTotal > 0);
         assertValueEquals(0, dlNow);
         assertValueEquals(0, dlTotal);
@@ -986,7 +989,7 @@ void LegacyProgressCallback(bool finished, const char[] error, float dltotal, fl
             PrintToServer("INFO: Got FTP download callback, uploading it again");
 
             assertTrue("Downloading a FTP file should create a new file ;)", FileExists(testDownloadFtpFile));
-            System2_UploadFTPFile(LegacyProgressCallback, testDownloadFtpFile, "upload/system2.zip", "speedtest.tele2.net", "", "", 21, TEST_FTP_UPLOAD);
+            //System2_UploadFTPFile(LegacyProgressCallback, testDownloadFtpFile, "system2.zip", "test.rebex.net", "demo", "password", 21, TEST_FTP_UPLOAD);
         } else if (data == TEST_FTP_UPLOAD) {
             PrintToServer("INFO: Got FTP upload callback");
         }
@@ -1083,7 +1086,7 @@ void CheckLegacyCallbacksCalled() {
 }
 
 public Action OnCheckCallbacks(Handle timer, any isLegacy) {
-    int callbacks = isLegacy ? 9 : 26;
+    int callbacks = isLegacy ? 8 : 25;
 
     // Wait max. 20 seconds for all callbacks
     if (timesTimerCalled >= 20) {
