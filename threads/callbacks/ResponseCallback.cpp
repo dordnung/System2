@@ -29,8 +29,8 @@ ResponseCallback::ResponseCallback(Request* request, std::string error)
     : Callback(request->responseCallbackFunction), request(request), error(error),
     statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {};
 
-ResponseCallback::ResponseCallback(Request* request, CURL* curl, std::string content)
-    : Callback(request->responseCallbackFunction), request(request), content(content),
+ResponseCallback::ResponseCallback(Request* request, CURL* curl, std::string content, size_t contentLength)
+    : Callback(request->responseCallbackFunction), request(request), content(content), contentLength(contentLength),
     statusCode(0), totalTime(0.0f), downloadSize(0), uploadSize(0), downloadSpeed(0), uploadSpeed(0) {
     // Get the response code
     long code;

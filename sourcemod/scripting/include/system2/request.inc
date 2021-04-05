@@ -204,6 +204,7 @@ methodmap System2Request < Handle {
     /**
      * Sets the path to the file to which the output of the request will be written to.
      * Use this to download the output of a response to a file.
+     * When used response content will not be available in System2Response->GetContent, only in file.
      *
      * @param file      File to write the output to.
      * @param ...       File format arguments.
@@ -754,6 +755,7 @@ methodmap System2Response < Handle {
 
     /**
      * Retrieves the content of the response.
+     * When used SetOutputFile in System2Request content will not be available with this method, only in output file.
      * This shouldn't be used when retrieved binary stuff.
      *
      * @param content   Buffer to store the content in.
@@ -772,6 +774,7 @@ methodmap System2Response < Handle {
     property int ContentLength {
         /**
          * Returns the length of the complete response content.
+         * This also works if response was written to an output file and GetContent will deliver an empty response.
          *
          * @return      Length of the content.
          * @error       Invalid response.

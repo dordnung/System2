@@ -27,8 +27,8 @@
 FTPResponseCallback::FTPResponseCallback(FTPRequest* ftpRequest, std::string error)
     : ResponseCallback(ftpRequest, error) {}
 
-FTPResponseCallback::FTPResponseCallback(FTPRequest* ftpRequest, CURL* curl, std::string content)
-    : ResponseCallback(ftpRequest, curl, content) {}
+FTPResponseCallback::FTPResponseCallback(FTPRequest* ftpRequest, CURL* curl, std::string content, size_t contentLength)
+    : ResponseCallback(ftpRequest, curl, content, contentLength) {}
 
 void FTPResponseCallback::PreFire() {
     // Nothing to do here

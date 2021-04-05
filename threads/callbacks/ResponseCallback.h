@@ -36,6 +36,7 @@ protected:
 public:
     std::string error;
     std::string content;
+    size_t contentLength;
     std::string lastURL;
     int statusCode;
     float totalTime;
@@ -45,7 +46,7 @@ public:
     int uploadSpeed;
 
     ResponseCallback(Request* request, std::string error);
-    ResponseCallback(Request* request, CURL* curl, std::string content);
+    ResponseCallback(Request* request, CURL* curl, std::string content, size_t contentLength);
 
     virtual void Abort();
 

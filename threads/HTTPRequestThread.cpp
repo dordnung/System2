@@ -35,7 +35,7 @@ void HTTPRequestThread::Run() {
 
     if (curl) {
         // Apply general request stuff
-        WriteDataInfo writeData = { std::string(), nullptr };
+        WriteDataInfo writeData = { std::string(), 0, nullptr };
         if (!this->ApplyRequest(curl, writeData)) {
             // Create error callback and clean up curl
             system2Extension.AppendCallback(std::make_shared<HTTPResponseCallback>(this->httpRequest, "Can not open output file", this->requestMethod));
@@ -131,7 +131,7 @@ void HTTPRequestThread::Run() {
         // Perform curl operation and create the callback
         std::shared_ptr<HTTPResponseCallback> callback;
         if (curl_easy_perform(curl) == CURLE_OK) {
-            callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, curl, writeData.content, this->requestMethod, headerData.headers);
+            callback = std::make_shared<HTTPResponseCallback>(this->httpRequest, curl, writeData.content, writeData.contentLength, this->requestMethod, headerData.headers);
         } else {
             if (!strlen(errorBuffer)) {
                 // Set readable error if there is no one

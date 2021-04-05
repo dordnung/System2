@@ -38,7 +38,7 @@ public:
     int httpVersion;
 
     HTTPResponseCallback(HTTPRequest* httpRequest, std::string error, HTTPRequestMethod requestMethod);
-    HTTPResponseCallback(HTTPRequest* httpRequest, CURL* curl, std::string content, HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers);
+    HTTPResponseCallback(HTTPRequest* httpRequest, CURL* curl, std::string content, size_t contentLength, HTTPRequestMethod requestMethod, std::map<std::string, std::string> headers);
 
 private:
     virtual void PreFire();

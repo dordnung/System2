@@ -38,6 +38,7 @@ private:
 public:
     typedef struct {
         std::string content;
+        size_t contentLength;
         FILE* file;
     } WriteDataInfo;
 

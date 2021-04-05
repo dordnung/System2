@@ -33,7 +33,7 @@ void FTPRequestThread::Run() {
 
     if (curl) {
         // Apply general request stuff
-        WriteDataInfo writeData = { std::string(), nullptr };
+        WriteDataInfo writeData = { std::string(), 0, nullptr };
         if (!this->ApplyRequest(curl, writeData)) {
             system2Extension.AppendCallback(std::make_shared<FTPResponseCallback>(this->ftpRequest, "Can not open output file"));
             curl_easy_cleanup(curl);
@@ -104,7 +104,7 @@ void FTPRequestThread::Run() {
 
             // Perform curl operation and create the callback
             if (curl_easy_perform(curl) == CURLE_OK) {
-                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content);
+                callback = std::make_shared<FTPResponseCallback>(this->ftpRequest, curl, writeData.content, writeData.contentLength);
             } else {
                 if (!strlen(errorBuffer)) {
                     // Set readable error if there is no one

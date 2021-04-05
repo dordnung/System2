@@ -122,13 +122,15 @@ size_t RequestThread::WriteData(char* ptr, size_t size, size_t nmemb, void* user
     // Get the data info
     RequestThread::WriteDataInfo* dataInfo = (RequestThread::WriteDataInfo*)userdata;
 
-    // Add to content
     size_t realsize = size * nmemb;
-    dataInfo->content.append(ptr, realsize);
+    dataInfo->contentLength += realsize;
 
-    // Write to the file if any file is opened
     if (dataInfo->file) {
+        // Write to the file if any file is opened
         return fwrite(ptr, size, nmemb, dataInfo->file);
+    } else {
+        // Otherwise add data to content
+        dataInfo->content.append(ptr, realsize);
     }
 
     return realsize;

@@ -88,7 +88,7 @@ cell_t NativeResponse_GetContentLength(IPluginContext* pContext, const cell_t* p
         return 0;
     }
 
-    return response->content.length();
+    return response->contentLength;
 }
 
 cell_t NativeResponse_GetStatusCode(IPluginContext* pContext, const cell_t* params) {
