@@ -36,7 +36,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   5. `cd $BUILD_DIR`
 
 - **Build libcurl**
-  1. `wget https://curl.haxx.se/download/curl-7.76.0.zip && unzip curl-7.76.0.zip`
+  1. `wget https://curl.se/download/curl-7.76.0.zip && unzip curl-7.76.0.zip`
   2. `cd curl-7.76.0`
   3. `./configure --with-ssl=$BUILD_DIR/openssl-1.1.1k --with-zlib=$BUILD_DIR/zlib-1.2.11 --with-libidn2=$BUILD_DIR/libidn2-2.2.0 --disable-shared --enable-static --disable-rtsp --disable-ldap --disable-ldaps --disable-manual --disable-libcurl-option --without-librtmp --without-libssh2 --without-nghttp2 --without-gssapi --host=i386-pc-linux-gnu CFLAGS=-m32 && make all ca-bundle`
   4. **DO NOT INSTALL IT!**
@@ -62,7 +62,7 @@ Binaries and more information can be found on [alliedmods.net](https://forums.al
   8. Add a new system variable named `ZLIB` pointing to the `zlib-1.2.11` folder
 
 - **Build libcurl**
-  1. Download curl from `https://curl.haxx.se/download/curl-7.76.0.zip` and unzip to some folder
+  1. Download curl from `https://curl.se/download/curl-7.76.0.zip` and unzip to some folder
   2. Reopen the `Developer Command Prompt for VS 2019` at the `curl-7.76.0` folder
   3. Type `vcvarsall.bat x86` and press ENTER
   4. Type `cd winbuild` and press ENTER

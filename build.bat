@@ -41,7 +41,7 @@ cd %BUILD_DIR%
 REM Libcurl
 echo "Building curl"
 if not exist "curl.zip" (
-	curl https://curl.haxx.se/download/curl-7.76.0.zip -o curl.zip
+	curl https://curl.se/download/curl-7.76.0.zip -o curl.zip
 	unzip -q curl.zip
 )
 

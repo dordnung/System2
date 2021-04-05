@@ -47,7 +47,7 @@ cd "$BUILD_DIR" || exit
 # LibCurl
 echo "Building libcurl"
 if [[ ! -f "curl-7.76.0.zip" ]]; then
-	wget https://curl.haxx.se/download/curl-7.76.0.zip && unzip -q curl-7.76.0.zip
+	wget https://curl.se/download/curl-7.76.0.zip && unzip -q curl-7.76.0.zip
 fi
 
 cd curl-7.76.0
