@@ -44,9 +44,6 @@ bool RequestThread::ApplyRequest(CURL* curl, WriteDataInfo& writeData) {
     if (this->request->maxSendSpeed > 0) {
         curl_easy_setopt(curl, CURLOPT_MAX_SEND_SPEED_LARGE, this->request->maxSendSpeed);
     }
-    
-    // Disable certificate revocation checks
-    curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NO_REVOKE);
 
     // Disable SSL verifying if wanted
     if (!this->request->verifySSL) {
