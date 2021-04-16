@@ -40,7 +40,7 @@
 /* Basic information exposed publicly */
 #define SMEXT_CONF_NAME			"System2"
 #define SMEXT_CONF_DESCRIPTION	"HTTP/FTP Request and System API for Sourcemod"
-#define SMEXT_CONF_VERSION		"3.3.1"
+#define SMEXT_CONF_VERSION		"3.3.2"
 #define SMEXT_CONF_AUTHOR		"David Ordnung"
 #define SMEXT_CONF_URL			"http://forums.alliedmods.net/showthread.php?t=146019"
 #define SMEXT_CONF_LOGTAG		"System2"
